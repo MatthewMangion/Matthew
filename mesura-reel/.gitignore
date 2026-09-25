@@ -3,3 +3,5 @@
 audio/*.wav
 audio/*.tmp.wav
 node_modules/
+# cover PNGs are intermediates; the JPGs are the deliverables
+renders/covers/*.png

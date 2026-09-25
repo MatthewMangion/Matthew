@@ -255,34 +255,50 @@
       ctx.strokeStyle = tl.blind && o.blind > 0 ? M.mix(T.border, T.ochre, o.blind * 0.6) : T.border;
       ctx.lineWidth = 2;
       ctx.stroke();
-      M.label(ctx, tl.label, tx + 30, ty + 54, { weight: 500, size: 27, color: T.muted, ls: 0, upper: false });
+      const ms = tl.blind ? clamp(o.measured || 0) : 0;
+      if (ms > 0) {
+        M.label(ctx, 'AI readiness', tx + 30, ty + 54, { weight: 500, size: 27, color: T.muted, ls: 0, upper: false, alpha: ms });
+        M.label(ctx, tl.label, tx + 30, ty + 54, { weight: 500, size: 27, color: T.muted, ls: 0, upper: false, alpha: 1 - ms });
+      } else {
+        M.label(ctx, tl.label, tx + 30, ty + 54, { weight: 500, size: 27, color: T.muted, ls: 0, upper: false });
+      }
       let jx = 0;
       if (tl.blind && o.blind > 0) jx = (M.rand(Math.floor(t * 30), 41) - 0.5) * 14 * o.blind;
-      ctx.font = M.font('serif', 500, 86);
+      ctx.font = M.font('serif', 500, 80);
       ctx.letterSpacing = '0px';
       ctx.fillStyle = tl.blind ? T.faint : T.ink;
-      ctx.fillText(tl.value, tx + 28 + jx, ty + 164);
+      if (ms < 1) {
+        ctx.save();
+        ctx.globalAlpha *= 1 - ms;
+        ctx.fillText(tl.value, tx + 28 + jx, ty + 164);
+        ctx.restore();
+      }
+      if (ms > 0) {
+        M.odometer(ctx, 72 * E.outQuart(ms), { x: tx + 26, y: ty + 164, size: 80, color: T === K.DK ? D.mint : P.pine, align: 'left', decimals: 0, digits: 2, hideLeadingZeros: true });
+        K.badgeP(ctx, tx + tw_ - 30, ty + 142, 'Above benchmark', { align: 'right', size: 22, p: clamp(ms * 1.6 - 0.4) });
+      }
+      if (tl.blind && o.ring > 0) K.traceRect(ctx, tx - 10, ty - 10, tw_ + 20, th + 20, 28, o.ring, T.ochre, 6);
       if (tl.spark) {
         ctx.strokeStyle = T.pine;
         ctx.lineWidth = 4;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
         ctx.beginPath();
-        const sx = tx + tw_ - 30 - 150, sy = ty + 150;
+        const SW = 120, sx = tx + tw_ - 30 - SW, sy = ty + 150;
         const sp = o.sparkP ? o.sparkP(i) : 1;
         const n = tl.spark.length;
         const upto = (n - 1) * sp;
         for (let k = 0; k <= Math.floor(upto); k++) {
-          const px = sx + (k / (n - 1)) * 150, py = sy - tl.spark[k] * 70;
+          const px = sx + (k / (n - 1)) * SW, py = sy - tl.spark[k] * 70;
           if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
         }
         const kf = Math.floor(upto), fr = upto - kf;
         if (kf < n - 1 && fr > 0) {
-          ctx.lineTo(sx + ((kf + fr) / (n - 1)) * 150, sy - lerp(tl.spark[kf], tl.spark[kf + 1], fr) * 70);
+          ctx.lineTo(sx + ((kf + fr) / (n - 1)) * SW, sy - lerp(tl.spark[kf], tl.spark[kf + 1], fr) * 70);
         }
         ctx.stroke();
       } else {
-        K.badgeN(ctx, tx + tw_ - 30, ty + 142, 'Not measured', T, { align: 'right', size: 24, p: o.badgeP ?? 1 });
+        K.badgeN(ctx, tx + tw_ - 30, ty + 142, 'Not measured', T, { align: 'right', size: 24, p: (o.badgeP ?? 1) * (1 - ms) });
       }
       ctx.restore();
     });
@@ -294,16 +310,40 @@
       ctx.save();
       ctx.globalAlpha *= clamp(cp * 1.5);
       M.label(ctx, 'AI use over time', x + pad, cy + 34, { weight: 500, size: 25, color: T.muted, ls: 0, upper: false });
+      const cm = clamp(o.measured || 0);
+      const ly = cy + ch * 0.66;
+      ctx.save();
+      ctx.globalAlpha *= 1 - cm;
       ctx.strokeStyle = T.faint;
       ctx.lineWidth = 3;
       ctx.setLineDash([6, 12]);
       ctx.beginPath();
-      const ly = cy + ch * 0.66;
       ctx.moveTo(x + pad, ly);
       ctx.lineTo(x + pad + (w - pad * 2) * clamp(cp), ly);
       ctx.stroke();
       ctx.setLineDash([]);
       M.label(ctx, 'No data', x + w / 2, ly - 20, { fam: 'mono', weight: 400, size: 25, color: T.faint, ls: 0.04, align: 'center', upper: false });
+      ctx.restore();
+      if (cm > 0) {
+        // measured: the series draws on
+        const pts = [0.18, 0.22, 0.2, 0.3, 0.34, 0.42, 0.4, 0.52, 0.58, 0.66, 0.7, 0.8];
+        const cw = w - pad * 2, n = pts.length, upto = (n - 1) * E.outCubic(cm);
+        ctx.save();
+        ctx.strokeStyle = T === K.DK ? D.mint : P.pine;
+        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        const Y = (v) => ly + 14 - v * (ch * 0.62);
+        for (let k = 0; k <= Math.floor(upto); k++) {
+          const px = x + pad + (k / (n - 1)) * cw;
+          if (k === 0) ctx.moveTo(px, Y(pts[k])); else ctx.lineTo(px, Y(pts[k]));
+        }
+        const kf = Math.floor(upto), fr = upto - kf;
+        if (kf < n - 1 && fr > 0) ctx.lineTo(x + pad + ((kf + fr) / (n - 1)) * cw, Y(lerp(pts[kf], pts[kf + 1], fr)));
+        ctx.stroke();
+        ctx.restore();
+      }
       ctx.restore();
     }
     // scanning beam
@@ -323,6 +363,228 @@
       ctx.fillRect(bx + 12, y, 3, h);
       ctx.restore();
     }
+    ctx.restore();
+  };
+
+  // ------------------------------------------------------------ slot counter
+  // Independent digit columns (slot machine). cols: [{pos}] continuous positions in digit units;
+  // a column shows digit floor(pos) mod 10 rolling towards the next. Decimal point after `dot` columns.
+  K.slot = (ctx, cols, o) => {
+    const fam = o.fam || 'serif', weight = o.weight || 500, size = o.size;
+    const mt = M.fontMetrics(ctx, fam, weight, size);
+    ctx.save();
+    ctx.font = M.font(fam, weight, size);
+    ctx.letterSpacing = '0px';
+    let dw = 0;
+    for (let d = 0; d < 10; d++) dw = Math.max(dw, ctx.measureText(String(d)).width);
+    dw *= 0.94;
+    const dotW = ctx.measureText('.').width * 1.05;
+    const suf = o.suffix || '';
+    const sufW = suf ? ctx.measureText(suf).width : 0;
+    const total = cols.length * dw + (o.dot != null ? dotW : 0) + sufW;
+    let x = o.align === 'center' ? o.x - total / 2 : o.x;
+    const y = o.y, step = size, top = y - mt.fig - size * 0.1, h = mt.fig + size * 0.2;
+    cols.forEach((c, i) => {
+      if (o.dot != null && i === o.dot) {
+        ctx.fillStyle = o.color;
+        ctx.fillText('.', x + (dotW - ctx.measureText('.').width) / 2, y);
+        x += dotW;
+      }
+      const base = Math.floor(c.pos), f = c.pos - base;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(x - 4, top, dw + 8, h);
+      ctx.clip();
+      ctx.fillStyle = c.color || o.color;
+      for (let k = -1; k <= 2; k++) {
+        const d = M.mod(base + k, 10);
+        const gw = ctx.measureText(String(d)).width;
+        ctx.fillText(String(d), x + (dw - gw) / 2, y + (k - f) * step);
+      }
+      ctx.restore();
+      x += dw;
+    });
+    if (suf && (o.suffixP ?? 1) > 0) {
+      const p = o.suffixP ?? 1;
+      ctx.save();
+      ctx.fillStyle = o.suffixColor || o.color;
+      const sc = lerp(0.3, 1, E.outBack(p, 2.2));
+      ctx.translate(x + sufW / 2, y - mt.fig / 2);
+      ctx.scale(sc, sc);
+      ctx.globalAlpha *= clamp(p * 2.5);
+      ctx.fillText(suf, -sufW / 2, mt.fig / 2);
+      ctx.restore();
+    }
+    ctx.restore();
+    return { total, left: o.align === 'center' ? o.x - total / 2 : o.x, top, h };
+  };
+  // Position of a slot column that spins at `speed` digits/unit-time and lands on `digit` at t1,
+  // decelerating from t0 along a cubic ease-out whose initial slope equals the spin speed.
+  // The spin phase is solved so the landing is exact: phase + speed·t0 + speed·(t1−t0)/3 ≡ digit (mod 10).
+  K.slotPhase = (speed, t0, t1, digit) => M.mod(digit - speed * (t0 + (t1 - t0) / 3), 10);
+  K.slotPos = (t, speed, t0, t1, digit) => {
+    const phase = K.slotPhase(speed, t0, t1, digit);
+    if (t <= t0) return phase + speed * t;
+    const D0 = (speed * (t1 - t0)) / 3;
+    const end = phase + speed * t0 + D0;
+    if (t >= t1) return end;
+    const u = (t - t0) / (t1 - t0);
+    return end - D0 * Math.pow(1 - u, 3);
+  };
+
+  // ------------------------------------------------------------ shadow / light helpers
+  K.shadowEdge = (p, o = {}) => {
+    const ang = M.deg(lerp(o.a0 ?? -12, o.a1 ?? 18, p));
+    return { nx: Math.cos(ang), ny: Math.sin(ang), ex: lerp(M.W + 420, -420, p), ey: M.H * (o.y ?? 0.52) };
+  };
+  K.shadowMask = (x, p, o = {}) => {
+    const { nx, ny, ex, ey } = K.shadowEdge(p, o);
+    const soft = o.soft ?? 70;
+    const g = x.createLinearGradient(ex - nx * soft, ey - ny * soft, ex + nx * soft, ey + ny * soft);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, 'rgba(0,0,0,1)');
+    x.fillStyle = g;
+    x.fillRect(0, 0, M.W, M.H);
+  };
+  K.shadowRim = (ctx, p, o = {}) => {
+    if (p <= 0 || p >= 1) return;
+    const { nx, ny, ex, ey } = K.shadowEdge(p, o);
+    const tx = -ny, ty = nx, L = 2600, wd = 150;
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    const g = ctx.createLinearGradient(ex - nx * wd, ey - ny * wd, ex + nx * wd, ey + ny * wd);
+    g.addColorStop(0, M.rgba(P.ochre, 0));
+    g.addColorStop(0.46, M.rgba(P.ochre, 0.1));
+    g.addColorStop(0.5, M.rgba('#FFE2A8', 0.55));
+    g.addColorStop(0.54, M.rgba(P.ochre, 0.1));
+    g.addColorStop(1, M.rgba(P.ochre, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(ex + tx * L - nx * wd, ey + ty * L - ny * wd);
+    ctx.lineTo(ex + tx * L + nx * wd, ey + ty * L + ny * wd);
+    ctx.lineTo(ex - tx * L + nx * wd, ey - ty * L + ny * wd);
+    ctx.lineTo(ex - tx * L - nx * wd, ey - ty * L - ny * wd);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  };
+  // Light world ↔ dark world wipe: draws light, then dark masked by the sweeping terminator.
+  K.sweep = (ctx, p, drawLight, drawDark, o = {}) => {
+    if (p < 1) drawLight(ctx);
+    if (p > 0) {
+      if (p >= 1) drawDark(ctx);
+      else M.layer(ctx, (x) => drawDark(x), { mask: (x) => K.shadowMask(x, p, o) });
+      K.shadowRim(ctx, p, o);
+    }
+  };
+
+  // Glint on the horizon (pre-sunrise)
+  K.glint = (ctx, x, y, gp, rot) => {
+    if (gp <= 0) return;
+    const s = lerp(4, 70, gp);
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    M.glow(ctx, x, y, s * 5, D.ochre, 0.55 * gp);
+    const fl = ctx.createLinearGradient(x - 520 * gp, 0, x + 520 * gp, 0);
+    fl.addColorStop(0, M.rgba(D.ochre, 0));
+    fl.addColorStop(0.5, M.rgba('#FFE7B8', 0.75 * gp));
+    fl.addColorStop(1, M.rgba(D.ochre, 0));
+    ctx.fillStyle = fl;
+    ctx.fillRect(x - 520 * gp, y - 2.5 * (0.5 + gp), 1040 * gp, 5 * (0.5 + gp));
+    ctx.restore();
+    M.mark(ctx, x, y, s * 1.6, { color: '#FFE2A8', rot, alpha: clamp(gp * 3) });
+  };
+
+  // Hidden AI activity: drifting dots, optionally pulled into a point of light.
+  // o: {t (seconds), n, alpha, pull (i)→0..1, to:{x,y}, top (draw only pulled, glowing)}
+  K.activity = (ctx, o) => {
+    const n = o.n || 150, t = o.t;
+    if (o.top) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+    }
+    for (let i = 0; i < n; i++) {
+      const ax = 540 + (M.rand(i, 61) - 0.5) * 1300, ay = 1000 + (M.rand(i, 62) - 0.5) * 1700;
+      const wx = 120 + M.rand(i, 63) * 220, wy = 90 + M.rand(i, 64) * 200;
+      const fx = 0.12 + M.rand(i, 65) * 0.35, fy = 0.1 + M.rand(i, 66) * 0.3;
+      let x = ax + Math.sin(t * fx * TAU + i) * wx, y = ay + Math.cos(t * fy * TAU + i * 1.7) * wy;
+      const pull = o.pull ? o.pull(i) : 0;
+      if (o.to && pull > 0) {
+        x = lerp(x, o.to.x + (M.rand(i, 68) - 0.5) * 40, pull);
+        y = lerp(y, o.to.y + (M.rand(i, 69) - 0.5) * 20, pull);
+      }
+      if (o.top) {
+        if (pull < 0.05) continue;
+        ctx.fillStyle = M.rgba('#FFD890', 0.5 * pull * (1 - pull * 0.5));
+        ctx.beginPath();
+        ctx.arc(x, y, 2.4, 0, TAU);
+        ctx.fill();
+        continue;
+      }
+      const tw_ = 0.5 + 0.5 * Math.sin(t * (2.6 + M.rand(i, 70) * 4) + i);
+      const warm = M.rand(i, 71) < 0.18;
+      const r = (2 + M.rand(i, 72) * 3.2) * (1 - pull * 0.6);
+      ctx.fillStyle = M.rgba(warm ? D.ochre : D.mint, (o.alpha ?? 1) * (0.2 + 0.55 * tw_) * (1 - pull * 0.3));
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, TAU);
+      ctx.fill();
+    }
+    if (o.top) ctx.restore();
+  };
+
+  // Stat ring (gauge) on pine. o: {val, reveal, pulse (0..1), bezel rot, alpha}
+  K.statRing = (ctx, cx, cy, r, o) => {
+    const reveal = o.reveal ?? 1, val = o.val;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(o.bezel || 0);
+    ctx.strokeStyle = M.rgba(P.onPine, 0.14 * reveal);
+    ctx.lineWidth = 2;
+    ctx.setLineDash([2, 16]);
+    ctx.beginPath();
+    ctx.arc(0, 0, r + 92, 0, TAU);
+    ctx.stroke();
+    ctx.restore();
+    M.tickRing(ctx, cx, cy, r, {
+      n: 100, value: val / 100, reveal, active: P.ochre, idle: M.rgba(P.onPine, 0.2), major: M.rgba(P.onPine, 0.45),
+      len: 24, lenMajor: 42, lenActive: 66, lw: 3, lwMajor: 4, lwActive: 6,
+    });
+    ctx.save();
+    ctx.globalAlpha *= reveal;
+    [['0', -90], ['25', 0], ['50', 90], ['75', 180]].forEach(([s, a]) => {
+      const ang = M.deg(a);
+      M.label(ctx, s, cx + Math.cos(ang) * (r + 48), cy + Math.sin(ang) * (r + 48) + 9, { fam: 'mono', weight: 400, size: 24, color: M.rgba(P.onPine, 0.5), ls: 0, align: 'center', upper: false });
+    });
+    ctx.restore();
+    const ang = -Math.PI / 2 + (val / 100) * TAU;
+    if (val > 0.05) {
+      ctx.fillStyle = P.ochre;
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(ang) * (r + 20), cy + Math.sin(ang) * (r + 20), 9, 0, TAU);
+      ctx.fill();
+    }
+    const pl = o.pulse || 0;
+    if (pl > 0 && pl < 1) {
+      ctx.save();
+      ctx.strokeStyle = M.rgba(P.ochre, 0.9 * (1 - pl));
+      ctx.lineWidth = lerp(10, 1, pl);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r + 20 + pl * 170, 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+    }
+  };
+
+  // Rounded-rect outline drawn on with progress p (dash offset trick)
+  K.traceRect = (ctx, x, y, w, h, r, p, color, lw = 5) => {
+    if (p <= 0) return;
+    const per = 2 * (w + h) - (8 - 2 * Math.PI) * r;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    ctx.setLineDash([per * clamp(p), per]);
+    M.rrect(ctx, x, y, w, h, r);
+    ctx.stroke();
     ctx.restore();
   };
 

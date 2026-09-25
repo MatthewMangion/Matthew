@@ -58,7 +58,7 @@
     const reel = R.reels[id];
     const fps = o.fps || 60;
     const t = f / fps;
-    const n = Math.max(1, Math.round(o.samples ?? (reel.blur ? reel.blur(M.mod(t, reel.duration)) : 1)));
+    const n = Math.max(1, Math.round(o.samples ?? (reel.blur ? reel.blur(M.mod(t, reel.duration)) * (o.sampleScale || 1) : 1)));
     const shutter = o.shutter ?? 0.5;
     if (n === 1) {
       R.drawAt(reel, vctx, t);
@@ -79,6 +79,17 @@
       reel.post(vctx, M.mod(t, reel.duration), f);
     }
     return n;
+  };
+
+  // Static cover (grid thumbnail) for a reel
+  R.cover = (id) => {
+    const reel = R.reels[id];
+    reset(vctx);
+    reel.cover(vctx);
+    if (reel.post) {
+      reset(vctx);
+      reel.post(vctx, 0, 0);
+    }
   };
 
   // Cue sheet in seconds (for the audio composer)

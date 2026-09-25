@@ -7,7 +7,8 @@
    node tools/render.cjs --reel flagship --stills 1,2.5,4     → PNG stills
    node tools/render.cjs --reel flagship --sheet 0.5          → contact sheet every 0.5 s
    node tools/render.cjs --reel flagship --cues               → audio cue sheet JSON
-   Options: --fps 60 --workers 4 --samples N --from s --to s --out file --audio file.wav --crf 16 */
+   node tools/render.cjs --reel flagship --cover out.png      → static cover (grid thumbnail)
+   Options: --fps 60 --workers 4 --samples N --sample-scale k --from s --to s --out file --audio file.wav --crf 16 */
 'use strict';
 const { chromium } = require('playwright');
 const http = require('http');
@@ -58,8 +59,9 @@ async function openPage(browser, port) {
   return { page, cdp };
 }
 
+const sampleScale = +opt('sample-scale', fps < 50 ? 1.6 : 1);
 async function capture(w, f, samples) {
-  const n = await w.page.evaluate(([id, f, fps, s]) => R.frame(id, f, s ? { fps, samples: +s } : { fps }), [reel, f, fps, samples]);
+  const n = await w.page.evaluate(([id, f, fps, s, k]) => R.frame(id, f, s ? { fps, samples: +s } : { fps, sampleScale: k }), [reel, f, fps, samples, sampleScale]);
   const shot = await w.cdp.send('Page.captureScreenshot', { format: 'png', optimizeForSpeed: true });
   return { buf: Buffer.from(shot.data, 'base64'), n };
 }
@@ -88,6 +90,16 @@ async function main() {
       fs.mkdirSync(path.dirname(out), { recursive: true });
       fs.writeFileSync(out, JSON.stringify(cues, null, 1));
       console.log('cues →', out, cues.cues.length, 'events');
+      return;
+    }
+
+    if (opt('cover', false)) {
+      const out = path.resolve(typeof opt('cover') === 'string' ? opt('cover') : path.join(ROOT, 'renders', `mesura-${reel}-cover.png`));
+      fs.mkdirSync(path.dirname(out), { recursive: true });
+      await first.page.evaluate((id) => R.cover(id), reel);
+      const shot = await first.cdp.send('Page.captureScreenshot', { format: 'png' });
+      fs.writeFileSync(out, Buffer.from(shot.data, 'base64'));
+      console.log('cover →', out);
       return;
     }
 

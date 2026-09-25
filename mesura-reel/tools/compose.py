@@ -458,18 +458,19 @@ ARRANGEMENTS = {
         "auto": [(0, 0), (15.9, 0), (16.0, -12), (19.85, -12), (20.0, -6), (27.9, -7), (28.0, -7), (31.95, 0), (32.0, 1.5), (36.4, 0), (60, 0)],
     },
     "guess": {
-        "bars": ["Dm", "Dm", "Bb", "F", "Dm", "Dm", "F", "C"],
-        "sections": [(0, 7.5, "sparse"), (8, 16, "groove"), (16, 20, "dark"), (20, 24, "sunrise"), (24, 31, "groove2"), (31, 32, "lift")],
-        "stop": None,
-        "fills": [(7.0, 7.5)],
-        "auto": [(0, -8), (7.9, -8), (8.0, 0), (15.9, 0), (16.0, -6), (19.95, 0), (20.0, 1.5), (24, 0), (32, 0)],
+        "bars": ["Dm", "Dm", "Bb", "F", "Dm", "C", "F", "C"],
+        "sections": [(0, 7.9, "sparse"), (8, 15.5, "groove"), (16, 20, "sparse"), (20, 22.4, "dark"), (22.4, 24, "build"),
+                     (24, 28, "sunrise"), (28, 31, "groove2"), (31, 32, "lift")],
+        "stop": 16.0,
+        "fills": [(15.0, 15.5)],
+        "auto": [(0, -7), (7.85, -7), (7.9, 0), (15.9, 0), (16.0, -12), (19.9, -12), (20.0, -6), (22.3, -6), (23.95, 0), (24.0, 1.5), (28, 0), (32, 0)],
     },
-    "loop": {
-        "bars": ["Dm", "Bb", "C", "F", "F"],
-        "sections": [(0, 4, "groove"), (4, 8, "dark"), (8, 11.5, "build"), (12, 16, "sunrise"), (16, 20, "groove2")],
+    "shadow": {
+        "bars": ["Dm", "Bb", "Dm", "Bb", "C", "F", "C", "Dm", "Bb", "C"],
+        "sections": [(0, 4, "groove"), (4, 16, "dark"), (16, 20, "build"), (20, 24, "sunrise"), (24, 39, "groove2"), (39, 40, "lift")],
         "stop": None,
-        "fills": [(11.0, 11.5)],
-        "auto": [(0, 0), (3.95, 0), (4.0, -6), (7.95, -6), (8.0, -6), (11.95, 0), (12.0, 1.5), (16, 0), (20, 0)],
+        "fills": [(23.5, 24.0)],
+        "auto": [(0, -2), (3.95, -2), (4.0, -6), (15.9, -7), (16.0, -7), (19.95, 0), (20.0, 1.5), (24, 0), (40, 0)],
     },
 }
 
@@ -669,6 +670,32 @@ def render_sfx(cues, n, B):
         elif ty == "counter":
             for (dt, frac) in counter_ticks(c):
                 put(t + dt, tick(0.85 + 0.5 * frac, body=0.6), 0.34 * g * (0.7 + 0.3 * frac), pan=RNG.uniform(-0.2, 0.2), rev=0.1)
+        elif ty == "slot":
+            # clicks whenever a spinning column passes a digit (same maths as K.slotPos)
+            for ci, (sp, b0_, b1_, digit, _ph) in enumerate(c["cols"]):
+                ph = (digit - sp * (b0_ + (b1_ - b0_) / 3)) % 10  # mirrors K.slotPhase
+
+                def pos(u, sp=sp, b0_=b0_, b1_=b1_, ph=ph):
+                    if u <= b0_:
+                        return ph + sp * u
+                    D0 = sp * (b1_ - b0_) / 3
+                    end = ph + sp * b0_ + D0
+                    if u >= b1_:
+                        return end
+                    q = (u - b0_) / (b1_ - b0_)
+                    return end - D0 * (1 - q) ** 3
+                us = np.linspace(c["b"], c["end"], 6000)
+                ps = np.array([pos(u) for u in us])
+                cross = np.nonzero(np.diff(np.floor(ps)) > 0)[0] + 1
+                last = -1
+                pitch = [0.72, 1.0, 1.35][ci]
+                for k in cross:
+                    ts = us[k] * B
+                    if ts - last < 0.018:
+                        continue
+                    last = ts
+                    put(ts, tick(pitch, body=0.5), [0.32, 0.22, 0.14][ci] * g, pan=[-0.35, 0.0, 0.35][ci], rev=0.08)
+                put(b1_ * B, tick(pitch * 0.9, body=1.0), 0.5 * g, rev=0.2)
         elif ty == "land":
             put(t, thunk(), 0.8 * g, rev=0.3)
             put(t, bell(81, 1.8, 1.5, decay=0.8), 0.12 * g, rev=0.6)

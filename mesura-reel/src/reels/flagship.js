@@ -105,7 +105,7 @@
     ctx.clip();
     if (statOut < 1) {
       // depth: a soft lift in the centre of the pine field
-      const lg = ctx.createRadialGradient(540, 930, 40, 540, 930, 1000);
+      const lg = ctx.createRadialGradient(540, 912, 40, 540, 912, 1000);
       lg.addColorStop(0, M.rgba('#2A6258', 0.9 * (1 - statOut)));
       lg.addColorStop(1, M.rgba(P.pine, 0));
       ctx.fillStyle = lg;
@@ -124,8 +124,8 @@
     const mv = tw(b, 10.05, 1.15, E.snap);
     const [sx, sy] = shakeAt(b);
     const nx = lerp(540 + sx, MT.x + MT.w / 2, mv);
-    const ny = lerp(1012 + sy, mTop - 40, mv) + (BASE - mTop - barH);
-    const ns = lerp(250, 104, mv) * (1 + 0.03 * tw(b, 6.0, 4.0, E.outCubic) * (1 - mv));
+    const ny = lerp(991 + sy, mTop - 40, mv) + (BASE - mTop - barH);
+    const ns = lerp(240, 104, mv) * (1 + 0.03 * tw(b, 6.0, 4.0, E.outCubic) * (1 - mv));
     const numOpts = (color, suf) => ({ x: nx, y: ny, size: ns, color, align: 'center', decimals: 1, digits: 2, suffix: '%', suffixColor: suf, suffixP: land, hideLeadingZeros: true });
     if (exit < 1 && b >= 4) {
       ctx.save();
@@ -139,7 +139,7 @@
   }
 
   function statRing(ctx, b, val) {
-    const cx = 540, cy = 930, r = 400;
+    const cx = 540, cy = 912, r = 390;
     const reveal = tw(b, 4.0, 1.1, E.outCubic);
     // slow-turning outer bezel
     ctx.save();
@@ -810,5 +810,20 @@
     M.grain(ctx, f, 0.045);
   }
 
-  R.define('flagship', { title: 'Flagship · 29.6s', duration: DUR, beats: BEATS, draw, blur, post, cues, music: 'flagship' });
+  // grid cover: the hook, unanswered (key content inside the 3:4 crop, y 240–1680)
+  function cover(ctx) {
+    K.bg(ctx, P.paper);
+    M.label(ctx, 'Eurostat · 2025', X0, 360, { fam: 'mono', weight: 500, size: 30, color: P.inkMuted, ls: 0.04, upper: false });
+    const Bc = M.block(ctx, { lines: ['Malta ranks', '*first* in', 'the EU.'], size: 184, lh: 0.97, x: X0 - 6, y: 430, anchor: 'top' });
+    K.markBlock(ctx, Bc, { t: 1, color: P.ink, in: { style: 'none' }, hl: { p: 1, color: P.ochre, top: 0.98, h: 1.2, padX: 14, r: 10 } });
+    const rowY = 1200;
+    ctx.fillStyle = P.ink;
+    ctx.fillRect(X0, rowY, XR - X0, 3);
+    K.rankRow(ctx, X0 + 7, rowY, XR - X0 - 14, 27, { t: 99, at: 0, stagger: 0, h: 62, heroH: 190, lw: 7, heroW: 14, color: M.rgba(P.ink, 0.26), hero: P.ochre });
+    M.label(ctx, 'Rank 01 / 27', X0, rowY + 64, { fam: 'mono', weight: 500, size: 28, color: P.ink, ls: 0.04 });
+    M.text(ctx, { lines: ['…at something most organisations', "don't measure."], fam: 'sans', weight: 500, size: 46, lh: 1.3, x: X0, y: 1340, anchor: 'top' }, { t: 1, color: P.inkBody, in: { style: 'none' } });
+    M.lockup(ctx, 540, 1590, 58, { align: 'center', color: P.pine });
+  }
+
+  R.define('flagship', { title: 'Flagship · 29.6s', duration: DUR, beats: BEATS, draw, blur, post, cues, cover, music: 'flagship' });
 })(typeof window !== 'undefined' ? window : globalThis);
