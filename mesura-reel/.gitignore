@@ -1,3 +1,5 @@
 build/
 audio/score.wav
 node_modules/
+audio/how.wav
+__pycache__/
