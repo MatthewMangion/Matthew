@@ -23,7 +23,7 @@ wait
 "$FFMPEG" -y -loglevel error -stats \
   -framerate 60 -i "$FRAMES/f%04d.png" -i build/score.wav \
   -vf "scale=in_range=full:out_range=tv:out_color_matrix=bt709:flags=lanczos+accurate_rnd+full_chroma_int,format=yuv420p" \
-  -c:v libx264 -preset slower -crf 15 -profile:v high -level:v 4.2 -g 60 -bf 3 \
+  -c:v libx264 -preset slower -crf 18 -profile:v high -level:v 4.2 -g 60 -bf 3 \
   -x264-params "aq-mode=3:aq-strength=0.9:deblock=-1,-1:psy-rd=1.0,0.15" \
   -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv \
   -c:a aac -b:a 256k -ar 48000 -movflags +faststart -shortest "$OUT"

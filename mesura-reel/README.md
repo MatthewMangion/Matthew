@@ -5,7 +5,7 @@ frame is a pure function of time. The same composition runs live in a browser an
 offline with real motion blur, and the soundtrack is synthesised from the animation's own
 event sheet so picture and sound can't drift.
 
-**Watch:** [`mesura-reel.mp4`](mesura-reel.mp4) (26.4 s, H.264 High, BT.709, 60 fps, AAC 256 kb/s, 33 MB).
+**Watch:** [`mesura-reel.mp4`](mesura-reel.mp4) (26.4 s, H.264 High, BT.709, 60 fps, AAC 256 kb/s, 13 MB).
 
 ![Storyboard: ten key frames from the reel](storyboard.jpg)
 
