@@ -7,7 +7,8 @@ JOBS=${JOBS:-4}
 FRAMES=${FRAMES:-build/frames}
 OUT=${OUT:-mesura-reel.mp4}
 FFMPEG=${FFMPEG:-$(command -v ffmpeg || python3 -c 'import imageio_ffmpeg as f; print(f.get_ffmpeg_exe())')}
-TOTAL=900   # 15 s at 60 fps
+DUR=$(sed -n 's/^export const W = .*DUR = \([0-9.]*\);/\1/p' reel.js)
+TOTAL=$(awk "BEGIN { printf \"%d\", $DUR * 60 + 0.5 }")   # frames at 60 fps
 mkdir -p "$FRAMES" build
 
 node render/render.mjs cues audio

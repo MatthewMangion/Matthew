@@ -23,9 +23,9 @@ def font(name, size):
     return ImageFont.truetype(buf, size)
 
 
-KEYS = [(0.55, "The question"), (2.1, "The question"), (3.7, "The evidence"), (5.2, "Into the gap"),
-        (6.4, "Shadow AI"), (7.4, "The measure"), (9.6, "Six dimensions"), (11.9, "Measure again"),
-        (12.8, "The mark"), (14.95, "End card")]
+KEYS = [(0.64, "The question"), (3.9, "The question"), (7.2, "The evidence"), (10.5, "Into the gap"),
+        (12.8, "Shadow AI"), (14.25, "The measure"), (18.9, "Six dimensions"), (22.1, "Measure again"),
+        (23.2, "The mark"), (26.35, "End card")]
 COLS, TW = 5, 560
 TH = TW * 9 // 16
 PAD, CAP, TOP = 28, 40, 96
@@ -38,7 +38,7 @@ f_title, f_label, f_tc = font("SerifDisplay-500", 40), font("InterText-500", 19)
 
 sheet = Image.new("RGB", (W, H), (242, 237, 227))
 d = ImageDraw.Draw(sheet)
-d.text((PAD, 30), "mesura.ai  ·  15 second brand reel", fill=INK, font=f_title)
+d.text((PAD, 30), "mesura.ai  ·  brand reel", fill=INK, font=f_title)
 d.text((W - PAD, 44), "1920 × 1080  ·  60 fps  ·  storyboard", fill=BODY, font=f_label, anchor="ra")
 for k, (t, label) in enumerate(KEYS):
     im = Image.open(FRAMES / f"f{round(t * 60):04d}.png").convert("RGB").resize((TW, TH), Image.LANCZOS)

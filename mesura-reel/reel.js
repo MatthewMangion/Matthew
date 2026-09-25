@@ -3,7 +3,7 @@
 // player and the frame-accurate, motion-blurred offline render.
 import { MARK, WORDMARK } from './logo.js';
 
-export const W = 1920, H = 1080, FPS = 60, DUR = 15;
+export const W = 1920, H = 1080, FPS = 60, DUR = 26.4;
 const TAU = Math.PI * 2;
 
 /* ------------------------------------------------------------------ math */
@@ -102,13 +102,15 @@ const FONT_FILES = [
 ];
 
 /* ============================================================ timeline ==
-   120 BPM: one beat = 0.5 s. Major hits land on beats. */
+   100 BPM: one beat = 0.6 s, bars start at 1.8 + 2.4n. The measure (13.8) and
+   the mark (23.4) land on downbeats; everything else sits on a beat or half-beat. */
 const T = {
-  land: 0.5, hop: 0.62, sweep: 0.8, dock1: 1.5, lift: 1.55, hop2: 1.75, dock2: 2.0, out1: 2.25,
-  bar1: 2.5, bar2: 2.75, head1: 3.0, ghost: 3.1, phaseB: 3.75, head2: 3.95, band: 4.5, zoom: 5.0, dark: 5.4,
-  title3: 5.45, sub3: 6.0, sweep4: 7.0, sweep4End: 7.7, flow: 8.25, spokes: 8.5, labels: 8.58, poly: 9.0, sub5: 9.5,
-  morph6: 9.9, take: [10.5, 11.0, 11.5, 12.0], out6: 12.25, morph7: 12.45, hit: 13.0, word: 13.12, dot: 13.5,
-  tag1: 13.95, tag2: 14.25,
+  land: 0.6, hop: 0.72, sweep: 1.02, dock1: 2.4, lift: 2.5, l2: 2.62, hop2: 3.1, dock2: 3.6, out1: 4.2, fly: 4.35,
+  bar1: 4.8, bar2: 5.4, head1: 6.0, ghost: 6.3, phaseB: 7.8, head2: 8.1, band: 9.0, zoom: 10.2, dark: 10.8,
+  title3: 10.85, ann: 11.4, sub3: 12.0, sweep4: 13.8, sweep4End: 14.8, sub4: 15.0,
+  flow: 16.2, spokes: 16.55, labels: 16.65, poly: 17.4, cap5: 17.7, sub5: 18.0,
+  morph6: 19.2, take: [19.8, 20.4, 21.0, 21.6], out6: 22.45, morph7: 22.8, hit: 23.4, word: 23.55, dot: 24.0,
+  tag1: 24.6, tag2: 24.9,
 };
 
 export function createReel(canvas) {
@@ -450,7 +452,7 @@ export function createReel(canvas) {
       Q.tau.push(tt - 0.035);
     }
   }
-  const baseL1 = t => lerp(Q.yA, Q.yB1, E.inOutCubic(seg(t, T.lift, T.lift + 0.32)));
+  const baseL1 = t => lerp(Q.yA, Q.yB1, E.inOutCubic(seg(t, T.lift, T.lift + 0.45)));
   function heroS1(t) {
     const r0 = 13;
     if (t < T.hop) {
@@ -470,11 +472,11 @@ export function createReel(canvas) {
       return { x: lerp(xs, qx1, p), y: baseL1(t) - lerp(rs, -Q.qd.cy, p), r, c: P.ochre };
     }
     const qx2 = Q.q2 + Q.qd.cx, qy2 = Q.yB2 + Q.qd.cy;
-    if (t < T.out1) {
+    if (t < T.fly) {
       const p = E.inOutCubic(seg(t, T.hop2, T.dock2));
       return { x: lerp(qx1, qx2, p), y: lerp(baseL1(t) + Q.qd.cy, qy2, p) - 110 * Math.sin(Math.PI * p), r: Q.qd.r, c: P.ochre };
     }
-    const p = E.inOutCubic(seg(t, T.out1, T.bar1));
+    const p = E.inOutCubic(seg(t, T.fly, T.bar1));
     return { x: lerp(qx2, B.x0 + B.h / 2, p), y: lerp(qy2, B.y1, p) - 140 * Math.sin(Math.PI * p), r: lerp(Q.qd.r, B.h / 2, E.inCubic(p)), c: mix(P.ochre, P.pine, seg(p, 0.35, 0.95)) };
   }
   function heroVel(fn, t) { const h = 1 / 240, a = fn(t - h), b = fn(t + h); return [(b.x - a.x) / (2 * h), (b.y - a.y) / (2 * h)]; }
@@ -482,11 +484,11 @@ export function createReel(canvas) {
   function scene1(t) {
     // Line 1: glyphs spring up behind the travelling dot.
     const y1 = baseL1(t);
-    const l1c = mix(P.ink, P.muted, seg(t, T.lift, T.lift + 0.4));
+    const l1c = mix(P.ink, P.muted, seg(t, T.lift, T.lift + 0.5));
     const fall = (gx, line) => {
-      const t0 = T.out1 - 0.06 + ((gx - 300) / 1400) * 0.12 + line * 0.035;
+      const t0 = T.out1 + ((gx - 300) / 1400) * 0.16 + line * 0.05;
       const tt = t - t0; if (tt <= 0) return null;
-      return { dy: E.inOutCubic(clamp(tt / 0.26)) * 175, dx: 0, r: 0, a: 1 };
+      return { dy: E.inOutCubic(clamp(tt / 0.32)) * 175, dx: 0, r: 0, a: 1 };
     };
     ctx.save();
     { ctx.beginPath(); ctx.rect(0, 0, W, y1 + Q.L1.desc); ctx.clip(); }
@@ -502,16 +504,16 @@ export function createReel(canvas) {
     });
     ctx.restore();
     // '?' of line 1: hook only while the hero dot sits in it.
-    drawQuestion(t, Q.x1 + Q.L1.xs[last], y1, T.dock1 - 0.24, l1c, t < T.hop2 + 0.03, 0, fall(Q.q1, 0), T.hop2 + 0.05);
+    drawQuestion(t, Q.x1 + Q.L1.xs[last], y1, T.dock1 - 0.3, l1c, t < T.hop2 + 0.03, 0, fall(Q.q1, 0), T.hop2 + 0.05);
     // Line 2
-    if (t > 1.62) {
-      const tIn = 1.64, st = 0.065;
+    if (t > T.l2 - 0.02) {
+      const tIn = T.l2, st = 0.1;
       ctx.save();
       { ctx.beginPath(); ctx.rect(0, Q.yB2 - Q.L2.asc - 10, W, Q.L2.asc + Q.L2.desc + 10); ctx.clip(); }
       const lastQ = Q.L2.text.length - 1;
       glyphs(Q.L2, Q.x2, Q.yB2, i => {
         if (i === lastQ) return null;
-        const k = Q.L2.wordOf[i], ti = t - tIn - k * st - (i - Q.L2.xs.findIndex((_, j) => Q.L2.wordOf[j] === k)) * 0.012;
+        const k = Q.L2.wordOf[i], ti = t - tIn - k * st - (i - Q.L2.xs.findIndex((_, j) => Q.L2.wordOf[j] === k)) * 0.016;
         if (ti <= 0) return null;
         const p = spring(ti, 2.1, 0.7);
         const g = { a: clamp(ti / 0.08), dy: (1 - p) * 175, c: i >= Q.m0 && i < Q.m1 ? P.ochre : P.ink };
@@ -519,7 +521,7 @@ export function createReel(canvas) {
         return g;
       });
       ctx.restore();
-      drawQuestion(t, Q.x2 + Q.L2.xs[lastQ], Q.yB2, T.dock2 - 0.24, P.ink, true, 1, fall(Q.q2, 1), 99);
+      drawQuestion(t, Q.x2 + Q.L2.xs[lastQ], Q.yB2, T.dock2 - 0.3, P.ink, true, 1, fall(Q.q2, 1), 99);
     }
     // Opening ripples (a measurement ping)
     ripple(960, 540, t, T.land, 14, 150, P.ochre, 0.75, 2.5);
@@ -564,15 +566,15 @@ export function createReel(canvas) {
   const B = { x0: 150, S: 39, y1: 482, y2: 668, h: 64 };
   const bx = v => B.x0 + v * B.S;
   function barVals(t) {
-    const v1 = 29.5 * E.outQuint(seg(t, T.bar1, T.bar1 + 0.9));
-    let v2 = 15.1 * E.outQuint(seg(t, T.bar2, T.bar2 + 0.9));
-    v2 += (21.6 - 15.1) * E.inOutQuart(seg(t, T.phaseB + 0.05, T.phaseB + 0.6));
+    const v1 = 29.5 * E.outQuint(seg(t, T.bar1, T.bar1 + 1.1));
+    let v2 = 15.1 * E.outQuint(seg(t, T.bar2, T.bar2 + 1.1));
+    v2 += (21.6 - 15.1) * E.inOutQuart(seg(t, T.phaseB + 0.05, T.phaseB + 0.8));
     return [v1, v2];
   }
   function scene2(t) {
     if (t < T.out1) return;
     const [v1, v2] = barVals(t);
-    const pb = seg(t, T.phaseB, T.phaseB + 0.45);
+    const pb = seg(t, T.phaseB, T.phaseB + 0.55);
     // Gap band (drawn beneath the bars)
     if (t > T.band) drawBand(t);
     // Bar 1
@@ -594,7 +596,7 @@ export function createReel(canvas) {
     const da = seg(t, T.ghost, T.ghost + 0.12) * (1 - seg(t, T.phaseB - 0.02, T.phaseB + 0.2));
     if (da > 0) {
       const yd = (B.y1 + B.y2) / 2 - 22, xa = B.x0, xm = bx(15.1), xe = bx(30.2);
-      const p1 = E.inOutCubic(seg(t, T.ghost, T.ghost + 0.28)), p2 = E.inOutCubic(seg(t, T.ghost + 0.2, T.ghost + 0.5));
+      const p1 = E.inOutCubic(seg(t, T.ghost, T.ghost + 0.4)), p2 = E.inOutCubic(seg(t, T.ghost + 0.3, T.ghost + 0.75));
       ctx.save(); ctx.globalAlpha = da; ctx.strokeStyle = P.muted; ctx.lineWidth = 1.5; ctx.fillStyle = P.muted;
       const seg1 = lerp(xa, xm, p1), seg2 = lerp(xm, xe, p2);
       ctx.beginPath(); ctx.moveTo(xa, yd); ctx.lineTo(seg1, yd); if (p2 > 0) { ctx.moveTo(xm, yd); ctx.lineTo(seg2, yd); } ctx.stroke();
@@ -604,7 +606,7 @@ export function createReel(canvas) {
       const lab = (x, a) => { if (a <= 0) return; ctx.globalAlpha = da * a; ctx.fillStyle = P.paper; ctx.fillRect(x - 38, yd - 12, 76, 24); text('15.1', F.mono(17, 500), x, yd + 6, P.muted, da * a, 'center'); };
       lab((xa + xm) / 2, seg(p1, 0.6, 1)); lab((xm + xe) / 2, seg(p2, 0.6, 1));
       // alignment guide from the end of Malta's bar
-      const ga = seg(t, T.ghost + 0.42, T.ghost + 0.55);
+      const ga = seg(t, T.ghost + 0.65, T.ghost + 0.82);
       ctx.globalAlpha = da * ga; ctx.setLineDash([3, 5]); ctx.beginPath(); ctx.moveTo(bx(29.5), B.y1 + B.h / 2 + 6); ctx.lineTo(bx(29.5), yd + 9); ctx.stroke(); ctx.setLineDash([]);
       ctx.restore();
       text('× 2', F.mono(20, 500), xe + 16, yd + 7, P.ink, da * ga);
@@ -622,11 +624,11 @@ export function createReel(canvas) {
     rise(lay('Nearly twice the EU average.', hf), 150, 272, P.ink, t, T.head1, { tOut: T.phaseB, stagger: 0.045 });
     rise(lay('Individual use is running ahead.', hf), 150, 272, P.ink, t, T.head2, { stagger: 0.045 });
     // Source
-    text('Source: Eurostat, 2025. Individual GenAI use; enterprises with 10+ employees.', F.text(18, 400), 150, 938, P.faint, seg(t, 2.8, 3.1) * (1 - seg(t, 4.85, 5.0)));
+    text('Source: Eurostat, 2025. Individual GenAI use; enterprises with 10+ employees.', F.text(18, 400), 150, 938, P.faint, seg(t, T.bar1 + 0.3, T.bar1 + 0.6) * (1 - seg(t, T.zoom - 0.2, T.zoom)));
   }
   function drawBand(t) {
     const xa = bx(21.6), xb = bx(29.5), cy = (B.y1 + B.y2) / 2;
-    const hh = 176 * E.outExpo(seg(t, T.band, T.band + 0.5));
+    const hh = 176 * E.outExpo(seg(t, T.band, T.band + 0.65));
     const zp = seg(t, T.zoom, T.dark);
     ctx.save();
     ctx.beginPath(); ctx.rect(xa, cy - hh, xb - xa, hh * 2); ctx.clip();
@@ -637,12 +639,12 @@ export function createReel(canvas) {
     ctx.strokeStyle = P.ochre; ctx.lineWidth = 1.6; ctx.beginPath();
     for (let x = xa - 400; x < xb + 400; x += 13) { ctx.moveTo(x, cy - hh); ctx.lineTo(x + hh * 2, cy + hh); }
     ctx.stroke();
-    const pa = E.inOutCubic(seg(t, T.zoom - 0.12, T.zoom + 0.22));
+    const pa = E.inOutCubic(seg(t, T.zoom - 0.12, T.zoom + 0.3));
     if (pa > 0 && off) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = pa; ctx.drawImage(off, 0, 0); }
     ctx.restore();
     ctx.fillStyle = rgba(P.ochre, 1 - seg(zp, 0.3, 0.8));
     ctx.fillRect(xa - 1, cy - hh, 2, hh * 2); ctx.fillRect(xb - 1, cy - hh, 2, hh * 2);
-    const la = seg(t, T.band + 0.18, T.band + 0.35);
+    const la = seg(t, T.band + 0.25, T.band + 0.45);
     if (la > 0) text('THE SPACE IN BETWEEN', F.text(18, 600), xa, cy - hh - 16, P.ochre, la * (1 - zp), 'left', 2.2);
   }
 
@@ -674,18 +676,18 @@ export function createReel(canvas) {
     PT.labels = lab.map(([txt, sx, sy], k) => {
       const i = 17 + k * 41, p = PT[i];
       p.Z = 1.18 + k * 0.05; p.s = 5;
-      const tt = 6.35, z = p.Z - camZ(tt);
+      const tt = T.sub3 + 0.35, z = p.Z - camZ(tt);
       // invert the projection for time tt (ignoring drift terms, then subtract them)
-      const dxd = p.amp * Math.sin(0.55 * tt + p.ph), dyd = 0.7 * p.amp * Math.sin(0.7 * tt + p.ph2) + (tt - 5.0) * p.vy;
+      const dxd = p.amp * Math.sin(0.55 * tt + p.ph), dyd = 0.7 * p.amp * Math.sin(0.7 * tt + p.ph2) + (tt - T.zoom) * p.vy;
       p.X = 960 + (sx - 960) * z + camX(tt) - dxd; p.Y = 540 + (sy - 540) * z - dyd;
       return { i, txt };
     });
   }
-  const camZ = t => { const u = Math.max(0, t - 5.0); return -0.9 + 0.9 * (1 - Math.exp(-2.6 * u)) + 0.05 * u; };
-  const camX = t => Math.max(0, t - 5.0) * 22;
+  const camZ = t => { const u = Math.max(0, t - T.zoom); return -0.9 + 0.9 * (1 - Math.exp(-2.2 * u)) + 0.045 * u; };
+  const camX = t => Math.max(0, t - T.zoom) * 20;
   function darkPos(p, t) {
     const z = p.Z - camZ(t);
-    const X = p.X + p.amp * Math.sin(0.55 * t + p.ph), Y = p.Y + 0.7 * p.amp * Math.sin(0.7 * t + p.ph2) + (t - 5.0) * p.vy;
+    const X = p.X + p.amp * Math.sin(0.55 * t + p.ph), Y = p.Y + 0.7 * p.amp * Math.sin(0.7 * t + p.ph2) + (t - T.zoom) * p.vy;
     return { x: 960 + (X - camX(t) - 960) / z, y: 540 + (Y - 540) / z, z };
   }
   function softDot(x, y, r, blur, color, a) {
@@ -706,7 +708,7 @@ export function createReel(canvas) {
   function scene3(t, opts = {}) {
     darkBg();
     // particles (unsnapped only when the measure sweep is running)
-    const fade = seg(t, 4.88, 5.12);
+    const fade = seg(t, T.zoom - 0.12, T.zoom + 0.12);
     const Lx = opts.lineX ?? -1e9;
     for (let i = 0; i < NP; i++) {
       const p = PT[i];
@@ -726,20 +728,20 @@ export function createReel(canvas) {
     // annotations
     PT.labels.forEach(({ i, txt }, k) => {
       const p = PT[i]; const d = darkPos(p, t);
-      const a = seg(t, 5.8 + k * 0.14, 6.1 + k * 0.14) * (d.x < Lx + 30 ? 0 : 1);
+      const a = seg(t, T.ann + k * 0.2, T.ann + 0.3 + k * 0.2) * (d.x < Lx + 30 ? 0 : 1);
       if (a <= 0) return;
-      ctx.beginPath(); ctx.arc(d.x, d.y, 11 + 6 * (1 - E.outCubic(seg(t, 5.8 + k * 0.14, 6.2 + k * 0.14))), 0, TAU);
+      ctx.beginPath(); ctx.arc(d.x, d.y, 11 + 6 * (1 - E.outCubic(seg(t, T.ann + k * 0.2, T.ann + 0.4 + k * 0.2))), 0, TAU);
       ctx.strokeStyle = rgba(P.dInk, 0.55 * a); ctx.lineWidth = 1.2; ctx.stroke();
       ctx.beginPath(); ctx.moveTo(d.x + 13, d.y); ctx.lineTo(d.x + 34, d.y); ctx.stroke();
       text(txt, F.text(21, 500), d.x + 42, d.y + 7, P.dBody, a * 0.95);
     });
     // Title with a rack focus
-    const tp = seg(t, T.title3, T.title3 + 0.65);
+    const tp = seg(t, T.title3, T.title3 + 0.85);
     if (tp > 0) {
       ctx.save();
       const blur = 26 * (1 - E.outCubic(tp));
       if (blur > 0.3) ctx.filter = `blur(${blur.toFixed(2)}px)`;
-      const s = lerp(1.05, 1, E.outCubic(tp)) + 0.018 * seg(t, 6.4, 7.0);
+      const s = lerp(1.05, 1, E.outCubic(tp)) + 0.022 * E.inOutSine(seg(t, T.sweep4 - 1.4, T.sweep4));
       ctx.translate(150, 612); ctx.scale(s, s);
       text('Shadow AI', F.disp(212), 0, 0, P.dInk, clamp(tp * 1.6), 'left', lerp(14, -2, E.outCubic(tp)));
       ctx.restore(); ctx.filter = 'none';
@@ -768,7 +770,7 @@ export function createReel(canvas) {
   }
   function gridPos(p, t) {
     const d = darkPos(p, t), q = spring(t - p.snap, 2.1, 0.62);
-    const breathe = 1 + 0.24 * Math.exp(-((t - 7.78 - p.gx / 5200) ** 2) / 0.0018);
+    const breathe = 1 + 0.24 * Math.exp(-((t - T.sweep4End - 0.15 - p.gx / 5200) ** 2) / 0.0022);
     return { x: lerp(d.x, p.gx, q), y: lerp(d.y, p.gy, q), r: lerp(p.s / d.z, 6.2, clamp(q)) * breathe, q, d };
   }
   function lightBg(gridA = 1, zoom = 1) {
@@ -788,7 +790,7 @@ export function createReel(canvas) {
     ctx.save(); ctx.beginPath(); ctx.rect(0, 272 - L.asc - 10, W, L.asc + L.desc + 20); ctx.clip();
     glyphs(L, 150, 272, i => { const k = L.wordOf[i], ti = t - tw[k] - 0.02; if (ti <= 0) return null; const p = E.outExpo(clamp(ti / 0.7)); return { a: 1, dy: (1 - p) * 90, c: P.ink }; });
     ctx.restore();
-    text('One code  ·  one anonymous assessment  ·  one benchmarked report', F.text(24, 500), 150, 902, P.muted, seg(t, 7.55, 7.8));
+    rise(lay('One code  ·  one anonymous assessment  ·  one benchmarked report', F.text(24, 500)), 150, 902, P.muted, t, T.sub4, { dur: 0.6, stagger: 0.03 });
     ctx.restore();
     // snapped points
     for (let i = 0; i < NP; i++) {
@@ -818,8 +820,8 @@ export function createReel(canvas) {
   const RC = { x: 1240, y: 596 }, RR = 262;
   const DIMS = [['Awareness', 100], ['Adoption', 83], ['Literacy', 100], ['Organisation', 79], ['Affinity (ATI)', 67], ['Demonstrated', 100]];
   const axA = k => -Math.PI / 2 + (k * Math.PI) / 3;
-  const tiltAt = t => 1.02 * (1 - E.outCubic(seg(t, T.flow, T.flow + 1.05)));
-  const spinAt = t => -0.55 * (1 - E.outCubic(seg(t, T.flow, T.flow + 1.05)));
+  const tiltAt = t => 1.02 * (1 - E.outCubic(seg(t, T.flow, T.flow + 1.35)));
+  const spinAt = t => -0.55 * (1 - E.outCubic(seg(t, T.flow, T.flow + 1.35)));
   function proj(x, y, t) {
     const sp = spinAt(t), c = Math.cos(sp), s = Math.sin(sp);
     const X = x * c - y * s, Y = x * s + y * c, ti = tiltAt(t);
@@ -840,17 +842,17 @@ export function createReel(canvas) {
       // slots sorted by the same angle convention
       const slots = []; for (let j = 0; j < n; j++) { const s = j / n, hp = hexPt((ring * RR) / 4, s); slots.push({ s, ring, a: Math.atan2(hp[1], hp[0]) }); }
       slots.sort((a, b) => a.a - b.a);
-      grp.forEach((g, j) => { const p = PT[g.i]; p.ring = ring; p.hs = slots[j].s; p.fd = (ring - 1) * 0.035 + hash(g.i, 9) * 0.07; });
+      grp.forEach((g, j) => { const p = PT[g.i]; p.ring = ring; p.hs = slots[j].s; p.fd = (ring - 1) * 0.05 + hash(g.i, 9) * 0.1; });
     }
   }
   function radarDots(t) {
     for (let i = 0; i < NP; i++) {
       const p = PT[i];
       if (!p.g0) { const g = gridPos(p, T.flow); p.g0 = { x: g.x, y: g.y, r: g.r }; }
-      const q = E.inOutCubic(seg(t, T.flow + p.fd, T.flow + p.fd + 0.62));
+      const q = E.inOutCubic(seg(t, T.flow + p.fd, T.flow + p.fd + 0.85));
       const hp = hexPt((p.ring * RR) / 4, p.hs);
       // hexagon -> circle in the radar-to-ring morph
-      const cm = E.inOutCubic(seg(t, T.morph6, T.morph6 + 0.45));
+      const cm = E.inOutCubic(seg(t, T.morph6, T.morph6 + 0.55));
       const ang = Math.atan2(hp[1], hp[0]), rad = Math.hypot(hp[0], hp[1]);
       const rr = lerp(rad, (p.ring * RR) / 4, cm);
       const [tx, ty] = proj(rr * Math.cos(ang), rr * Math.sin(ang), t);
@@ -860,7 +862,7 @@ export function createReel(canvas) {
       const curl = 0.28 * dist * Math.sin(Math.PI * q);
       const x = lerp(sx, tx, q) + (-ry / rl) * curl, y = lerp(sy, ty, q) + (rx / rl) * curl;
       const rad0 = p.g0.r, rad1 = 3.1;
-      const al = 1 - seg(t, T.morph6 + 0.05, T.morph6 + 0.4);
+      const al = 1 - seg(t, T.morph6 + 0.05, T.morph6 + 0.5);
       const col = mix(P.pine, '#BDB39D', seg(q, 0.4, 1));
       softDot(x, y, lerp(rad0, rad1, q), 0, col, al);
     }
@@ -869,14 +871,14 @@ export function createReel(canvas) {
     const out = seg(t, T.morph6 - 0.05, T.morph6 + 0.3);
     // spokes
     for (let k = 0; k < 6; k++) {
-      const p = E.outCubic(seg(t, T.spokes + k * 0.035, T.spokes + 0.35 + k * 0.035));
+      const p = E.outCubic(seg(t, T.spokes + k * 0.05, T.spokes + 0.45 + k * 0.05));
       if (p <= 0) continue;
       const [x0, y0] = proj(0, 0, t), [x1, y1] = proj(RR * p * Math.cos(axA(k)), RR * p * Math.sin(axA(k)), t);
       ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.strokeStyle = rgba('#BDB39D', 0.9 * (1 - out)); ctx.lineWidth = 1.5; ctx.stroke();
     }
     radarDots(t);
     // data polygon, morphing into the ring track
-    const cm = E.inOutCubic(seg(t, T.morph6, T.morph6 + 0.48));
+    const cm = E.inOutCubic(seg(t, T.morph6, T.morph6 + 0.55));
     if (t > T.poly) {
       const vr = DIMS.map(([, v], k) => (RR * v) / 100 * spring(t - T.poly - k * 0.05, 1.9, 0.55));
       ctx.beginPath();
@@ -901,14 +903,14 @@ export function createReel(canvas) {
         const [x, y] = proj(vr[k] * Math.cos(axA(k)), vr[k] * Math.sin(axA(k)), t);
         const a = 1 - out;
         if (k === 4) {
-          for (let j = 0; j < 3; j++) ripple(x, y, t, 9.35 + j * 0.5, 8, 34, P.ochre, 0.6, 1.5);
+          for (let j = 0; j < 3; j++) ripple(x, y, t, T.poly + 0.45 + j * 0.6, 8, 34, P.ochre, 0.7, 1.5);
           dot(x, y, 9, P.ochre, a);
         } else dot(x, y, 6.5, P.pine, a);
       });
     }
     // labels
     DIMS.forEach(([name, v], k) => {
-      const t0 = T.labels + k * 0.065, p = seg(t, t0, t0 + 0.5);
+      const t0 = T.labels + k * 0.09, p = seg(t, t0, t0 + 0.55);
       if (p <= 0) return;
       const e = E.outExpo(p), a = clamp(p * 3) * (1 - out);
       const ang = axA(k), rad = RR + 38 + (1 - e) * -22 + out * 30;
@@ -922,7 +924,7 @@ export function createReel(canvas) {
     const hf = F.disp(66);
     rise(lay('Six dimensions.', hf), 150, 272, P.ink, t, T.flow + 0.1, { tOut: T.morph6 - 0.02, stagger: 0.05 });
     rise(lay('One readiness score.', hf), 150, 352, P.pine, t, T.sub5, { tOut: T.morph6 + 0.02, stagger: 0.05 });
-    rise(lay('Five self-reported, one tested. Each scored 0–100.', F.text(24, 500)), 150, 902, P.muted, t, 9.2, { tOut: T.morph6, dur: 0.6, stagger: 0.03 });
+    rise(lay('Five self-reported, one tested. Each scored 0–100.', F.text(24, 500)), 150, 902, P.muted, t, T.cap5, { tOut: T.morph6, dur: 0.6, stagger: 0.03 });
   }
 
   /* ============================================================ scene 6
@@ -939,7 +941,7 @@ export function createReel(canvas) {
   function scene6(t) {
     const out = seg(t, T.out6, T.out6 + 0.3);
     // track
-    if (t < T.morph7 + 0.2 && t > T.morph6 + 0.47) {
+    if (t < T.morph7 + 0.2 && t > T.morph6 + 0.54) {
       ctx.beginPath(); ctx.arc(RC.x, RC.y, 250, 0, TAU); ctx.lineWidth = 40; ctx.strokeStyle = rgba(P.track, 1 - seg(t, T.out6 + 0.05, T.morph7 + 0.15)); ctx.stroke();
     }
     const v = ringVal(t);
@@ -982,7 +984,7 @@ export function createReel(canvas) {
       ctx.fillStyle = rgba(P.borderStrong, a); ctx.fillRect(150 + ox, y + 30, lw, 1.5);
     });
     const hf = F.disp(66);
-    rise(lay('Measure again.', hf), 150, 272, P.ink, t, T.morph6 + 0.28, { tOut: T.out6, stagger: 0.05 });
+    rise(lay('Measure again.', hf), 150, 272, P.ink, t, T.morph6 + 0.35, { tOut: T.out6, stagger: 0.05 });
     rise(lay('See what changed.', hf), 150, 352, P.pine, t, T.take[1] + 0.05, { tOut: T.out6 + 0.03, stagger: 0.05 });
   }
 
@@ -1058,7 +1060,7 @@ export function createReel(canvas) {
       ctx.closePath(); ctx.fillStyle = P.paper; ctx.fill();
     }
     // ring -> mark
-    if (t < 13.8) {
+    if (t < T.hit + 0.8) {
       const S = ringSec(RING.ro, RING.ri, -Math.PI / 2, arcEnd(v));
       const cx = lerp(RC.x, ms.x, ms.m), cy = lerp(RC.y, ms.y, ms.m);
       pathSec({ a: S, b: MK.sec }, cx, cy, ms.D / ms.C0.D, ms.D, rot, ms.mOut, ms.mIn);
@@ -1092,7 +1094,7 @@ export function createReel(canvas) {
   let WPATH = [];
 
   /* =============================================================== HUD */
-  const EYEBROW = [[2.45, 'EUROSTAT · 2025'], [3.8, 'MALTA · 2025'], [5.5, 'THE SPACE IN BETWEEN'], [7.2, 'WHAT MESURA IS'], [8.3, 'WHAT MESURA MEASURES'], [10.05, 'HOW PROGRESS IS PROVEN'], [12.25, '']];
+  const EYEBROW = [[T.bar1 - 0.05, 'EUROSTAT · 2025'], [T.phaseB + 0.05, 'MALTA · 2025'], [T.dark + 0.1, 'THE SPACE IN BETWEEN'], [T.sweep4 + 0.28, 'WHAT MESURA IS'], [T.flow + 0.05, 'WHAT MESURA MEASURES'], [T.morph6 + 0.15, 'HOW PROGRESS IS PROVEN'], [T.out6, '']];
   function hud(t, dark) {
     // eyebrow
     let k = -1; for (let i = 0; i < EYEBROW.length; i++) if (t >= EYEBROW[i][0]) k = i;
@@ -1101,19 +1103,19 @@ export function createReel(canvas) {
       const s = scramble(EYEBROW[k][1], p, t);
       const lx = t > T.sweep4 && t < T.sweep4End ? lineX(t) : null;
       const col = dark && !(lx != null && lx > 150) ? P.dOchre : P.ochre;
-      const ea = t > T.zoom && t < 5.5 ? 1 - seg(t, T.zoom, T.zoom + 0.12) : 1;
+      const ea = t > T.zoom && t < T.dark + 0.1 ? 1 - seg(t, T.zoom, T.zoom + 0.12) : 1;
       text(s, F.text(20, 600), 150, 178, col, ea, 'left', 2.4);
     }
     // measuring rule + playhead
-    const a = seg(t, 0.15, 0.6) * (1 - seg(t, 12.3, 12.8));
+    const a = seg(t, 0.15, 0.6) * (1 - seg(t, T.out6 - 0.1, T.out6 + 0.4));
     if (a <= 0) return;
     const x0 = 150, x1 = 1770, y = 1012, px = lerp(x0, x1, t / DUR);
     const cPast = dark ? P.dMuted : P.muted, cFut = dark ? P.dFaint : P.faint;
     const reveal = E.outCubic(seg(t, 0.15, 0.9));
     const ticks = new Path2D();
-    for (let i = 0; i <= 60; i++) {
-      const x = lerp(x0, x1, i / 60); if ((x - x0) / (x1 - x0) > reveal) break;
-      const hgt = i % 4 === 0 ? (i % 20 === 0 ? 14 : 9) : 5;
+    for (let i = 0; i <= Math.floor(DUR * 2); i++) {
+      const x = lerp(x0, x1, (i / 2) / DUR); if ((x - x0) / (x1 - x0) > reveal) break;
+      const hgt = i % 2 === 0 ? (i % 10 === 0 ? 14 : 9) : 5;
       ticks.moveTo(x + 0.5, y); ticks.lineTo(x + 0.5, y - hgt);
     }
     ctx.lineWidth = 1; ctx.strokeStyle = rgba(cFut, 0.75 * a); ctx.stroke(ticks);
@@ -1121,7 +1123,7 @@ export function createReel(canvas) {
     ctx.fillStyle = rgba(cFut, 0.6 * a); ctx.fillRect(x0, y, (x1 - x0) * reveal, 1);
     ctx.fillStyle = rgba(cPast, a); ctx.fillRect(x0, y, px - x0, 1);
     ctx.fillStyle = rgba(dark ? P.dOchre : P.ochre, a); ctx.fillRect(px - 1, y - 20, 2, 26);
-    [0, 5, 10, 15].forEach(s => text(`00:${String(s).padStart(2, '0')}`, F.mono(13), lerp(x0, x1, s / 15), y + 26, dark ? P.dFaint : P.faint, a * clamp((reveal - s / 15) * 8), s === 0 ? 'left' : s === 15 ? 'right' : 'center'));
+    [0, 5, 10, 15, 20, 25].forEach(s => text(`00:${String(s).padStart(2, '0')}`, F.mono(13), lerp(x0, x1, s / DUR), y + 26, dark ? P.dFaint : P.faint, a * clamp((reveal - s / DUR) * 8), s === 0 ? 'left' : 'center'));
   }
 
   /* ============================================================= frame */
@@ -1133,9 +1135,9 @@ export function createReel(canvas) {
       // Scenes 1-2 share one paper world with a slow push and, at the end, a dive into the gap.
       if (t > T.zoom - 0.13) renderTo(offCtx, () => scene3(t));
       ctx.fillStyle = P.paper; ctx.fillRect(0, 0, W, H);
-      const push = 1 + 0.006 * t;
+      const push = 1 + 0.0035 * t;
       const zc = t > T.zoom ? Math.exp(Math.log(40) * E.inExpo(seg(t, T.zoom, T.dark))) : 1;
-      const pre = 1 - 0.02 * E.inOutCubic(seg(t, T.band + 0.3, T.zoom)) * (1 - E.inOutCubic(seg(t, T.zoom, T.zoom + 0.12)));
+      const pre = 1 - 0.022 * E.inOutCubic(seg(t, T.zoom - 0.7, T.zoom)) * (1 - E.inOutCubic(seg(t, T.zoom, T.zoom + 0.15)));
       const fx = (bx(21.6) + bx(29.5)) / 2, fy = (B.y1 + B.y2) / 2;
       paperGrid(push * zc * pre, fx, fy, 0.55);
       ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1144,17 +1146,17 @@ export function createReel(canvas) {
       if (t < T.bar1 + 0.01) scene1(t);
       scene2(t);
       reset();
-      dark = t > 5.33;
+      dark = t > T.dark - 0.07;
     } else if (t < T.sweep4) {
       scene3(t); dark = true;
     } else if (t < T.flow) {
       scene4(t); dark = lineX(t) < 1200;
     } else {
-      lightBg(1 - seg(t, 12.6, 13.2));
+      lightBg(1 - seg(t, T.morph7 + 0.15, T.hit + 0.2));
       if (t < T.morph6 + 0.5) scene5(t);
       if (t > T.morph6 + 0.2 && t < T.hit) scene6(t);
       if (t > T.morph7 - 0.001) {
-        const k = 1 + 0.024 * E.inOutSine(seg(t, 13.35, 15.0));
+        const k = 1 + 0.026 * E.inOutSine(seg(t, T.dot - 0.15, DUR));
         ctx.setTransform(k, 0, 0, k, 960 - 960 * k, 520 - 520 * k);
         scene7(t); reset();
       }
@@ -1205,10 +1207,10 @@ export function createReel(canvas) {
     post(frame);
     return n;
   }
-  const FAST = [[0.0, 0.56], [0.6, 1.56], [1.72, 2.05], [2.22, 3.35], [3.05, 3.5], [3.78, 4.3], [4.95, 5.7], [6.95, 7.9], [8.2, 9.2], [9.85, 10.45], [10.45, 12.7], [12.4, 13.75]];
-  const HEAVY = [[0.12, 0.36, 24], [5.0, 5.18, 16], [5.18, 5.28, 32], [5.28, 5.43, 64], [7.0, 7.72, 16], [12.45, 13.12, 16], [13.08, 13.54, 16]];
+  const FAST = [[0, T.land + 0.06], [T.hop, T.dock1 + 0.06], [T.lift, T.dock2 + 0.05], [T.out1, T.bar1 + 1.2], [T.ghost, T.ghost + 0.85], [T.phaseB, T.phaseB + 0.85], [T.zoom - 0.05, T.dark + 0.4], [T.sweep4 - 0.05, T.sweep4End + 0.35], [T.flow, T.poly + 0.9], [T.morph6 - 0.05, T.morph6 + 0.65], [T.take[0], T.out6 + 0.35], [T.morph7, T.dot + 0.3]];
+  const HEAVY = [[0.14, 0.46, 24], [T.zoom, T.zoom + 0.3, 16], [T.zoom + 0.3, T.zoom + 0.4, 32], [T.zoom + 0.4, T.dark + 0.03, 64], [T.sweep4, T.sweep4End + 0.02, 16], [T.morph7, T.hit + 0.12, 16], [T.hit + 0.08, T.dot + 0.04, 16]];
   const samplesAt = t => { for (const [a, b, n] of HEAVY) if (t >= a && t <= b) return n; return FAST.some(([a, b]) => t >= a && t <= b) ? 10 : 4; };
-  const shutterAt = t => (t > 5.0 && t < 5.45 ? 0.9 : 0.55);
+  const shutterAt = t => (t > T.zoom && t < T.dark + 0.05 ? 0.9 : 0.55);
 
   /* ============================================================== init */
   async function init() {
@@ -1243,19 +1245,19 @@ export function createReel(canvas) {
     };
     const cols = [];
     for (let c = 0; c < GRID.cols; c++) { const ps = PT.filter(p => p.gc === c); cols.push({ t: Math.min(...ps.map(p => p.snap)), x: ps[0].gx }); }
-    const L2t = []; for (let i = 0; i < Q.L2.text.length; i++) if (Q.L2.text[i] !== ' ') L2t.push(1.64 + Q.L2.wordOf[i] * 0.065);
+    const L2t = []; for (let i = 0; i < Q.L2.text.length; i++) if (Q.L2.text[i] !== ' ') L2t.push(+(T.l2 + Q.L2.wordOf[i] * 0.1).toFixed(3));
     return {
-      T,
+      T, DUR,
       glyphs1: Q.tau.map((t, i) => ({ t: +t.toFixed(4), x: Q.x1 + Q.L1.xs[i] })).filter((_, i) => Q.L1.text[i] !== ' '),
       words2: [...new Set(L2t)],
-      bar1: ticks(t => barVals(t)[0], T.bar1, T.bar1 + 1.0), bar2: ticks(t => barVals(t)[1], T.bar2, T.phaseB + 0.8),
+      bar1: ticks(t => barVals(t)[0], T.bar1, T.bar1 + 1.2), bar2: ticks(t => barVals(t)[1], T.bar2, T.phaseB + 0.8),
       ring: ticks(ringVal, T.take[0], T.take[3] + 0.8, 0, 0.02),
       columns: cols,
-      s3labels: PT.labels.map((l, k) => ({ t: 5.8 + k * 0.14, x: darkPos(PT[l.i], 6.3).x })),
-      spokes: [0, 1, 2, 3, 4, 5].map(k => T.spokes + k * 0.035),
-      dims: DIMS.map((d, k) => ({ t: T.labels + k * 0.065, x: proj((RR + 38) * Math.cos(axA(k)), (RR + 38) * Math.sin(axA(k)), 9.5)[0] })),
+      s3labels: PT.labels.map((l, k) => ({ t: +(T.ann + k * 0.2).toFixed(3), x: darkPos(PT[l.i], T.sub3 + 0.3).x })),
+      spokes: [0, 1, 2, 3, 4, 5].map(k => +(T.spokes + k * 0.05).toFixed(3)),
+      dims: DIMS.map((d, k) => ({ t: +(T.labels + k * 0.09).toFixed(3), x: proj((RR + 38) * Math.cos(axA(k)), (RR + 38) * Math.sin(axA(k)), T.poly + 0.5)[0] })),
       word: WORDMARK.map((g, i) => ({ ch: g.ch, t: g.color === 'pine' ? T.word + i * 0.04 : g.ch === 'idot' ? T.dot + 0.16 + 0.26 : T.dot + (g.ch === 'a' ? 0.02 : 0.07) })),
-      lineX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7].map(d => ({ t: T.sweep4 + d, x: lineX(T.sweep4 + d) })),
+      lineX: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0].map(d => ({ t: T.sweep4 + d, x: lineX(T.sweep4 + d) })),
     };
   }
 
