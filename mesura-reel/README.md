@@ -138,6 +138,7 @@ Requirements: Node 18+ with Playwright and Chromium, Python 3 with `numpy` and `
 FILM=how ./build.sh        # the same for mesura-how-it-works.mp4
 JOBS=8 ./build.sh          # more workers
 FILM=social REEL=02-shadow-ai ./build.sh   # one social reel -> social/videos/mesura-02-shadow-ai.mp4
+python3 render/series.py                   # covers and the series sheet from the rendered reels
 node render/render.mjs stills out 2.4,14.2,23.4                # single frames, no blur
 PAGE=how.html node render/render.mjs stills out 4.8,19.4       # the same for the explainer
 python3 render/storyboard.py build/frames-how storyboard-how.jpg how

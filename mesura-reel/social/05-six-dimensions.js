@@ -58,7 +58,8 @@ export default film({
       const ox = -fall * 80;
       ctx.save(); ctx.globalAlpha = 1; ctx.translate(ox, 0);
       k.block(d.name, F.disp(60), SAFE.l + 46, y, 0, P.ink, t, t0 + 0.04, { dur: 0.6, alpha: a });
-      k.block(d.desc, F.text(32, 400), SAFE.l + 48, y + 46, 0, P.body, t, t0 + 0.12, { stagger: 0.025, dur: 0.6, tOut: T.fill - 0.1 });
+      // descriptions fade out in place before the score bars take their line
+      k.block(d.desc, F.text(32, 400), SAFE.l + 48, y + 46, 0, P.body, t, t0 + 0.12, { stagger: 0.025, dur: 0.6, alpha: 1 - seg(t, T.fill - 0.45, T.fill - 0.12) });
       ctx.restore();
       // self-rated / tested tags
       const tg = spring(t - (i < 5 ? T.tags + i * 0.07 : T.tag6), 2.6, 0.6) * (1 - seg(t, T.fill - 0.2, T.fill + 0.1));

@@ -1,9 +1,10 @@
 """Cover images and a series contact sheet for the social reels.
 
-    python3 render/series.py <frames_root>
+    python3 render/series.py [frames_root]      (default: build, where build.sh renders)
 
-Reads <frames_root>/frames-<id>/fNNNN.png for each reel and writes social/covers/<id>.jpg (a full
-1080x1920 frame chosen as the cover) and social/series.jpg (every cover on one sheet).
+Reads <frames_root>/frames-social-<id>/fNNNN.png (or frames-<id>) for each reel and writes
+social/covers/<id>.jpg (a full 1080x1920 frame chosen as the cover) and social/series.jpg
+(every cover on one sheet).
 """
 import io
 import sys
@@ -12,7 +13,7 @@ from pathlib import Path
 from fontTools.ttLib import TTFont
 from PIL import Image, ImageDraw, ImageFont
 
-ROOT = Path(sys.argv[1])
+ROOT = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent / "build")
 HERE = Path(__file__).resolve().parent.parent
 FONTS = HERE / "fonts"
 OUT = HERE / "social"
@@ -25,7 +26,7 @@ REELS = [
     ("04-did-it-work", "Did it work?", 2.0),
     ("05-six-dimensions", "Six dimensions", 2.2),
     ("06-compared-to-what", "Compared to what?", 1.8),
-    ("07-the-report", "What you get", 1.8),
+    ("07-the-report", "What you get", 5.2),
     ("08-can-you-answer", "Can you answer this?", 5.8),
 ]
 
@@ -53,7 +54,8 @@ d = ImageDraw.Draw(sheet)
 d.text((PAD, 30), "mesura.ai  ·  social reels", fill=INK, font=f_title)
 d.text((W - PAD, 44), "1080 × 1920  ·  60 fps  ·  Instagram and TikTok", fill=BODY, font=f_label, anchor="ra")
 for k, (rid, label, t) in enumerate(REELS):
-    im = Image.open(ROOT / f"frames-{rid}" / f"f{round(t * 60):04d}.png").convert("RGB")
+    src = next(d for d in (ROOT / f"frames-social-{rid}", ROOT / f"frames-{rid}") if d.exists())
+    im = Image.open(src / f"f{round(t * 60):04d}.png").convert("RGB")
     im.save(OUT / "covers" / f"{rid}.jpg", quality=92, optimize=True)
     r, c = divmod(k, COLS)
     x, y = PAD + c * (TW + PAD), TOP + r * (TH + CAP + PAD)
