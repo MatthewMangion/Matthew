@@ -1,0 +1,5 @@
+# regenerable intermediates
+.stills/
+audio/*.wav
+audio/*.tmp.wav
+node_modules/

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesura Reel Studio</title>
+<style>
+:root{
+  --paper:#F2EDE3;--surface:#FFFFFF;--border:#E3DCCC;--ink:#22362F;--ink-body:#45534D;--ink-muted:#6E7A73;
+  --pine:#1D4A43;--on-pine:#F6F2E9;--ochre:#D19C3F;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--paper);color:var(--ink-body);font:14px/1.5 -apple-system,"Segoe UI",sans-serif}
+body.render{background:#000;overflow:hidden}
+body.render #ui{display:none}
+body.render canvas#stage{position:fixed;left:0;top:0;width:1080px;height:1920px}
+#ui{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;height:100vh;padding:20px}
+#viewport{position:relative;display:grid;place-items:center;min-height:0}
+#frame{position:relative;height:100%;max-height:calc(100vh - 40px);aspect-ratio:9/16;border-radius:18px;overflow:hidden;box-shadow:0 12px 32px rgba(34,54,47,.18)}
+#frame canvas{position:absolute;inset:0;width:100%;height:100%}
+#panel{display:flex;flex-direction:column;gap:14px;overflow:auto}
+h1{font:600 20px Georgia,serif;color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:500 13px -apple-system,sans-serif;border-radius:999px;padding:8px 14px;border:1px solid var(--border);background:var(--surface);color:var(--ink);cursor:pointer}
+button.on{background:var(--pine);color:var(--on-pine);border-color:var(--pine)}
+input[type=range]{width:100%}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--ink-muted)}
+</style>
+</head>
+<body>
+<div id="ui">
+  <div id="viewport"><div id="frame"><canvas id="stagePreview"></canvas><canvas id="overlay" width="1080" height="1920"></canvas></div></div>
+  <div id="panel">
+    <h1>Mesura reel studio</h1>
+    <div class="row" id="reels"></div>
+    <div class="row">
+      <button id="play">Play</button>
+      <button id="guides">Safe zones</button>
+      <button id="blur">Blur still</button>
+    </div>
+    <input type="range" id="scrub" min="0" max="1000" value="0">
+    <div class="mono" id="time">0.00s</div>
+    <div class="mono" id="info"></div>
+  </div>
+</div>
+<canvas id="stage"></canvas>
+<script src="src/lib.js"></script>
+<script src="src/engine.js"></script>
+<script src="src/kit.js"></script>
+<script src="src/reels/flagship.js"></script>
+<script src="src/reels/guess.js"></script>
+<script src="src/reels/loop.js"></script>
+<script>
+(function(){
+  const params = new URLSearchParams(location.search);
+  const renderMode = params.has('render');
+  if (renderMode) document.body.classList.add('render');
+  const stage = document.getElementById('stage');
+  R.attach(stage);
+  window.__ready = M.loadFonts(f => 'src/fonts/' + f + '.woff2').then(() => { M.fontsReady = true; return true; });
+  if (renderMode) return;
+
+  // ---------- studio UI
+  const prev = document.getElementById('stagePreview');
+  prev.width = 540; prev.height = 960;
+  const pctx = prev.getContext('2d');
+  const ov = document.getElementById('overlay');
+  const octx = ov.getContext('2d');
+  let id = params.get('reel') || R.order[0];
+  let playing = false, t = +(params.get('t') || 0), last = 0, guides = false;
+  let audio = null;
+  const reelsEl = document.getElementById('reels');
+  R.order.forEach(k => {
+    const b = document.createElement('button');
+    b.textContent = R.reels[k].title;
+    b.onclick = () => { id = k; t = 0; loadAudio(); sync(); draw(); };
+    b.dataset.id = k;
+    reelsEl.appendChild(b);
+  });
+  function loadAudio(){
+    if (audio) { audio.pause(); audio = null; }
+    const a = new Audio('audio/' + id + '.m4a');
+    a.loop = true; a.preload = 'auto';
+    a.addEventListener('error', () => { if (audio === a) audio = null; });
+    audio = a;
+  }
+  function sync(){
+    [...reelsEl.children].forEach(b => b.classList.toggle('on', b.dataset.id === id));
+    document.getElementById('play').textContent = playing ? 'Pause' : 'Play';
+    document.getElementById('guides').classList.toggle('on', guides);
+  }
+  function drawGuides(){
+    octx.clearRect(0,0,1080,1920);
+    if (!guides) return;
+    octx.fillStyle = 'rgba(169,68,54,.18)';
+    octx.fillRect(0,0,1080,220);            // top bar (both apps)
+    octx.fillRect(0,1460,1080,460);         // captions / CTA area
+    octx.fillRect(930,860,150,600);          // TikTok action rail
+    octx.strokeStyle = 'rgba(169,68,54,.8)'; octx.setLineDash([12,10]); octx.lineWidth = 3;
+    octx.strokeRect(72,220,936,1240);
+    octx.strokeStyle = 'rgba(61,107,142,.8)';
+    octx.strokeRect(0,240,1080,1440);        // Instagram 3:4 grid crop
+  }
+  function draw(){
+    R.frame(id, Math.round(t*60), {samples: 1});
+    pctx.drawImage(stage, 0, 0, 540, 960);
+    const reel = R.reels[id];
+    document.getElementById('time').textContent = t.toFixed(2) + 's / ' + reel.duration.toFixed(1) + 's · beat ' + (t/reel.beat).toFixed(2) + ' · frame ' + Math.round(t*60);
+    document.getElementById('scrub').value = Math.round(t / reel.duration * 1000);
+  }
+  function loop(now){
+    if (playing){
+      const reel = R.reels[id];
+      if (audio && !audio.paused && audio.readyState >= 2) t = audio.currentTime % reel.duration;
+      else { t += (now - last) / 1000; t %= reel.duration; }
+      draw();
+    }
+    last = now;
+    requestAnimationFrame(loop);
+  }
+  document.getElementById('play').onclick = () => {
+    playing = !playing;
+    if (audio) { if (playing) { audio.currentTime = t; audio.play().catch(()=>{}); } else audio.pause(); }
+    sync();
+  };
+  document.getElementById('guides').onclick = () => { guides = !guides; drawGuides(); sync(); };
+  document.getElementById('blur').onclick = () => { R.frame(id, Math.round(t*60), {}); pctx.drawImage(stage,0,0,540,960); };
+  document.getElementById('scrub').oninput = e => { t = e.target.value/1000 * R.reels[id].duration; if (audio) audio.currentTime = t; draw(); };
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space') { e.preventDefault(); document.getElementById('play').click(); }
+    if (e.code === 'ArrowRight') { t += e.shiftKey ? 1 : 1/60; draw(); }
+    if (e.code === 'ArrowLeft') { t = Math.max(0, t - (e.shiftKey ? 1 : 1/60)); draw(); }
+  });
+  window.__ready.then(() => { loadAudio(); sync(); draw(); requestAnimationFrame(loop); });
+})();
+</script>
+</body>
+</html>
