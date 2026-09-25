@@ -259,6 +259,40 @@ def sub(note, t0, dur, gain=0.3, att=0.01, rel=0.08):
 
 
 
+# ------------------------------------------------ interface sounds (the vertical films)
+def key_click(vel=1.0, f=3200):
+    t = tt(0.05)
+    c = filt(noise(len(t)), "bp", (f * 0.6, f * 1.6)) * np.exp(-t / 0.004)
+    body = np.sin(2 * np.pi * 210 * t) * np.exp(-t / 0.012) * 0.5
+    return (c + body) * vel
+
+
+def tap(vel=1.0):
+    """A fingertip on glass: a soft thump and a short click."""
+    t = tt(0.12)
+    thump = np.sin(2 * np.pi * (120 + 90 * np.exp(-t / 0.01)) * t) * np.exp(-t / 0.03)
+    click = filt(noise(len(t)), "bp", (1200, 4200)) * np.exp(-t / 0.003) * 0.6
+    return (thump + click) * vel
+
+
+def pop(f, vel=1.0, dur=0.08):
+    """A dot appearing: a tiny upward bubble."""
+    t = tt(dur)
+    ff = f * (0.75 + 0.6 * (1 - np.exp(-t / 0.012)))
+    return np.sin(2 * np.pi * np.cumsum(ff) / SR) * env_ad(len(t), 0.002, dur * 0.3) * vel
+
+
+def bass(note, t0, dur, gain, att=0.008, rel=0.08, bite=0.35):
+    """Sub sine plus a filtered saw layer, so the line still reads on a phone speaker."""
+    n = int((dur + rel) * SR)
+    t = np.arange(n) / SR
+    f = mtof(note)
+    env = np.clip(t / att, 0, 1) * np.clip((dur + rel - t) / rel, 0, 1)
+    body = np.tanh((np.sin(2 * np.pi * f * t) + 0.18 * np.sin(4 * np.pi * f * t)) * 1.3)
+    grit = filt(saw(f, n) + saw(f * 1.004, n, 0.5), "lp", 650) * np.exp(-t / 0.18)
+    place("bass", (body + bite * grit) * env, t0, gain)
+
+
 def add_kick(t0, vel=1.0, **kw):
     place("drums", kick(vel, **kw), t0, 0.5)
     KICKS.append((t0, vel))

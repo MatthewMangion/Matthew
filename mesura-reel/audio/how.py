@@ -15,7 +15,7 @@ import numpy as np
 
 import synth as S
 from synth import SR, mtof, tt, place, env_ad, filt, svf, noise, saw, clap, hat, tick, fm_pluck, bell, tock, blip, \
-    whoosh, riser, reverse_swell, boom, kick, pad_chord, add_kick
+    whoosh, riser, reverse_swell, boom, kick, pad_chord, add_kick, key_click, tap, pop, bass
 
 HERE = Path(__file__).resolve().parent
 CUES = json.loads(Path(sys.argv[1] if len(sys.argv) > 1 else HERE / "how-cues.json").read_text())
@@ -33,39 +33,6 @@ def vpan(x):
 
 
 # ------------------------------------------------------------ interface sounds
-def key_click(vel=1.0, f=3200):
-    t = tt(0.05)
-    c = filt(noise(len(t)), "bp", (f * 0.6, f * 1.6)) * np.exp(-t / 0.004)
-    body = np.sin(2 * np.pi * 210 * t) * np.exp(-t / 0.012) * 0.5
-    return (c + body) * vel
-
-
-def tap(vel=1.0):
-    """A fingertip on glass: a soft thump and a short click."""
-    t = tt(0.12)
-    thump = np.sin(2 * np.pi * (120 + 90 * np.exp(-t / 0.01)) * t) * np.exp(-t / 0.03)
-    click = filt(noise(len(t)), "bp", (1200, 4200)) * np.exp(-t / 0.003) * 0.6
-    return (thump + click) * vel
-
-
-def pop(f, vel=1.0, dur=0.08):
-    """A dot appearing: a tiny upward bubble."""
-    t = tt(dur)
-    ff = f * (0.75 + 0.6 * (1 - np.exp(-t / 0.012)))
-    return np.sin(2 * np.pi * np.cumsum(ff) / SR) * env_ad(len(t), 0.002, dur * 0.3) * vel
-
-
-def bass(note, t0, dur, gain, att=0.008, rel=0.08, bite=0.35):
-    """Sub sine plus a filtered saw layer, so the line still reads on a phone speaker."""
-    n = int((dur + rel) * SR)
-    t = np.arange(n) / SR
-    f = mtof(note)
-    env = np.clip(t / att, 0, 1) * np.clip((dur + rel - t) / rel, 0, 1)
-    body = np.tanh((np.sin(2 * np.pi * f * t) + 0.18 * np.sin(4 * np.pi * f * t)) * 1.3)
-    grit = filt(saw(f, n) + saw(f * 1.004, n, 0.5), "lp", 650) * np.exp(-t / 0.18)
-    place("bass", (body + bite * grit) * env, t0, gain)
-
-
 def chatter(t0, t1, gain, pan=0.0, f=(4200, 6800)):
     """The 40 Hz flicker of a scramble-decode, one tiny tick per glyph change."""
     for k in range(int(np.ceil(t0 * 40)), int(t1 * 40)):

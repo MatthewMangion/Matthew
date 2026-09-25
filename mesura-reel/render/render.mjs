@@ -1,5 +1,6 @@
 // Offline renderer for the Mesura reel.
 //   [PAGE=how.html] node render/render.mjs stills <outDir> <t1,t2,...>   single frames, no motion blur
+//   PAGE='social.html?r=01-ai-at-work' picks one of the social reels
 //   node render/render.mjs frames <outDir> [from] [to] [stride] [offset]   motion-blurred PNG sequence
 //   node render/render.mjs cues <outDir>                    event sheet for the soundtrack
 // Pages are served straight from disk through request interception, so no server is needed.
@@ -19,7 +20,7 @@ async function loadPlaywright() {
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.woff2': 'font/woff2', '.json': 'application/json', '.png': 'image/png' };
 
 const [mode = 'stills', outDir = 'out/stills', a, b] = process.argv.slice(2);
-const PAGE = process.env.PAGE || 'index.html';   // index.html (16:9 reel) or how.html (9:16 explainer)
+const PAGE = process.env.PAGE || 'index.html';   // index.html (16:9 reel), how.html (9:16 explainer), social.html?r=<id>
 const { chromium } = await loadPlaywright();
 const browser = await chromium.launch({ args: ['--disable-gpu', '--force-color-profile=srgb', '--font-render-hinting=none'] });
 const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
@@ -31,7 +32,7 @@ await page.route('http://reel.local/**', route => {
   if (!file.startsWith(ROOT) || !fs.existsSync(file)) return route.fulfill({ status: 404, body: 'not found' });
   route.fulfill({ status: 200, body: fs.readFileSync(file), headers: { 'content-type': TYPES[path.extname(file)] || 'application/octet-stream' } });
 });
-await page.goto(`http://reel.local/${PAGE}?render`);
+await page.goto(`http://reel.local/${PAGE}${PAGE.includes('?') ? '&' : '?'}render`);
 await page.waitForFunction(() => window.REEL_READY === true, null, { timeout: 60000 });
 const { W, H } = await page.evaluate(() => ({ W: window.REEL.W, H: window.REEL.H }));
 await page.setViewportSize({ width: W, height: H });
@@ -47,7 +48,8 @@ if (mode === 'stills') {
   console.log(`wrote ${times.length} stills to ${outDir}`);
 } else if (mode === 'cues') {
   const cues = await page.evaluate(() => window.REEL.cues());
-  const name = PAGE === 'index.html' ? 'cues.json' : `${PAGE.replace(/\.html$/, '')}-cues.json`;
+  const name = process.env.CUES_NAME || (PAGE === 'index.html' ? 'cues.json' : `${PAGE.replace(/\.html$/, '')}-cues.json`);
+  fs.mkdirSync(path.dirname(path.join(outDir, name)), { recursive: true });
   fs.writeFileSync(path.join(outDir, name), JSON.stringify(cues, null, 1));
   console.log(`wrote ${name}`);
 } else if (mode === 'frames') {

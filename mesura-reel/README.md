@@ -1,9 +1,10 @@
 # Mesura.ai films
 
-Two motion pieces for Mesura.ai, built in code on one shared engine:
+Motion pieces for Mesura.ai, built in code on one shared engine:
 
 1. **Brand reel.** 26 seconds, 1920×1080, about what Mesura is for.
 2. **How it works.** 30 seconds, 1080×1920 for phones, about how the diagnostic runs.
+3. **Social reels.** Eight 24.6-second reels for Instagram and TikTok, each built around a hook and one idea.
 
 Every frame is a pure function of time. The same composition runs live in a browser and
 renders offline with real motion blur. Each soundtrack is synthesised from the animation's
@@ -48,9 +49,32 @@ digests every answer, and the engine unfolds into the readiness score.
 | 22.2 – 27.0 | **What you get** | A report sheet springs up over the dark: the summary, two named actions and a scheduled remeasurement. |
 | 27.0 – 30.0 | **End card** | Paper floods back from the centre, the header lockup restacks into the full logo, and *Measure where you stand. Keep measuring.* resolves onto a *Get your Diagnostic* button. |
 
-Figures and copy come from the Mesura Chamber presentation (Eurostat 2025 data, the four
-steps, and the sample report's readiness scores). Colours, type and voice follow the Mesura
-design system.
+## 3. Social reels (9:16, Instagram and TikTok)
+
+**Watch:** [`social/videos/`](social/videos) has eight 24.6 s reels, each 1080×1920 at 60 fps with
+sound. **Post:** [`social/CAPTIONS.md`](social/CAPTIONS.md) has a caption, hashtags and a cover
+for each one.
+
+![Contact sheet: the hook frame of each reel](social/series.jpg)
+
+Each reel opens on its hook in the very first frame, explains one idea in about 20 seconds and
+closes on the same end card. There, the ochre point drops onto the downbeat, grows into the mark,
+and the lockup, tagline and *Get your Diagnostic* follow.
+
+| Reel | Hook | The explanation |
+| --- | --- | --- |
+| 01 AI at work | *1 in 5 European companies now use AI.* | 100 companies as a band of dots rewinds to 2024 (13.5%) and grows back. The dots collapse into Malta vs EU bars (29.5% vs 15.1%, nearly twice). National numbers stop at your door. |
+| 02 Shadow AI | *There's AI in your company you can't see.* | Racks into focus in the dark. People (29.5%) vs companies (21.6%), with the space in between hatched. It has a name, four symptoms, and it isn't misconduct. |
+| 03 Who is more ready? | *Who is more ready for AI?* | Pick one: Employee A (every day) or B (once a week). The hidden habits reveal B. Usage alone can't show readiness. |
+| 04 Did it work? | *You ran the AI training. Did it work?* | The to-do list is all ticked, except impact. Baseline, action, remeasurement. The takes climb 43 → 59 → 71 → 81, and the difference is the evidence. |
+| 05 Six dimensions | *How do you measure AI readiness?* | The six dimensions in the product's colours: five self-rated, one tested. The rows collapse into one ring that counts to 88%. |
+| 06 Compared to what? | *88%. Is that good?* | Three baselines drop onto a scale (sector, Mesura average, your organisation). The six dimensions get the same markers. No black box: the Literacy weighting card. |
+| 07 What you get | *One assessment. Here's what you get.* | The report writes itself and scrolls: the score and tier, the strongest and focus areas, benchmarks, named actions and the remeasurement history. |
+| 08 Can you answer this? | *Can you answer this?* | A real question from the assessment, with a countdown, then the reveal. Seven questions like it, the only dimension with right answers. Confidence isn't capability. |
+
+Figures and copy come from the Mesura Chamber presentation: Eurostat 2025 data, the four steps,
+the six dimensions, the three baselines and the sample report's scores. Colours, type and voice
+follow the Mesura design system.
 
 ## Craft notes
 
@@ -76,7 +100,13 @@ design system.
   copy at 38 px, and a four-part progress rail tracks the steps. The interface moments
   (typing, focus rings, taps with press states, a question carousel) are drawn in the
   product's own components.
-- **Sound.** Both scores are synthesised in `audio/` at 100 BPM in D, with every step or
+- **One kit for the series.** `social/kit.js` fixes the safe area (clear of the top bar, the
+  caption block and the action rail of both apps), the type scale (hooks at 118–150 px,
+  statements at 100 px), the source captions and the end card. Each reel is a short module
+  that describes only its own story. `audio/social.py` scores all eight from their exported event
+  sheets, so the series shares one sound: the same instruments, 100 BPM, and the tock when the
+  point lands.
+- **Sound.** Both film scores are synthesised in `audio/` at 100 BPM in D, with every step or
   scene change on a downbeat. The reel moves Bm9 → Gmaj9 → D/F# → Em9 → Bm → D → A/C# →
   F#m7 → Gmaj9 → Asus4 → Dmaj9. The explainer climbs D | D Bm | G A | D Bm | Em F#m | G A | D,
   going dark for the diagnosis and resolving on the end card. Keystrokes, taps, arriving
@@ -107,6 +137,7 @@ Requirements: Node 18+ with Playwright and Chromium, Python 3 with `numpy` and `
 ./build.sh                 # cues -> score -> frames (4 workers) -> mesura-reel.mp4
 FILM=how ./build.sh        # the same for mesura-how-it-works.mp4
 JOBS=8 ./build.sh          # more workers
+FILM=social REEL=02-shadow-ai ./build.sh   # one social reel -> social/videos/mesura-02-shadow-ai.mp4
 node render/render.mjs stills out 2.4,14.2,23.4                # single frames, no blur
 PAGE=how.html node render/render.mjs stills out 4.8,19.4       # the same for the explainer
 python3 render/storyboard.py build/frames-how storyboard-how.jpg how
@@ -115,6 +146,10 @@ python3 render/storyboard.py build/frames-how storyboard-how.jpg how
 ## Files
 
 - `index.html`, `how.html`: player shells for the two films. Scrub by hovering.
+- `social.html?r=<id>`: player for the social reels (for example `?r=08-can-you-answer`).
+- `social/kit.js`: the shared template for the social reels. `social/01-…08-*.js` are the reels.
+  `social/videos/` holds the renders, `social/covers/` the cover frames, and `social/CAPTIONS.md`
+  the posting kit.
 - `reel.js`, `how.js`: the compositions (scenes, timing, particles, HUD).
 - `lib/core.js`: maths, easing, springs, palette, OKLab colour, fonts and the parametric mark.
 - `lib/draw.js`: drawing helpers shared by both films, including type reveals, odometers,
@@ -122,7 +157,8 @@ python3 render/storyboard.py build/frames-how storyboard-how.jpg how
 - `logo.js`: traced wordmark paths and the fitted mark parameters.
 - `render/render.mjs`: Playwright renderer (stills, frame sequences, cue export). `PAGE` picks the film.
 - `audio/synth.py`: the shared synthesiser (instruments, buses, reverb, sidechain, limiter).
-- `audio/score.py`, `audio/how.py`: the two arrangements. `audio/cues.json` and
+- `audio/score.py`, `audio/how.py`: the two film arrangements. `audio/cues.json` and
   `audio/how-cues.json` are the event sheets they read.
+- `audio/social.py`: one scoring engine for all the social reels. It reads `audio/social/<id>.json`.
 - `render/storyboard.py`: builds a storyboard sheet from a rendered frame sequence.
 - `fonts/`: static WOFF2 instances of Source Serif 4, Inter and JetBrains Mono, under the SIL Open Font License (texts included).
