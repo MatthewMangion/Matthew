@@ -30,7 +30,7 @@ FILMS = {
                        (12.8, "Shadow AI"), (14.25, "The measure"), (18.9, "Six dimensions"), (22.1, "Measure again"),
                        (23.2, "The mark"), (26.35, "End card")]),
     "how": dict(title="mesura.ai  ·  how it works", spec="1080 × 1920  ·  60 fps  ·  storyboard", cols=6, tw=300, aspect=(9, 16),
-                keys=[(0.3, "The drop"), (1.95, "The promise"), (4.1, "01 Sign up"), (6.45, "Your code"),
+                keys=[(0.8, "The point lands"), (2.4, "The promise"), (4.1, "01 Sign up"), (6.45, "Your code"),
                       (9.3, "02 Share"), (11.7, "The workforce"), (13.9, "03 Answer"), (16.5, "Submitted"),
                       (19.4, "04 Diagnose"), (21.6, "One score"), (24.9, "The report"), (29.9, "End card")]),
 }

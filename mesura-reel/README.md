@@ -30,7 +30,7 @@ ends as the full stop in *mesura.ai*.
 
 ## 2. How it works (9:16)
 
-**Watch:** [`mesura-how-it-works.mp4`](mesura-how-it-works.mp4) (30 s, 1080×1920, H.264 High, BT.709, 60 fps, AAC 256 kb/s).
+**Watch:** [`mesura-how-it-works.mp4`](mesura-how-it-works.mp4) (30 s, 1080×1920, H.264 High, BT.709, 60 fps, AAC 256 kb/s, 11 MB).
 
 ![Storyboard: twelve key frames from the explainer](storyboard-how.jpg)
 
@@ -41,7 +41,7 @@ digests every answer, and the engine unfolds into the readiness score.
 | Time | Beat | What happens |
 | --- | --- | --- |
 | 0.0 – 3.0 | **The promise** | The point falls in under gravity, lands with a sonar ping and grows into the Mesura mark. *One code. One assessment. One benchmarked report.* The mark flies up into the header lockup and the wordmark wipes on beside it. |
-| 3.0 – 7.8 | **01 Sign up** | A sign-up card springs up. A work email types itself, a size is picked and a finger taps *Get your Diagnostic*. The card folds into a pine ticket, and the organisation code decodes one character at a time. |
+| 3.0 – 7.8 | **01 Sign up** | A sign-up card springs up. A work email types itself, a size is picked and a finger taps *Get your Diagnostic*. The tap floods the card with pine, the card becomes a ticket, and the organisation code decodes one character at a time. |
 | 7.8 – 12.6 | **02 Share the code** | The ticket shrinks to a pill. The code travels out to a team, a department, then the whole workforce (8, 14 and 46 people), and each phrase in the caption lights up as the code arrives. |
 | 12.6 – 17.4 | **03 Answer anonymously** | One person's dot grows into their phone. They pick an answer and tap *Next*, the other eight questions flick past, and the survey is submitted anonymously. Back in the rings, everyone else finishes too. |
 | 17.4 – 22.2 | **04 Diagnose and generate** | An iris opens onto the dark. Every answer spirals into the spinning mark, and six dimension bars count up. The mark then unfolds into a readiness ring that counts to **88%**: *Elite AI Navigator*, ahead of the sector. |

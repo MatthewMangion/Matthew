@@ -59,6 +59,13 @@ export function createHow(canvas) {
       rise(L, lx, y0 + i * lh, color, t, tIn + i * (o.lineStagger ?? 0.08), { stagger: 0.04, ...o, tOut: (o.tOut ?? Infinity) + i * 0.03, colorOf: o.colorOf ? (ci => o.colorOf(i, ci)) : undefined });
     });
   }
+  // Centred scramble-decode. While it decodes, characters land in the slots of the finished line
+  // (left-aligned from its final left edge), so the line never slides as it grows.
+  function decode(str, p, t, font, cx, y, color, a, ls) {
+    if (p >= 1) return text(str, font, cx, y, color, a, 'center', ls);
+    // canvas centring counts the trailing letter-spacing that measure() leaves out
+    text(scramble(str, p, t, true), font, cx - (measure(str, font, ls) + ls) / 2, y, color, a, 'left', ls);
+  }
   const paper = (x, y, r) => { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = P.paper; ctx.fill(); };
   function lockIcon(x, y, s, color) {
     ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
@@ -168,7 +175,7 @@ export function createHow(canvas) {
     lines.forEach(([s, t0, c], i) => { const L = lay(s, f); rise(L, 540 - L.width / 2, 1150 + i * 100, c, t, t0, { tOut: tOut + i * 0.04, stagger: 0.05 }); });
     if (t > T.eye0 && t < T.out0 + 0.4) {
       const p = seg(t, T.eye0, T.eye0 + 0.4), a = 1 - seg(t, T.out0, T.out0 + 0.3);
-      text(scramble('HOW IT WORKS', p, t, true), F.text(26, 600), 540, 1030, P.ochre, a, 'center', 3.1);
+      decode('HOW IT WORKS', p, t, F.text(26, 600), 540, 1030, P.ochre, a, 3.1);
     }
   }
   // the mark (drawn over everything; it lives the whole film except the diagnosis, where it is the engine)
@@ -277,8 +284,7 @@ export function createHow(canvas) {
     const ca = seg(t, T.code - 0.15, T.code + 0.05) * fade;
     if (ca > 0.002) {
       const sz = lerp(116, 46, b.pl), cy = lerp(b.y + 238, b.y + 62, b.pl);
-      const s = scramble(CODE, seg(t, T.code - 0.1, T.code + 0.55), t, true);
-      text(s, F.mono(sz, 500), 540, cy, P.onPine, ca, 'center', lerp(4, 1, b.pl));
+      decode(CODE, seg(t, T.code - 0.1, T.code + 0.55), t, F.mono(sz, 500), 540, cy, P.onPine, ca, lerp(4, 1, b.pl));
     }
   }
 
