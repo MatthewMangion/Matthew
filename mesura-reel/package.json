@@ -1,0 +1,14 @@
+{
+  "name": "mesura-reel",
+  "private": true,
+  "type": "module",
+  "description": "15 second Mesura.ai brand reel, rendered from code",
+  "scripts": {
+    "build": "./build.sh",
+    "stills": "node render/render.mjs stills out",
+    "serve": "python3 -m http.server 8000"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mesura Reel</title>
+<style>
+  :root{--paper:#F2EDE3;--ink:#22362F;--muted:#6E7A73;--ochre:#D19C3F;--border:#E3DCCC}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#101A17;color:var(--paper);font:500 13px/1.4 "Inter",system-ui,sans-serif}
+  body{display:grid;place-items:center;overflow:hidden}
+  .stage{position:relative;width:min(100vw,calc(100vh*16/9));aspect-ratio:16/9}
+  canvas{display:block;width:100%;height:100%}
+  .bar{position:absolute;left:16px;right:16px;bottom:12px;display:flex;gap:12px;align-items:center;opacity:0;transition:opacity .2s}
+  .stage:hover .bar{opacity:1}
+  .bar button{all:unset;cursor:pointer;padding:4px 10px;border-radius:999px;background:rgba(21,33,29,.75);color:#F6F2E9}
+  .bar input{flex:1;accent-color:var(--ochre)}
+  .bar output{font-family:ui-monospace,monospace;background:rgba(21,33,29,.75);padding:4px 8px;border-radius:999px}
+  body.render .bar{display:none}
+  body.render{display:block;background:#000}
+  body.render .stage{width:1920px;height:1080px}
+</style>
+</head>
+<body>
+<div class="stage">
+  <canvas id="reel" width="1920" height="1080"></canvas>
+  <div class="bar">
+    <button id="play" aria-label="Play or pause">Pause</button>
+    <input id="scrub" type="range" min="0" max="15" step="0.001" value="0" aria-label="Scrub">
+    <output id="tc">00.00</output>
+  </div>
+</div>
+<script type="module">
+import { createReel } from './reel.js';
+const params = new URLSearchParams(location.search);
+const canvas = document.getElementById('reel');
+const reel = createReel(canvas);
+window.REEL = reel;
+await reel.init();
+if (params.has('render')) {
+  document.body.classList.add('render');
+  window.REEL_READY = true;
+} else {
+  const scrub = document.getElementById('scrub'), tc = document.getElementById('tc'), btn = document.getElementById('play');
+  let playing = !params.has('t'), t = parseFloat(params.get('t') || '0'), last = performance.now();
+  const loop = now => {
+    const dt = (now - last) / 1000; last = now;
+    if (playing) { t += dt; if (t >= reel.DUR) t = 0; }
+    reel.drawFrame(t);
+    scrub.value = t; tc.textContent = t.toFixed(2).padStart(5, '0');
+    requestAnimationFrame(loop);
+  };
+  btn.onclick = () => { playing = !playing; btn.textContent = playing ? 'Pause' : 'Play'; };
+  scrub.oninput = () => { t = parseFloat(scrub.value); };
+  addEventListener('keydown', e => {
+    if (e.code === 'Space') { btn.click(); e.preventDefault(); }
+    if (e.code === 'ArrowRight') t = Math.min(reel.DUR, t + (e.shiftKey ? 0.5 : 1 / 60));
+    if (e.code === 'ArrowLeft') t = Math.max(0, t - (e.shiftKey ? 0.5 : 1 / 60));
+  });
+  btn.textContent = playing ? 'Pause' : 'Play';
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
