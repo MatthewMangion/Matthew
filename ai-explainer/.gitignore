@@ -3,4 +3,4 @@ out/frames/
 out/stills/
 out/*.wav
 out/*.png
-out/render.log
+out/*.log

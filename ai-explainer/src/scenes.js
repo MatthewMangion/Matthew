@@ -694,6 +694,23 @@
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(ang) * r * 0.66, y + Math.sin(ang) * r * 0.66); ctx.stroke();
       fillCircle(ctx, x, y, r * 0.14, C.ink);
     }
+    let mips = null;
+    function mipTiles() {
+      if (mips) return mips;
+      const base = tile(); mips = [{ c: base, size: PITCH }];
+      let prev = base, size = PITCH;
+      while (size > 4) {
+        const n = Math.max(3, Math.round(size / 2));
+        const c = document.createElement('canvas'); c.width = c.height = n;
+        const x = c.getContext('2d'); x.imageSmoothingEnabled = true; x.imageSmoothingQuality = 'high';
+        x.drawImage(prev, 0, 0, n, n);
+        mips.push({ c, size: n }); prev = c; size = n;
+      }
+      const d = base.getContext('2d').getImageData(0, 0, PITCH, PITCH).data; let r = 0, g = 0, b = 0;
+      for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; }
+      const n = d.length / 4; mips.avg = `rgb(${Math.round(r / n)},${Math.round(g / n)},${Math.round(b / n)})`;
+      return mips;
+    }
     const dialAngle = (i, j, t) => {
       const base = hash1(i * 131 + j * 71, 5) * TAU;
       const d = Math.hypot(i - 2, j);
@@ -701,7 +718,9 @@
       if (j === 0 && i >= 0 && i <= 4) { // the five hero dials: two nudges
         a += 1.4 * spring(t - 27.85 - i * 0.07, 2.4, 0.35) * (i % 2 ? 1 : -1) + 0.7 * spring(t - 28.3 - i * 0.05, 2.6, 0.4) * (i % 2 ? -1 : 1);
       }
-      a += Math.sin(d * 0.35 - (t - ZS) * 5) * 0.9 * clamp((t - ZS + 0.2) / 0.6);
+      // ripple of nudges across the field; it settles as dials shrink below readable size (keeps the zoom clean)
+      const pitchNow = PITCH * Math.exp(Math.log(ZEND) * Ease.inOutCubic(clamp((t - ZS) / ZD)));
+      a += Math.sin(d * 0.35 - (t - ZS) * 5) * 0.9 * clamp((t - ZS + 0.2) / 0.6) * clamp((pitchNow - 34) / 50);
       return a;
     };
 
@@ -742,17 +761,28 @@
           if (sil > 0) {
             const [sx, sy] = S(540, GY + 1500);
             ctx.save(); ctx.translate(sx, sy); ctx.scale(90 * z, 90 * z); M.botPath(ctx); ctx.restore();
-            ctx.save(); ctx.globalAlpha = 1; ctx.rect(0, 0, W, H); ctx.restore();
             ctx.clip();
           }
           const pitch = PITCH * z;
           const indA = clamp((pitch - 18) / 12);
           const patA = clamp((30 - pitch) / 12);
           if (patA > 0) {
-            const pat = ctx.createPattern(tile(), 'repeat');
+            // mip-mapped texture: pick the pre-filtered tile closest to the on-screen pitch (no moire)
+            const mp = mipTiles();
+            let lvl = mp[0];
+            for (const m of mp) if (m.size >= pitch) lvl = m;
+            const k = pitch / lvl.size;
+            const pat = ctx.createPattern(lvl.c, 'repeat');
             const [ox, oy] = S(GX - PITCH / 2, GY - PITCH / 2);
-            pat.setTransform(new DOMMatrix([z, 0, 0, z, ox, oy]));
-            ctx.save(); ctx.globalAlpha *= patA; ctx.fillStyle = pat; ctx.fillRect(0, 0, W, H); ctx.restore();
+            const RS = window.RENDER_SCALE || 1;
+            pat.setTransform(new DOMMatrix([k, 0, 0, k, ox, oy]));
+            ctx.save(); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+            ctx.globalAlpha *= patA; ctx.fillStyle = pat; ctx.fillRect(0, 0, W, H);
+            // below ~9px the dials read as a soft tone: dissolve into the tile's average colour
+            const flatA = clamp((9 - pitch) / 5);
+            if (flatA > 0) { ctx.globalAlpha = patA * flatA; ctx.fillStyle = mp.avg; ctx.fillRect(0, 0, W, H); }
+            ctx.restore();
+            void RS;
           }
           if (indA > 0) {
             const wx0 = 540 - 540 / z, wx1 = 540 + 540 / z, wy0 = GY - pivotSY / z, wy1 = GY + (H - pivotSY) / z;
@@ -768,7 +798,16 @@
             }
             ctx.restore();
           }
+          // the field takes on Bub's colour as the silhouette resolves
+          const tintA = clamp((t - 30.35) / 0.9);
+          if (tintA > 0) { ctx.save(); ctx.globalAlpha *= Ease.inOutCubic(tintA) * 0.62; ctx.fillStyle = '#8E9CFF'; ctx.fillRect(0, 0, W, H); ctx.restore(); }
           ctx.restore();
+          const olA = clamp((t - 30.7) / 0.45);
+          if (olA > 0) {
+            const [sx, sy] = S(540, GY + 1500);
+            ctx.save(); ctx.translate(sx, sy); ctx.scale(90 * z, 90 * z); M.botPath(ctx); ctx.restore();
+            ctx.save(); ctx.globalAlpha *= olA; ctx.strokeStyle = C.ink; ctx.lineWidth = 9 * 90 * z; ctx.lineJoin = 'round'; ctx.stroke(); ctx.restore();
+          }
         }
         // Bub emerges from the dial field
         const bubA = clamp((t - 31.25) / 0.5);

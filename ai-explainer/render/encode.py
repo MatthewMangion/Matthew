@@ -13,7 +13,7 @@ FF = imageio_ffmpeg.get_ffmpeg_exe()
 FPS = 60
 MAIN = os.path.join(OUT, 'raising-an-ai_9x16.mp4')
 TEASER = os.path.join(OUT, 'raising-an-ai_teaser-15s.mp4')
-CRF = sys.argv[1] if len(sys.argv) > 1 else '20'
+CRF = sys.argv[1] if len(sys.argv) > 1 else '18'
 
 def run(args):
     print('$ ffmpeg', ' '.join(args[:12]), '...')
