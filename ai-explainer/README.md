@@ -9,6 +9,7 @@ synthesized from scratch in Python and locked to the animation's cue sheet.
 | Main cut (TikTok / Reels / Shorts) | [`out/raising-an-ai_9x16.mp4`](out/raising-an-ai_9x16.mp4) |
 | 15-second cut-down (Stories / ads) | [`out/raising-an-ai_teaser-15s.mp4`](out/raising-an-ai_teaser-15s.mp4) |
 | Cover / thumbnail (9:16 and 3:4 grid crop) | [`out/cover.jpg`](out/cover.jpg), [`out/cover_3x4.jpg`](out/cover_3x4.jpg) |
+| Live showreel page: the piece rendered in real time in the browser, with chapters | [`showreel/index.html`](showreel/index.html) |
 | Storyboard, beat sheet, fact check | [`STORYBOARD.md`](STORYBOARD.md) |
 
 ## The story in one line
@@ -72,6 +73,7 @@ python3 audio/score.py          # synthesize music + sound design -> out/soundtr
 node render/frames.mjs          # 4,860 PNG frames (parallel headless Chromium)
 python3 render/encode.py        # main cut + 15 s teaser (H.264/AAC, BT.709, faststart)
 node render/cover.mjs           # cover / thumbnail
+python3 render/build_showreel.py  # single-file live showreel page (fonts + code inlined)
 ```
 
 To preview live, serve the folder (for example `npx http-server`) and open `index.html`. It plays the
