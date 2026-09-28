@@ -151,7 +151,7 @@
   };
 
   // --------------------------------------------------------------- sun
-  // The Mesura mark as a rising sun: glow + ten light shafts aligned to its points.
+  // The mesura.ai mark as a rising sun: glow + eight light shafts aligned to its points.
   K.sun = (ctx, cx, cy, size, o = {}) => {
     const rot = o.rot || 0, rays = o.rays ?? 1, glow = o.glow ?? 1;
     const color = o.color || P.ochre, blend = o.blend || 'lighter';
@@ -172,9 +172,8 @@
       ctx.save();
       ctx.globalCompositeOperation = blend;
       const L = o.rayLen || 2600;
-      for (let k = 0; k < 10; k++) {
-        const p = M.LOGO_PTS[k * 2];
-        const a0 = Math.atan2(p[1] - 12, p[0] - 12) + rot + (o.rayRot || 0);
+      for (let k = 0; k < 8; k++) {
+        const a0 = (k * TAU) / 8 + rot + (o.rayRot || 0);
         const hw = M.deg((o.rayWidth ?? 2.4) * (0.8 + 0.4 * M.rand(k, 11)));
         const g = ctx.createLinearGradient(cx, cy, cx + Math.cos(a0) * L, cy + Math.sin(a0) * L);
         g.addColorStop(0, M.rgba(color, 0));
@@ -191,7 +190,7 @@
       }
       ctx.restore();
     }
-    if (o.core !== false) M.mark(ctx, cx, cy, size, { color, rot, hole: o.hole ?? 1, morph: o.morph || 0 });
+    if (o.core !== false) M.mark(ctx, cx, cy, size, { color: o.markColor || P.gold, rot });
   };
 
   // Floating dust motes (analytic paths; deterministic)
@@ -701,7 +700,7 @@
     const hp = o.headP ?? 1;
     ctx.save();
     ctx.globalAlpha *= hp;
-    M.lockup(ctx, x + pad, y + 92, 36, { color: P.pine });
+    M.lockup(ctx, x + pad, y + 92, 32, { color: P.logo });
     K.badgeN(ctx, x + w - pad, y + 80, 'Sample report', K.LT, { align: 'right', size: 24 });
     M.label(ctx, 'AI readiness report', x + pad, y + 196, { fam: 'serif', weight: 500, size: 58, color: P.ink, ls: -0.01, upper: false });
     ctx.restore();

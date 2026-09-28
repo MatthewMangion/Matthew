@@ -18,6 +18,7 @@ renders/
   mesura-guess-15.1s-60fps.mp4      mesura-guess-15.1s-30fps.mp4
   mesura-shadow-21.6s-60fps.mp4     mesura-shadow-21.6s-30fps.mp4
   covers/mesura-<reel>-cover.jpg    grid covers, key content inside the 3:4 crop
+  logo/mesura-logo.svg              the logo as vectors (plus a reversed version for dark grounds)
 audio/<reel>.m4a                    the scores on their own
 studio.html                         live preview with safe-zone overlay
 ```
@@ -104,7 +105,7 @@ Written to the brand voice: finding first, plain British English, no exclamation
 
 - **Check the figures.** 29.6%, 15.1% and 21.6% come from the Mesura design-system document, attributed to Eurostat (2025). Confirm them against the source before posting. "Rank 01 / 27" counts the 27 EU member states.
 - **Product screens are illustrative.** The survey questions, the "72 / 100" readiness score, the benchmark of 58, the dimension scores and the dashboard KPIs are mock-ups. They carry a "Sample report" badge where the report appears. Swap in real screens if you'd rather.
-- **Check the URL.** The end cards show `mesura.ai` and "Link in bio". If the address is different, change it in `src/reels/*.js` and re-render.
+- **Put the link in your bio.** The end cards carry the mesura.ai logo and "Link in bio", so the Diagnostic link needs to be in the profile before you post.
 
 ## Specs
 
@@ -121,6 +122,7 @@ Written to the brand voice: finding first, plain British English, no exclamation
 Everything here is code, and nothing is stock or template.
 
 - **Engine** (`src/lib.js`, `src/engine.js`). A deterministic canvas renderer: every frame is a pure function of time, so frames render in parallel and any moment can be scrubbed. Motion blur is real. Each output frame averages 6 to 16 sub-frame samples across a 180° shutter, with more samples during whips and slams.
+- **Logo**. Traced from the mesura.ai artwork into vector paths (`tools/trace_logo.py` → `src/logo.js`). It matches the original to sub-pixel accuracy (alpha IoU 0.993) and uses the artwork's own colours: gold #E1A23C, teal #073D44, and a cream wordmark on dark grounds. The mark only rotates as part of an entrance and always settles at its true orientation.
 - **Typography**. Source Serif 4 is baked into static optical-size-60 instances so display type uses the high-contrast display cut. Inter and JetBrains Mono carry labels and data. Glyph positions come from kerned prefix measurement, and words rise through masks.
 - **Kit** (`src/kit.js`). Brand components drawn from the design system: odometer and slot counters with independent digit columns, a gauge ring, dimension lines and rulers, the waffle chart, a sundial-style shadow terminator with a rim light, the Mesura mark as a rising sun, a dashboard, survey and report screens, a strip-based 3D perspective projector for the card flips, and container-transform buttons.
 - **Reels** (`src/reels/*.js`). The choreography, authored in beats so every cut lands on the music. The flagship runs 60 beats in 29.6 s (≈ 121.6 BPM).
@@ -129,7 +131,7 @@ Everything here is code, and nothing is stock or template.
 
 ### Rebuild
 
-Requirements: Node 18+ with Playwright (Chromium), Python 3 with `numpy scipy pillow imageio-ffmpeg`.
+Requirements: Node 18+ with Playwright (Chromium), Python 3 with `numpy scipy pillow imageio-ffmpeg` (and `potracer` to re-trace the logo).
 
 ```bash
 tools/build.sh flagship    # cues → score → 60 fps + 30 fps masters → cover

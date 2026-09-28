@@ -443,7 +443,7 @@
       ctx.fillStyle = fl;
       ctx.fillRect(GLINT.x - 520 * gp, GLINT.y - 2.5 * (0.5 + gp), 1040 * gp, 5 * (0.5 + gp));
       ctx.restore();
-      M.mark(ctx, GLINT.x, GLINT.y, s * 1.6, { color: '#FFE2A8', rot: b * 0.3, alpha: clamp(gp * 3) });
+      M.mark(ctx, GLINT.x, GLINT.y, s * 1.6, { color: '#FFE2A8', rot: -1.2 + (b - 32) * 0.3, alpha: clamp(gp * 3) });
     }
     hiddenActivityTop(ctx, b);
   }
@@ -475,22 +475,20 @@
   // =====================================================================
   // SUNRISE · b32–36
   // =====================================================================
-  const LOCK = { size: 150, y: 900 };
+  // logo sizes are mark heights; the full lockup is ~6.8× as wide
+  const LOCK = { size: 118, y: 912 };
+  const HDR = 34;
 
-  function lockGeom(ctx) {
-    const L = M.layoutLine(ctx, 'mesura', 'serif', 600, LOCK.size, -0.01);
-    const markSize = LOCK.size, gap = LOCK.size * 0.36;
-    const total = markSize + gap + L.width;
-    const x0 = 540 - total / 2;
-    const mt = M.fontMetrics(ctx, 'serif', 600, LOCK.size);
-    return { markX: x0 + markSize / 2, markY: LOCK.y - mt.xh / 2, markSize, x0 };
+  function lockGeom() {
+    const g = M.lockupGeom(LOCK.size, 540, LOCK.y, 'center');
+    return { markX: g.markCx, markY: g.markCy, markSize: LOCK.size, x0: g.x0, g };
   }
 
   function sunrise(ctx, b) {
     const rise = tw(b, 32.0, 1.5, E.glide);
     const flood = tw(b, 32.1, 1.5, E.inOutCubic);
     const toLock = tw(b, 33.25, 1.1, E.snap);
-    const Lg = lockGeom(ctx);
+    const Lg = lockGeom();
     const sunX = lerp(GLINT.x, 540, rise), sunY0 = lerp(GLINT.y, 860, rise);
     const sunS0 = lerp(110, 430, rise);
     const sx = lerp(sunX, Lg.markX, toLock), sy = lerp(sunY0, Lg.markY, toLock), ss = lerp(sunS0, Lg.markSize, toLock);
@@ -530,29 +528,15 @@
     ctx.save();
     ctx.translate(0, -tw(b, 35.35, 0.65, E.inExpo) * 0);
     const exit = tw(b, 36.4, 0.6, E.snap);
-    // lockup → header position
-    const hx = lerp(0, 1, exit);
-    const Lg = lockGeom(ctx);
+    // the lockup shrinks into the product header
+    const Lg = lockGeom();
     ctx.save();
-    const hs = lerp(1, 40 / LOCK.size, hx);
-    const hdx = lerp(Lg.x0, X0, hx), hdy = lerp(LOCK.y, 262, hx);
-    ctx.translate(hdx, hdy);
+    const hs = lerp(1, HDR / LOCK.size, exit);
+    ctx.translate(lerp(Lg.x0, X0, exit), lerp(LOCK.y, 262, exit));
     ctx.scale(hs, hs);
     ctx.translate(-Lg.x0, -LOCK.y);
-    M.mark(ctx, sx, sy, ss, { color: P.ochre, rot });
-    const wr = tw(b, 33.9, 1.0, E.outExpo);
-    if (wr > 0) {
-      ctx.save();
-      ctx.beginPath();
-      const tx = Lg.x0 + Lg.markSize + LOCK.size * 0.36;
-      ctx.rect(tx - 10, LOCK.y - LOCK.size, 700 * wr, LOCK.size * 1.6);
-      ctx.clip();
-      ctx.font = M.font('serif', 600, LOCK.size);
-      ctx.letterSpacing = -0.01 * LOCK.size + 'px';
-      ctx.fillStyle = P.pine;
-      ctx.fillText('mesura', tx - (1 - wr) * 90, LOCK.y);
-      ctx.restore();
-    }
+    M.mark(ctx, sx, sy, ss, { color: P.gold, rot });
+    M.wordmark(ctx, Lg.g.textX, LOCK.y, Lg.g.xh, { color: P.logo, reveal: tw(b, 33.9, 1.0, E.outExpo), slide: 70 });
     ctx.restore();
     M.text(ctx, { lines: ["Measure your organisation's", 'AI readiness.'], size: 66, lh: 1.12, x: 540, y: 1040, align: 'center', anchor: 'top' },
       { t: b, color: P.inkBody, in: { at: 34.05, dur: 0.9, stagger: 0.05, style: 'rise' }, out: { at: 36.35, dur: 0.45, stagger: 0.02, style: 'rise' } });
@@ -579,7 +563,7 @@
     if (alpha <= 0) return;
     ctx.save();
     ctx.globalAlpha *= alpha;
-    M.lockup(ctx, X0, 262, 40, { color: P.pine, rot: (b - 37) * 0.08 });
+    M.lockup(ctx, X0, 262, HDR, { color: P.logo });
     ctx.restore();
   }
 
@@ -748,11 +732,10 @@
     // lockup, with a quiet sunburst behind the mark (echo of the sunrise)
     const lk = tw(b, 52.9, 1.0, E.outExpo);
     if (lk > 0) {
-      const lrot = b * 0.12 + (1 - lk) * -1.5;
-      const Lw = M.layoutLine(ctx, 'mesura', 'serif', 600, 78, -0.01).width;
-      const mx = 540 - (78 + 78 * 0.36 + Lw) / 2 + 39, my = 380 - M.fontMetrics(ctx, 'serif', 600, 78).xh / 2;
-      K.sun(ctx, mx, my, 78, { rot: lrot, rays: 0.42 * lk, glow: 0.3 * lk, color: P.ochre, blend: 'source-over', core: false, rayLen: 1700, rayWidth: 3.6 });
-      M.lockup(ctx, 540, 380, 78, { align: 'center', color: P.pine, reveal: lk, rot: lrot, markAlpha: clamp(lk * 2) });
+      const lrot = (1 - lk) * -1.5; // settles to the mark's true orientation
+      const lg = M.lockupGeom(78, 540, 380, 'center');
+      K.sun(ctx, lg.markCx, lg.markCy, 78, { rot: lrot, rays: 0.42 * lk, glow: 0.3 * lk, rayRot: b * 0.04, color: P.ochre, blend: 'source-over', core: false, rayLen: 1700, rayWidth: 3.6 });
+      M.lockup(ctx, 540, 380, 78, { align: 'center', color: P.logo, markColor: P.gold, reveal: lk, rot: lrot, markAlpha: clamp(lk * 2) });
     }
     M.text(ctx, { lines: ['Start with a', 'Diagnostic.'], size: 150, lh: 0.98, x: 540, y: 520, align: 'center', anchor: 'top' },
       { t: b, color: P.ink, in: { at: 52.55, dur: 1.0, stagger: 0.08, style: 'rise' } });
@@ -767,9 +750,8 @@
     const tapP = tw(b, 53.7, 0.5, E.outCubic) * (1 - tw(b, 55.2, 0.5, E.outCubic));
     K.tap(ctx, lerp(900, BTN.cx + 120, tw(b, 53.7, 0.6, E.outCubic)), lerp(1400, BTN.cy + 10, tw(b, 53.7, 0.6, E.outCubic)), { p: tapP, press, ripple: M.prog(b, 54.35, 55.2), rippleColor: P.onPine });
     // url
-    const ty = tw(b, 54.7, 0.9, E.linear);
-    M.typewrite(ctx, 'mesura.ai', 540, 1262, ty, { fam: 'mono', weight: 500, size: 50, color: P.ink, ls: 0.02, t: b * B, align: 'center', cursor: b < 57.5 });
-    M.label(ctx, 'Link in bio', 540, 1330, { weight: 500, size: 30, color: P.inkMuted, ls: 0.02, align: 'center', upper: false, alpha: tw(b, 55.6, 0.8, E.outCubic) });
+    const lb = tw(b, 54.8, 0.8, E.outExpo);
+    M.label(ctx, 'Link in bio', 540, 1268 + (1 - lb) * 24, { weight: 500, size: 38, color: P.inkMuted, ls: 0.01, align: 'center', upper: false, alpha: lb });
     ctx.restore();
   }
   cue(51.9, 'morph', { dur: 1.15 * B, gain: 0.8 });
@@ -777,7 +759,7 @@
   cue(52.9, 'chime', { gain: 0.7, pitch: 1.5 });
   cue(54.3, 'tap', { gain: 1 });
   cue(54.35, 'confirm', { gain: 0.9 });
-  cue(54.7, 'type', { n: 9, dur: 0.9 * B });
+  cue(54.8, 'swipe', { dur: 0.35, gain: 0.3 });
   cue(59.1, 'riser', { dur: 0.9 * B, gain: 0.8 });
   cue(59.4, 'whoosh', { dur: 0.6, dir: 'up', gain: 0.7 });
 
@@ -822,7 +804,7 @@
     K.rankRow(ctx, X0 + 7, rowY, XR - X0 - 14, 27, { t: 99, at: 0, stagger: 0, h: 62, heroH: 190, lw: 7, heroW: 14, color: M.rgba(P.ink, 0.26), hero: P.ochre });
     M.label(ctx, 'Rank 01 / 27', X0, rowY + 64, { fam: 'mono', weight: 500, size: 28, color: P.ink, ls: 0.04 });
     M.text(ctx, { lines: ['…at something most organisations', "don't measure."], fam: 'sans', weight: 500, size: 46, lh: 1.3, x: X0, y: 1340, anchor: 'top' }, { t: 1, color: P.inkBody, in: { style: 'none' } });
-    M.lockup(ctx, 540, 1590, 58, { align: 'center', color: P.pine });
+    M.lockup(ctx, 540, 1590, 60, { align: 'center', color: P.logo, markColor: P.gold });
   }
 
   R.define('flagship', { title: 'Flagship · 29.6s', duration: DUR, beats: BEATS, draw, blur, post, cues, cover, music: 'flagship' });

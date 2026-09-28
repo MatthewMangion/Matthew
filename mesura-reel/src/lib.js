@@ -134,6 +134,7 @@
     pine: '#1D4A43', pineHover: '#163B35', pineActive: '#102C28', pineSoft: '#DCE5DF', onPine: '#F6F2E9',
     ochre: '#D19C3F', ochreHover: '#BC8A33', ochreSoft: '#F3E6C9', onOchre: '#3B2E12',
     positive: '#2E7D5B', caution: '#B07C2A', negative: '#A94436', info: '#3D6B8E',
+    gold: '#E1A23C', logo: '#073D44', // logo artwork colours
   };
   M.D = {
     paper: '#15211D', paperSunken: '#101A17', surface: '#1D2C27', border: '#2B3D37', borderStrong: '#3A4F48',
@@ -506,93 +507,79 @@
   };
   M.pill = (ctx, x, y, w, h) => M.rrect(ctx, x, y, w, h, h / 2);
 
-  // Mesura mark: 20-vertex rosette (from the brand SVG, 24×24 box, centre 12,12)
-  M.LOGO_PTS = [
-    [12, 2], [13.8, 5.6], [18, 4.2], [16.6, 8], [20.4, 10], [17, 12], [20.4, 14], [16.6, 16], [18, 19.8], [13.8, 18.4],
-    [12, 22], [10.2, 18.4], [6, 19.8], [7.4, 16], [3.6, 14], [7, 12], [3.6, 10], [7.4, 8], [6, 4.2], [10.2, 5.6],
-  ];
-  // Dense resample of the outline (for smooth morphs)
-  const SUB = 10;
-  M.LOGO_DENSE = (() => {
-    const out = [];
-    const P = M.LOGO_PTS;
-    for (let i = 0; i < P.length; i++) {
-      const a = P[i], b = P[(i + 1) % P.length];
-      for (let s = 0; s < SUB; s++) {
-        const t = s / SUB;
-        out.push([lerp(a[0], b[0], t) - 12, lerp(a[1], b[1], t) - 12]);
-      }
+  // ------------------------------------------------------------- logo
+  // The mesura.ai logo, traced from the brand artwork (src/logo.js, tools/trace_logo.py).
+  // Geometry stays in artwork pixels; these helpers scale it. Brand colours: gold mark, teal wordmark.
+  let logoPaths = null;
+  const paths = () => {
+    if (!logoPaths) {
+      const L = M.LOGO;
+      logoPaths = { mark: new Path2D(L.mark.d), glyphs: L.glyphs.map((g) => new Path2D(g.d)) };
     }
-    return out;
-  })();
-  // Draws the mark. size = rendered width of the 24-unit box.
-  // o: {rot (rad), color, morph (0 star → 1 circle), circleR (units), hole (0..1 hole scale), holeR (units),
-  //     spin, stroke, lineWidth, alpha, rays}
+    return logoPaths;
+  };
+  const markH = () => M.LOGO.mark.bbox[3] - M.LOGO.mark.bbox[1];
+
+  // The mark (8-point gauge badge). size = point-to-point height in px, centred on (cx, cy).
+  // o: {color, rot (rad), alpha}
   M.mark = (ctx, cx, cy, size, o = {}) => {
-    const s = size / 24;
-    const morph = o.morph || 0;
-    const cr = o.circleR ?? 8.2;
+    const L = M.LOGO;
+    const s = size / markH();
     ctx.save();
     ctx.translate(cx, cy);
-    ctx.rotate(o.rot || 0);
+    if (o.rot) ctx.rotate(o.rot);
     ctx.scale(s, s);
-    ctx.beginPath();
-    const D = M.LOGO_DENSE;
-    for (let i = 0; i < D.length; i++) {
-      let [x, y] = D[i];
-      if (morph > 0) {
-        const ang = Math.atan2(y, x);
-        const tx = Math.cos(ang) * cr, ty = Math.sin(ang) * cr;
-        x = lerp(x, tx, morph);
-        y = lerp(y, ty, morph);
-      }
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    const holeR = (o.holeR ?? 3.4) * (o.hole ?? 1);
-    if (holeR > 0.01) {
-      ctx.moveTo(holeR, 0);
-      ctx.arc(0, 0, holeR, 0, TAU, true);
-    }
+    ctx.translate(-L.mark.cx, -L.mark.cy);
     ctx.globalAlpha *= o.alpha ?? 1;
-    if (o.stroke) {
-      ctx.lineWidth = (o.lineWidth || 2) / s;
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = o.stroke;
-      ctx.stroke();
-    }
-    if (o.color) {
-      ctx.fillStyle = o.color;
-      ctx.fill('evenodd');
-    }
+    ctx.fillStyle = o.color || L.colors.gold;
+    ctx.fill(paths().mark);
     ctx.restore();
   };
 
-  // Logo lockup: mark + "mesura" wordmark. size = cap-ish scale (wordmark font size).
-  // reveal: 0..1 wordmark wipe; markP: mark scale-in progress
-  M.lockup = (ctx, x, y, size, o = {}) => {
-    const markSize = size * 1.0;
-    const gap = size * 0.36;
-    const L = M.layoutLine(ctx, 'mesura', 'serif', 600, size, -0.01);
-    const total = markSize + gap + L.width;
-    const x0 = o.align === 'center' ? x - total / 2 : x;
-    const mt = M.fontMetrics(ctx, 'serif', 600, size);
-    const midY = y - mt.xh / 2; // optical middle on x-height
-    M.mark(ctx, x0 + markSize / 2, midY, markSize, { color: o.markColor || M.P.ochre, rot: o.rot || 0, morph: o.morph || 0, hole: o.hole ?? 1, alpha: o.markAlpha ?? 1 });
+  // The "mesura.ai" wordmark. (x, y) = left edge and baseline; xh = x-height in px.
+  // o: {color, reveal (0..1 left-to-right wipe), slide (px the type travels in with the wipe), alpha}
+  M.wordmark = (ctx, x, y, xh, o = {}) => {
+    const L = M.LOGO;
+    const s = xh / (L.baseline - L.xTop);
     const rv = o.reveal ?? 1;
-    if (rv > 0) {
-      ctx.save();
+    if (rv <= 0) return;
+    ctx.save();
+    ctx.globalAlpha *= o.alpha ?? 1;
+    if (rv < 1) {
       ctx.beginPath();
-      ctx.rect(x0 + markSize + gap - 10, y - size, (L.width + 20) * rv, size * 1.6);
+      ctx.rect(x - 4, y - (L.baseline - L.word[1] + 20) * s, ((L.word[2] - L.word[0]) * s + 8) * rv, (L.word[3] - L.word[1] + 40) * s);
       ctx.clip();
-      ctx.font = M.font('serif', 600, size);
-      ctx.letterSpacing = -0.01 * size + 'px';
-      ctx.fillStyle = o.color || M.P.pine;
-      const slide = (1 - E.outExpo(rv)) * -size * 0.5;
-      ctx.fillText('mesura', x0 + markSize + gap + slide, y);
-      ctx.restore();
     }
-    return { x0, total, markCx: x0 + markSize / 2, markCy: midY, markSize, textX: x0 + markSize + gap, width: L.width };
+    const slide = (1 - E.outExpo(rv)) * -(o.slide ?? 0);
+    ctx.translate(x + slide, y);
+    ctx.scale(s, s);
+    ctx.translate(-L.word[0], -L.baseline);
+    ctx.fillStyle = o.color || L.colors.teal;
+    for (const p of paths().glyphs) ctx.fill(p, 'evenodd');
+    ctx.restore();
+  };
+
+  // Lockup geometry from the artwork's own proportions. size = mark height; y = wordmark baseline.
+  M.lockupGeom = (size, x, y, align = 'left') => {
+    const L = M.LOGO;
+    const s = size / markH();
+    const left = L.mark.bbox[0];
+    const total = (L.word[2] - left) * s;
+    const x0 = align === 'center' ? x - total / 2 : align === 'right' ? x - total : x;
+    return {
+      s, total, x0, y, size,
+      markCx: x0 + (L.mark.cx - left) * s, markCy: y - (L.baseline - L.mark.cy) * s,
+      textX: x0 + (L.word[0] - left) * s, xh: (L.baseline - L.xTop) * s,
+      top: y - (L.baseline - Math.min(L.mark.bbox[1], L.word[1])) * s,
+    };
+  };
+
+  // Full logo. o: {align, color (wordmark), markColor, rot, markAlpha, reveal, slide}
+  M.lockup = (ctx, x, y, size, o = {}) => {
+    const g = M.lockupGeom(size, x, y, o.align);
+    M.mark(ctx, g.markCx, g.markCy, size, { color: o.markColor, rot: o.rot || 0, alpha: o.markAlpha ?? 1 });
+    M.wordmark(ctx, g.textX, y, g.xh, { color: o.color, reveal: o.reveal ?? 1, slide: o.slide ?? size * 0.6 });
+    return g;
   };
 
   // Dimension line (technical-drawing style): end ticks + arrowheads, draws from centre outwards with p

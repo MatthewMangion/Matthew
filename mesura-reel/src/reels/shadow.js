@@ -148,7 +148,7 @@
       t: b, color: D.ink, in: { at: 16.2, dur: 0.9, stagger: 0.08, style: 'rise' }, out: { at: 19.55, dur: 0.45, stagger: 0.03, style: 'rise' },
       hl: { p: tw(b, 16.95, 0.8, E.outExpo) * (1 - tw(b, 19.35, 0.35, E.inExpo)), color: D.ochre, text: D.paperSunken, top: 0.98, h: 1.2, padX: 14, r: 10 },
     });
-    K.glint(ctx, GLINT.x, GLINT.y, tw(b, 17.6, 2.4, E.inQuad), b * 0.3);
+    K.glint(ctx, GLINT.x, GLINT.y, tw(b, 17.6, 2.4, E.inQuad), -1.2 + (b - 20) * 0.3);
     K.activity(ctx, { t: b * B, n: 150, top: true, pull: (i) => tw(b, 17.4 + M.rand(i, 67) * 1.1, 1.6, E.inCubic), to: GLINT });
   }
   cue(7.7, 'whoosh', { dur: 0.5, dir: 'down', gain: 0.4 });
@@ -162,13 +162,8 @@
   cue(18.0, 'riser', { dur: 2.0 * B, gain: 1 });
 
   // ----------------------------------------------------------------- sunrise → measured → CTA (b20–40)
-  const LOCK = { size: 150, y: 900 };
-  function lockGeom(ctx, size, y, cx = 540) {
-    const L = M.layoutLine(ctx, 'mesura', 'serif', 600, size, -0.01);
-    const total = size + size * 0.36 + L.width;
-    const x0 = cx - total / 2;
-    return { markX: x0 + size / 2, markY: y - M.fontMetrics(ctx, 'serif', 600, size).xh / 2, x0, total };
-  }
+  // logo sizes are mark heights; the full lockup is ~6.8× as wide
+  const LOCK = { size: 118, y: 912 };
   function finale(ctx, b) {
     const rise = tw(b, 20.0, 1.4, E.glide);
     const flood = tw(b, 20.1, 1.4, E.inOutCubic);
@@ -176,19 +171,18 @@
     const toHead = tw(b, 23.7, 0.7, E.snap);   // lockup → small header
     const toCta = tw(b, 28.6, 0.8, E.snap);    // header → centred CTA lockup
     const loop = tw(b, 39.25, 0.75, E.inExpo);
-    // lockup geometry through its three states
-    const big = lockGeom(ctx, LOCK.size, LOCK.y);
-    const hdrSize = 40, ctaSize = 78;
-    const hdr = { x0: X0, markX: X0 + hdrSize / 2, markY: 262 - M.fontMetrics(ctx, 'serif', 600, hdrSize).xh / 2 };
-    const ctaG = lockGeom(ctx, ctaSize, 380);
+    // lockup geometry through its three states: sunrise (centred) → header (left) → CTA (centred)
+    const hdrSize = 34, ctaSize = 78;
+    const big = M.lockupGeom(LOCK.size, 540, LOCK.y, 'center');
+    const ctaG = M.lockupGeom(ctaSize, 540, 380, 'center');
     const size = toCta > 0 ? lerp(hdrSize, ctaSize, toCta) : lerp(LOCK.size, hdrSize, toHead);
     const ly = toCta > 0 ? lerp(262, 380, toCta) : lerp(LOCK.y, 262, toHead);
-    const lx0 = toCta > 0 ? lerp(hdr.x0, ctaG.x0, toCta) : lerp(big.x0, hdr.x0, toHead);
-    const mtx = M.fontMetrics(ctx, 'serif', 600, size);
-    const markX = lx0 + size / 2, markY = ly - mtx.xh / 2;
+    const lx0 = toCta > 0 ? lerp(X0, ctaG.x0, toCta) : lerp(big.x0, X0, toHead);
+    const lg = M.lockupGeom(size, lx0, ly, 'left');
+    const markX = lg.markCx, markY = lg.markCy;
     const sunX = lerp(GLINT.x, 540, rise), sunY = lerp(GLINT.y, 860, rise), sunS = lerp(110, 420, rise);
     const sx = lerp(sunX, markX, toLock), sy = lerp(sunY, markY, toLock), ss = lerp(sunS, size, toLock);
-    const rot = lerp(-1.2, 0, E.outCubic(M.prog(b, 20.0, 22.0))) + (b - 28.6) * 0.1 * toCta;
+    const rot = lerp(-1.2, 0, E.outCubic(M.prog(b, 20.0, 22.0)));
     const [kx, ky] = shakeAt(b);
     K.bg(ctx, D.paperSunken);
     ctx.save();
@@ -202,20 +196,8 @@
       x.translate(0, -loop * 1500);
       const fade = 1 - tw(b, 21.8, 1.8, E.inOutCubic);
       K.sun(x, sx, sy, ss, { rot, rays: 0.55 * fade + 0.42 * toCta, glow: 0.4 * fade + 0.3 * toCta, rayRot: b * 0.05, color: P.ochre, blend: 'source-over', core: false, rayWidth: 3.4, rayLen: 1800 });
-      M.mark(x, sx, sy, ss, { color: P.ochre, rot });
-      const wr = tw(b, 21.7, 0.9, E.outExpo);
-      if (wr > 0) {
-        x.save();
-        const tx = lx0 + size + size * 0.36;
-        x.beginPath();
-        x.rect(tx - 10, ly - size, 760 * wr, size * 1.6);
-        x.clip();
-        x.font = M.font('serif', 600, size);
-        x.letterSpacing = -0.01 * size + 'px';
-        x.fillStyle = P.pine;
-        x.fillText('mesura', tx - (1 - wr) * 90, ly);
-        x.restore();
-      }
+      M.mark(x, sx, sy, ss, { color: P.gold, rot });
+      M.wordmark(x, lg.textX, ly, lg.xh, { color: P.logo, reveal: tw(b, 21.7, 0.9, E.outExpo), slide: 70 });
       M.text(x, { lines: ["Measure your organisation's", 'AI readiness.'], size: 66, lh: 1.12, x: 540, y: 1040, align: 'center', anchor: 'top' },
         { t: b, color: P.inkBody, in: { at: 22.0, dur: 0.8, stagger: 0.045, style: 'rise' }, out: { at: 23.6, dur: 0.4, stagger: 0.02, style: 'rise' } });
       // measured dashboard
@@ -251,8 +233,8 @@
         x.restore();
       }
       K.tap(x, lerp(900, 660, tw(b, 30.4, 0.5, E.outCubic)), lerp(1400, 1070, tw(b, 30.4, 0.5, E.outCubic)), { p: tw(b, 30.4, 0.4, E.outCubic) * (1 - tw(b, 31.7, 0.4, E.outCubic)), press, ripple: M.prog(b, 31.05, 31.8), rippleColor: P.onPine });
-      M.typewrite(x, 'mesura.ai', 540, 1262, tw(b, 30.0, 0.8, E.linear), { fam: 'mono', weight: 500, size: 50, color: P.ink, ls: 0.02, t: b * B, align: 'center', cursor: b < 36 });
-      M.label(x, 'Link in bio', 540, 1330, { weight: 500, size: 30, color: P.inkMuted, ls: 0.02, align: 'center', upper: false, alpha: tw(b, 30.6, 0.6, E.outCubic) });
+      const lb = tw(b, 30.1, 0.7, E.outExpo);
+      M.label(x, 'Link in bio', 540, 1268 + (1 - lb) * 24, { weight: 500, size: 38, color: P.inkMuted, ls: 0.01, align: 'center', upper: false, alpha: lb });
       x.restore();
     };
     if (flood >= 1) light(ctx);
@@ -284,7 +266,7 @@
   cue(28.5, 'whoosh', { dur: 0.5, dir: 'down', gain: 0.45 });
   cue(28.9, 'swipe', { dur: 0.45, gain: 0.4 });
   cue(29.4, 'pop', { gain: 0.7 });
-  cue(30.0, 'type', { n: 9, dur: 0.8 * B });
+  cue(30.1, 'swipe', { dur: 0.35, gain: 0.3 });
   cue(31.0, 'tap', { gain: 1 });
   cue(31.05, 'confirm', { gain: 0.7 });
   cue(32.75, 'swipe', { dur: 0.45, gain: 0.35 });
@@ -320,7 +302,7 @@
     K.dashboard(ctx, DASH.x, 700, DASH.w, DASH.h, { T: K.DK, t: 0, ring: 1 });
     ctx.restore();
     M.vignette(ctx, 0.35, D.paperSunken, 0.5);
-    M.lockup(ctx, 540, 1590, 58, { align: 'center', color: D.ink, markColor: D.ochre });
+    M.lockup(ctx, 540, 1590, 60, { align: 'center', color: D.ink, markColor: P.gold });
   }
 
   R.define('shadow', { title: 'Shadow AI · 21.6s', duration: DUR, beats: BEATS, draw, blur, post, cues, cover, music: 'shadow' });
