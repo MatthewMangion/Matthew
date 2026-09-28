@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build the live showreel page: the same engine + scenes, inlined, playing in real time with the soundtrack.
 
-Writes showreel/index.html (+ showreel/soundtrack.m4a). The page is published as a private Artifact.
+Writes showreel/index.html (+ showreel/soundtrack.mp3). The page is published as a private Artifact.
 """
 import json, os, subprocess
 import imageio_ffmpeg
@@ -13,7 +13,7 @@ read = lambda p: open(os.path.join(ROOT, p), encoding='utf-8').read()
 cues = json.load(open(os.path.join(ROOT, 'out', 'cues.json')))
 
 subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), '-hide_banner', '-loglevel', 'error', '-y', '-i', os.path.join(ROOT, 'out', 'soundtrack_raw.wav'),
-                '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', os.path.join(DST, 'soundtrack.m4a')], check=True)
+                '-c:a', 'libmp3lame', '-b:a', '192k', os.path.join(DST, 'soundtrack.mp3')], check=True)
 
 CHAPTERS = [
     (0, 'Hook', 'Go brush your ▮', 'Kinetic slam, confetti burst, dot-zoom match cut'),
@@ -180,7 +180,7 @@ __COVER__
   const chaps = [...document.querySelectorAll('.chap')];
   const audio = new Audio(); audio.preload = 'auto';
   let audioOk = false;
-  fetch('soundtrack.m4a').then((r) => (r.ok ? r.blob() : Promise.reject())).then((b) => { audio.src = URL.createObjectURL(b); audioOk = true; }).catch(() => {});
+  fetch('soundtrack.mp3').then((r) => (r.ok ? r.blob() : Promise.reject())).then((b) => { audio.src = URL.createObjectURL(b); audioOk = true; }).catch(() => {});
   let playing = false, started = false, cur = 0, wall = 0, dirty = true;
   const fmt = (t) => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
   const now = () => {
@@ -245,4 +245,4 @@ html = (PAGE.replace('__FONTS__', FONTS).replace('__ENGINE__', read('src/engine.
         .replace('__DUR__', str(cues['duration'])).replace('__CUES__', str(len(cues['cues']))))
 open(os.path.join(DST, 'index.html'), 'w', encoding='utf-8').write(html)
 print('showreel ->', os.path.join(DST, 'index.html'), f'{len(html) / 1024:.0f} KB;',
-      'audio', f"{os.path.getsize(os.path.join(DST, 'soundtrack.m4a')) / 1e6:.2f} MB")
+      'audio', f"{os.path.getsize(os.path.join(DST, 'soundtrack.mp3')) / 1e6:.2f} MB")
