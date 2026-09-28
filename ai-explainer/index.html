@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raising an AI</title>
+<style>
+  @font-face { font-family: 'Inter Tight'; src: url(fonts/InterTight-Var.woff2) format('woff2'); font-weight: 400 900; font-style: normal; }
+  @font-face { font-family: 'Inter Tight'; src: url(fonts/InterTight-Italic-Var.woff2) format('woff2'); font-weight: 400 900; font-style: italic; }
+  @font-face { font-family: 'Instrument Serif'; src: url(fonts/InstrumentSerif-Regular.woff2) format('woff2'); font-style: normal; }
+  @font-face { font-family: 'Instrument Serif'; src: url(fonts/InstrumentSerif-Italic.woff2) format('woff2'); font-style: italic; }
+  @font-face { font-family: 'JetBrains Mono'; src: url(fonts/JetBrainsMono-Var.woff2) format('woff2'); font-weight: 400 800; }
+  @font-face { font-family: 'Caveat'; src: url(fonts/Caveat-Var.woff2) format('woff2'); font-weight: 400 700; }
+  html, body { margin: 0; background: #0b0a09; color: #F4EDE1; font-family: 'Inter Tight', system-ui, sans-serif; }
+  body.render canvas { display: block; }
+  body.preview { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 16px; box-sizing: border-box; }
+  body.preview canvas { height: min(82vh, 1920px); width: auto; max-width: 100%; aspect-ratio: 9 / 16; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,.5); background: #000; }
+  .bar { display: none; width: min(460px, 100%); align-items: center; gap: 12px; }
+  body.preview .bar { display: flex; }
+  .bar button { background: #F4EDE1; color: #15120F; border: 0; border-radius: 999px; font: 700 14px 'Inter Tight', sans-serif; padding: 10px 16px; cursor: pointer; }
+  .bar input { flex: 1; accent-color: #FF4D2E; }
+  .bar span { font: 500 13px 'JetBrains Mono', monospace; opacity: .7; min-width: 64px; text-align: right; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<div class="bar"><button id="play">Play</button><input id="scrub" type="range" min="0" max="1" step="0.0005" value="0"><span id="time">0.00</span></div>
+<audio id="music" preload="auto"></audio>
+<script src="src/engine.js"></script>
+<script src="src/scenes.js"></script>
+<script src="src/main.js"></script>
+<script src="src/cover.js"></script>
+</body>
+</html>

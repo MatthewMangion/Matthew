@@ -1,0 +1,16 @@
+{
+  "name": "raising-an-ai",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Motion graphics explainer: how modern AI (LLMs) works, explained for parents. Rendered frame-by-frame from canvas.",
+  "type": "module",
+  "scripts": {
+    "stills": "node render/stills.mjs",
+    "frames": "node render/frames.mjs",
+    "audio": "python3 audio/score.py",
+    "build": "node render/frames.mjs && python3 audio/score.py && python3 render/encode.py"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}
