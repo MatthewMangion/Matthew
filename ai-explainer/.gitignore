@@ -4,3 +4,4 @@ out/stills/
 out/*.wav
 out/*.png
 out/*.log
+out/*_preview-*.mp4
