@@ -1026,7 +1026,7 @@
         ctx.restore();
         // type
         drawText(ctx, LM(), 540, 330, { T: t, at: 33.05, anim: 'rise', stagger: 0.07, out: { at: 35.75, dur: 0.3 }, decoAt: 33.7 });
-        drawText(ctx, LSIM(), 540, 330, { T: t, at: 36.05, anim: 'rise', stagger: 0.06, out: { at: 38.3, anim: 'fadeOut', dur: 0.25 } });
+        drawText(ctx, LSIM(), 540, 330, { T: t, at: 36.05, anim: 'rise', stagger: 0.06, out: { at: 37.3, dur: 0.3 } });
         // flash into the next scene
         const fl = clamp((t - 38.8) / 0.12) * (1 - clamp((t - 38.95) / 0.1));
         if (fl > 0) { ctx.fillStyle = alpha(C.cream, 0.85 * fl); ctx.fillRect(0, 0, W, H); }
