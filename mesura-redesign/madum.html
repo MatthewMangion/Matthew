@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en-MT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mesura · Madum</title>
+<meta name="description" content="Mesura homepage prototype, route B: every AI readiness result drawn as a Maltese cement tile.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  /* Layout: a tile-maker's pattern book. Wide white margins, one plate per spread, book-serif display; the tiles are the only saturated objects on the page. Single light theme by choice: the tiles are printed matter. */
+  --paper:#FAFAF7;
+  --paper-2:#F1F0EA;
+  --ink:#1B1C27;
+  --ink-2:#474959;
+  --ink-3:#5E6070;
+  --line:#DDDBD2;
+  --grout:#CFCAC0;
+  --bone:#F1EADB;
+  --cobalt:#253E8F;
+  --cobalt-2:#1B2F70;
+  --oxblood:#8E2A1E;
+  --ochre:#D29A2B;
+  --sage:#5B7F69;
+  --char:#23232B;
+  --f-display:"Bodoni Moda","Bodoni 72",Didot,Georgia,serif;
+  --f-sans:"Hanken Grotesk","Helvetica Neue",Arial,sans-serif;
+  --measure:1280px;
+  --gutter:clamp(16px,4.5vw,56px);
+  color-scheme:light;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:84px;background:var(--paper)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-sans);font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px)}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--measure);margin-inline:auto;padding-inline:var(--gutter)}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0}
+.tile{display:block;width:100%;height:auto;aspect-ratio:1;shape-rendering:geometricPrecision}
+
+/* type */
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2)}
+.eyebrow .dot{display:inline-block;width:6px;height:6px;margin:0 10px 2px;background:var(--oxblood);transform:rotate(45deg)}
+.disp{font-family:var(--f-display);font-weight:500;letter-spacing:-.015em;font-variant-numeric:lining-nums}
+.disp em{font-style:italic;font-weight:500;color:var(--cobalt)}
+.h1{font-size:clamp(44px,6.1vw,90px);line-height:.98}
+.h2{font-size:clamp(34px,4.6vw,64px);line-height:1.02}
+.h3{font-family:var(--f-display);font-size:26px;line-height:1.15;font-weight:600}
+.lede{font-size:clamp(18px,1.55vw,20px);line-height:1.6;color:var(--ink-2);max-width:32em}
+.body{color:var(--ink-2);max-width:34em}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;min-height:52px;padding:0 28px;border-radius:999px;border:1.5px solid transparent;font-family:var(--f-sans);font-size:16px;font-weight:650;letter-spacing:.005em;text-decoration:none;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s,transform .2s}
+.btn .arr{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.btn:hover .arr{transform:translateX(4px)}
+.btn-pri{background:var(--cobalt);color:#fff}
+.btn-pri:hover{background:var(--cobalt-2)}
+.btn-ghost{border-color:var(--ink);color:var(--ink);background:transparent}
+.btn-ghost:hover{background:var(--ink);color:var(--paper)}
+.btn-sm{min-height:42px;padding:0 20px;font-size:14.5px}
+.tlink{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-weight:650;text-decoration:none;border-bottom:1.5px solid currentColor;padding-top:2px;line-height:1.2;align-self:center}
+.tlink:hover{color:var(--cobalt)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--paper) 92%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .3s}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav-in{display:flex;align-items:center;gap:32px;min-height:72px}
+.brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none}
+.brand svg{width:30px;height:30px}
+.word{font-family:var(--f-display);font-size:26px;font-weight:600;letter-spacing:-.01em;line-height:1}
+.links{display:flex;gap:28px;margin-left:auto}
+.links a{position:relative;font-size:15px;font-weight:550;text-decoration:none;color:var(--ink-2);padding:8px 0}
+.links a:hover,.links a[aria-current="true"]{color:var(--ink)}
+.links a[aria-current="true"]::after{content:"";position:absolute;left:50%;bottom:0;width:6px;height:6px;margin-left:-3px;background:var(--oxblood);transform:rotate(45deg)}
+.menu{display:none;margin-left:auto;min-height:42px;padding:0 18px;border:1.5px solid var(--ink);background:transparent;border-radius:999px;font-weight:650;font-size:14.5px;cursor:pointer}
+.mnav{padding-block:4px 16px;border-top:1px solid var(--line)}
+.mnav a{display:block;padding:12px 0;font-family:var(--f-display);font-size:22px;text-decoration:none;border-bottom:1px solid var(--line)}
+@media (max-width:920px){.links{display:none}.menu{display:inline-flex;align-items:center}.nav .btn-sm{display:none}}
+
+/* hero */
+.hero-in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(36px,5vw,88px);align-items:center;padding-block:clamp(36px,5vw,72px) clamp(64px,7vw,104px)}
+.hero-copy{display:flex;flex-direction:column;gap:28px;min-width:0}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:center}
+.meta{display:flex;flex-wrap:wrap;gap:8px 22px;font-size:14px;color:var(--ink-2)}
+.meta span{display:inline-flex;align-items:center;gap:8px}
+.meta span::before{content:"";width:7px;height:7px;background:var(--ochre);transform:rotate(45deg)}
+@media (max-width:980px){.hero-in{grid-template-columns:minmax(0,1fr)}}
+
+.plate{position:relative;display:flex;flex-direction:column;gap:18px;padding:clamp(18px,2.4vw,30px);background:#fff;border:1px solid var(--line);box-shadow:0 1px 0 var(--line),0 30px 60px -40px rgba(27,28,39,.35);min-width:0}
+.plate-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.plate-no{font-family:var(--f-display);font-style:italic;font-size:22px}
+.plate-no b{font-style:normal;font-weight:600;font-variant-numeric:lining-nums}
+.tag{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+.tile-frame{padding:10px;background:var(--grout)}
+.plate-cap{display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--ink-2);flex-wrap:wrap}
+.plate-cap b{font-family:var(--f-display);font-size:18px;font-weight:600;color:var(--ink);font-variant-numeric:lining-nums}
+.sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px;padding-top:14px;border-top:1px solid var(--line)}
+.sl{display:flex;flex-direction:column;gap:4px;min-width:0}
+.sl label{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;font-weight:650;letter-spacing:.02em}
+.sl output{font-family:var(--f-display);font-size:15px;font-weight:600;font-variant-numeric:lining-nums tabular-nums;color:var(--ink-2)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:linear-gradient(90deg,var(--ink) 0 var(--p,50%),var(--line) var(--p,50%) 100%)}
+input[type=range]::-moz-range-track{height:2px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:2px;background:var(--ink)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;margin-top:-6.5px;background:var(--c,var(--cobalt));border:2px solid #fff;box-shadow:0 0 0 1px var(--ink);transform:rotate(45deg)}
+input[type=range]::-moz-range-thumb{width:13px;height:13px;background:var(--c,var(--cobalt));border:2px solid #fff;box-shadow:0 0 0 1px var(--ink);border-radius:0;transform:rotate(45deg)}
+input[type=range]:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px}
+.plate-act{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:13.5px;color:var(--ink-3)}
+.plate-act .btns{display:flex;gap:8px}
+.chipbtn{min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:13.5px;font-weight:650;cursor:pointer}
+.chipbtn:hover{border-color:var(--ink)}
+@media (max-width:520px){.sliders{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* sections */
+.sec{padding-block:clamp(72px,9vw,128px)}
+.sec-head{display:flex;flex-direction:column;gap:20px;max-width:760px;margin-bottom:clamp(40px,5vw,64px)}
+.sec-head.center{margin-inline:auto;text-align:center;align-items:center}
+.rule-orn{display:flex;align-items:center;gap:14px;color:var(--oxblood)}
+.rule-orn::before,.rule-orn::after{content:"";height:1px;width:48px;background:var(--line)}
+.rule-orn svg{width:14px;height:14px}
+
+/* anatomy */
+.anat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(32px,6vw,96px);align-items:start}
+.anat-tile{position:sticky;top:110px;min-width:0}
+.anat-tile .tile-frame{padding:14px}
+.anat-tile .tile g[data-layer]{transition:opacity .35s}
+.anat-tile[data-focus] .tile g[data-layer]{opacity:.12}
+.anat-tile[data-focus="strategy"] .tile g[data-layer="strategy"],.anat-tile[data-focus="data"] .tile g[data-layer="data"],.anat-tile[data-focus="technology"] .tile g[data-layer="technology"],.anat-tile[data-focus="skills"] .tile g[data-layer="skills"],.anat-tile[data-focus="governance"] .tile g[data-layer="governance"],.anat-tile[data-focus="culture"] .tile g[data-layer="culture"]{opacity:1}
+.anat-label{margin-top:14px;display:flex;justify-content:space-between;gap:12px;font-size:14px;color:var(--ink-2);min-height:24px}
+.anat-label b{font-family:var(--f-display);font-style:italic;font-size:19px;font-weight:500;color:var(--ink)}
+.dims{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink)}
+.dims li{border-bottom:1px solid var(--line)}
+.dims button{display:grid;grid-template-columns:64px minmax(0,1fr);gap:4px 22px;width:100%;padding:22px 8px 24px 0;text-align:left;background:transparent;border:0;cursor:pointer;border-radius:0}
+.dims button:hover .nm,.dims button[aria-pressed="true"] .nm{color:var(--cobalt)}
+.dims .sw{grid-row:span 3;width:64px;height:64px;background:var(--bone);border:1px solid var(--line)}
+.dims .nm{font-family:var(--f-display);font-size:28px;font-weight:600;line-height:1.1;transition:color .2s}
+.dims .where{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--oxblood)}
+.dims .ds{color:var(--ink-2);font-size:16px;max-width:30em}
+@media (max-width:900px){.anat{grid-template-columns:minmax(0,1fr)}.anat-tile{position:relative;top:0;max-width:420px}}
+
+/* floor */
+.floor-sec{position:relative;padding-block:0;overflow:hidden;background:var(--grout)}
+.floor{display:grid;grid-template-columns:repeat(var(--cols,10),minmax(0,1fr));gap:2px;padding:2px 0}
+.floor svg{width:100%;height:auto;aspect-ratio:1}
+.floor-card{position:absolute;left:max(var(--gutter),calc((100vw - var(--measure))/2 + var(--gutter)));top:50%;transform:translateY(-50%);width:min(520px,calc(100% - 2*var(--gutter)));padding:clamp(24px,3vw,44px);background:var(--paper);border:1px solid var(--line);box-shadow:0 30px 60px -30px rgba(27,28,39,.4);display:flex;flex-direction:column;gap:16px}
+.floor-card .stat{font-family:var(--f-display);font-size:clamp(72px,8vw,120px);line-height:.85;font-weight:500;letter-spacing:-.03em;color:var(--oxblood);font-variant-numeric:lining-nums}
+.stat small{font-size:.42em;letter-spacing:0}
+.floor-card p{color:var(--ink-2)}
+.floor-card .src{font-size:13px;color:var(--ink-3)}
+.floor-note{position:absolute;right:var(--gutter);bottom:12px;padding:4px 10px;background:var(--paper);font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--ink-3);border-radius:999px}
+@media (max-width:760px){
+  .floor-card{position:relative;left:auto;top:auto;transform:none;width:auto;margin:-64px var(--gutter) 0;z-index:2}
+  .floor-sec{padding-bottom:28px}
+  .floor-note{display:none}
+}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,40px);list-style:none;margin:0;padding:0;counter-reset:st}
+.steps li{display:flex;flex-direction:column;gap:14px;min-width:0;counter-increment:st}
+.steps .tile-frame{padding:8px;max-width:260px}
+.steps .n{display:flex;align-items:center;gap:12px;font-family:var(--f-display);font-style:italic;font-size:20px;color:var(--oxblood)}
+.steps .n::before{content:counter(st);display:grid;place-items:center;width:34px;height:34px;border:1.5px solid var(--oxblood);border-radius:50%;font-style:normal;font-weight:600;font-size:16px;font-variant-numeric:lining-nums}
+.steps p{color:var(--ink-2);max-width:24em}
+.sketch *:not(.g0){fill:none!important;stroke:var(--ink-3);stroke-width:.8;stroke-dasharray:2.4 2}
+.sk-part g[data-layer="skills"] *,.sk-part g[data-layer="governance"] *,.sk-part g[data-layer="culture"] *{fill:none!important;stroke:var(--ink-3);stroke-width:.8;stroke-dasharray:2.4 2}
+@media (max-width:820px){.steps{grid-template-columns:minmax(0,1fr)}.steps li{display:grid;grid-template-columns:120px minmax(0,1fr);gap:6px 20px;align-items:start}.steps .tile-frame{grid-row:span 3}}
+
+/* report booklet */
+.book{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);background:#fff;border:1px solid var(--line);box-shadow:0 40px 80px -40px rgba(27,28,39,.45),0 2px 0 var(--line)}
+.page{padding:clamp(24px,3.4vw,52px);display:flex;flex-direction:column;gap:22px;min-width:0}
+.cover{background:linear-gradient(270deg,rgba(27,28,39,.07),rgba(27,28,39,0) 7%),var(--bone)}
+.cover .mast{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.cover h3{font-family:var(--f-display);font-size:clamp(30px,3vw,42px);line-height:1.02;font-weight:500}
+.cover .who{font-size:14px;color:var(--ink-2)}
+.cover .tile-frame{padding:8px;background:var(--grout)}
+.cover .cfoot{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-top:auto}
+.cover .score{font-family:var(--f-display);font-size:64px;line-height:.8;font-weight:500;font-variant-numeric:lining-nums}
+.cover .score small{font-size:18px;color:var(--ink-3)}
+.cover .pno{font-family:var(--f-display);font-style:italic;font-size:17px;color:var(--ink-2)}
+.inside{background:linear-gradient(90deg,rgba(27,28,39,.06),rgba(27,28,39,0) 6%),#fff}
+.inside h4{margin:0;font-family:var(--f-display);font-size:26px;font-weight:600}
+.lg{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--ink-2)}
+.lg span{display:inline-flex;align-items:center;gap:8px}
+.lg i{display:inline-block}
+.lg .y{width:18px;height:8px;background:var(--char)}
+.lg .m,.lg .e{width:9px;height:9px;transform:rotate(45deg)}
+.lg .m{background:var(--oxblood)}.lg .e{background:var(--cobalt)}
+.bars{display:flex;flex-direction:column;gap:14px}
+.brow{display:grid;grid-template-columns:104px minmax(0,1fr) 34px;gap:12px;align-items:center;font-size:14.5px}
+.brow .nm{font-weight:650}
+.brow .v{font-family:var(--f-display);font-weight:600;font-size:18px;text-align:right;font-variant-numeric:lining-nums tabular-nums}
+.track{position:relative;height:14px;background:var(--paper-2)}
+.track .you{position:absolute;inset:3px auto 3px 0;background:var(--char)}
+.track .mk{position:absolute;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;transform:rotate(45deg);border:1.5px solid #fff}
+.track .mk.m{background:var(--oxblood)}.track .mk.e{background:var(--cobalt)}
+.todo{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;counter-reset:td}
+.todo li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;font-size:15px;color:var(--ink-2);counter-increment:td}
+.todo li::before{content:counter(td);font-family:var(--f-display);font-style:italic;font-size:22px;line-height:1;color:var(--oxblood)}
+.todo b{color:var(--ink);font-weight:650}
+.book-cap{margin-top:14px;font-size:13px;color:var(--ink-3);text-align:center}
+@media (max-width:860px){.book{grid-template-columns:minmax(0,1fr)}.cover{background:var(--bone)}.inside{background:#fff}.brow{grid-template-columns:88px minmax(0,1fr) 30px}}
+
+/* audiences */
+.aud{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.6vw,32px)}
+.acard{display:grid;grid-template-columns:132px minmax(0,1fr);gap:24px;padding:clamp(22px,3vw,40px);background:#fff;border:1px solid var(--line);min-width:0}
+.acard .tile-frame{padding:6px;align-self:start}
+.acard .txt{display:flex;flex-direction:column;gap:14px;min-width:0}
+.acard .k{font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--oxblood)}
+.acard h3{font-family:var(--f-display);font-size:clamp(26px,2.6vw,34px);line-height:1.08;font-weight:500}
+.acard p{color:var(--ink-2)}
+.acard .btn{align-self:flex-start;margin-top:6px}
+@media (max-width:900px){.aud{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){.acard{grid-template-columns:minmax(0,1fr)}.acard .tile-frame{max-width:132px}}
+
+/* faq */
+.faq{max-width:880px;margin-inline:auto}
+.faq details{border-bottom:1px solid var(--line)}
+.faq details:first-of-type{border-top:1px solid var(--ink)}
+.faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 0;cursor:pointer;font-family:var(--f-display);font-size:clamp(21px,2vw,26px);font-weight:500;line-height:1.25}
+.faq summary::-webkit-details-marker{display:none}
+.faq .orn{flex:none;width:14px;height:14px;background:var(--oxblood);transform:rotate(45deg);transition:transform .3s,background-color .3s}
+.faq details[open] .orn{transform:rotate(225deg) scale(.7);background:var(--cobalt)}
+.faq .a{padding:0 40px 26px 0;color:var(--ink-2);max-width:38em}
+
+/* final */
+.final{padding-block:clamp(24px,4vw,56px) 0}
+.final-in{display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;padding-bottom:clamp(40px,5vw,64px)}
+.final .sub{color:var(--ink-2);font-size:19px}
+.fstrip{display:grid;grid-template-columns:repeat(var(--cols,9),minmax(0,1fr));gap:2px;background:var(--grout);padding:2px 0}
+.fstrip svg{width:100%;height:auto;aspect-ratio:1}
+.slot{position:relative;display:grid;place-items:center;aspect-ratio:1;background:var(--paper);color:var(--cobalt);text-decoration:none;font-family:var(--f-display);font-style:italic;font-size:clamp(13px,1.3vw,18px);text-align:center;line-height:1.15;padding:8px}
+.slot::before{content:"";position:absolute;inset:8%;border:1.5px dashed var(--cobalt);animation:breathe 2.8s ease-in-out infinite}
+.slot:hover{background:#fff}
+@keyframes breathe{50%{inset:11%;opacity:.55}}
+
+/* footer */
+.foot{background:var(--ink);color:#E9E8F0;padding-block:56px 120px}
+.foot a{color:#C9C8D6;text-decoration:none}
+.foot a:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.foot-in{display:grid;grid-template-columns:minmax(0,5fr) repeat(3,minmax(0,2fr));gap:32px}
+.foot h4{margin:0 0 12px;font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#A9A8B9}
+.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:15px}
+.foot .word{color:#fff}
+.foot .tagline{margin-top:14px;color:#C9C8D6;max-width:26em;font-size:15px}
+.mail{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:15px}
+.mail code{font-family:inherit;user-select:all;color:#fff}
+.copy{min-height:32px;padding:0 12px;border:1px solid #4A4B5E;background:transparent;border-radius:999px;font-size:12.5px;color:#E9E8F0;cursor:pointer}
+.copy:hover{border-color:#fff}
+.foot-base{margin-top:48px;padding-top:18px;border-top:1px solid #34354A;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:#A9A8B9}
+@media (max-width:860px){.foot-in{grid-template-columns:repeat(2,minmax(0,1fr))}.foot-in>div:first-child{grid-column:1/-1}}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:70;transform:translate(-50%,20px);opacity:0;pointer-events:none;max-width:min(92vw,440px);padding:12px 18px;background:var(--ink);color:#fff;font-size:14px;line-height:1.45;border-radius:14px;transition:opacity .25s,transform .25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* prototype review bar (presentation chrome, not part of the design) */
+.rv{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:2px;padding:5px;background:rgba(18,18,20,.92);color:#f4f4f5;border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.25);font:500 12.5px/1 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);max-width:calc(100vw - 24px)}
+.rv a,.rv button{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:999px;color:#d4d4d8;text-decoration:none;border:0;background:transparent;cursor:pointer;font:inherit;white-space:nowrap}
+.rv a:hover,.rv button:hover{background:rgba(255,255,255,.1);color:#fff}
+.rv a[aria-current="page"]{background:#f4f4f5;color:#111}
+.rv .sep{width:1px;height:18px;background:rgba(255,255,255,.18);margin:0 4px}
+@media (max-width:560px){.rv .full{display:none}.rv a,.rv button{padding:0 10px}}
+.rv.min{padding:4px}
+.rv.min>*:not(.rv-t){display:none}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Mesura, back to top">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><rect x=".75" y=".75" width="28.5" height="28.5" fill="#F1EADB" stroke="#253E8F" stroke-width="1.5"/><circle cx="0" cy="0" r="7" fill="#8E2A1E"/><circle cx="30" cy="0" r="7" fill="#8E2A1E"/><circle cx="30" cy="30" r="7" fill="#8E2A1E"/><circle cx="0" cy="30" r="7" fill="#8E2A1E"/><path d="M15 6.5l2.3 5.4 5.6-1.4-3.4 4.5 3.4 4.5-5.6-1.4L15 23.5l-2.3-5.4-5.6 1.4 3.4-4.5-3.4-4.5 5.6 1.4z" fill="#253E8F"/><circle cx="15" cy="15" r="2.6" fill="#D29A2B"/></svg>
+      <span class="word">Mesura</span>
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#dimensions">The six dimensions</a>
+      <a href="#report">Your report</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-pri btn-sm" href="#top" data-start>Take the survey</a>
+    <button class="menu" id="menu" aria-expanded="false" aria-controls="mnav">Menu</button>
+  </div>
+  <div class="wrap mnav" id="mnav" hidden>
+    <a href="#how">How it works</a><a href="#dimensions">The six dimensions</a><a href="#report">Your report</a><a href="#faq">FAQ</a>
+  </div>
+</header>
+
+<main id="top">
+  <section aria-labelledby="h1">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <p class="eyebrow">Free AI readiness survey<span class="dot" aria-hidden="true"></span>Malta</p>
+        <h1 class="disp h1" id="h1">What does your AI readiness <em>look like?</em></h1>
+        <p class="lede">Answer a ten-minute survey. Mesura scores you across six dimensions, compares you with the Malta average and the EU, and gives you a personalised report with clear next steps. Your results are also drawn as a tile, in a pattern that is yours alone.</p>
+        <div class="cta-row">
+          <a class="btn btn-pri" href="#top" data-start id="go">Start the free survey <span class="arr" aria-hidden="true">→</span></a>
+          <a class="tlink" href="#dimensions">How to read a tile</a>
+        </div>
+        <p class="meta"><span>About 10 minutes</span><span>For you or your organisation</span><span>Personalised report</span></p>
+      </div>
+
+      <figure class="plate" style="margin:0" aria-labelledby="plate-cap">
+        <div class="plate-top">
+          <span class="plate-no" id="pno">Pattern No. <b>047</b></span>
+          <span class="tag" id="ptag">Sample</span>
+        </div>
+        <div class="tile-frame"><svg class="tile" id="hero-tile" viewBox="0 0 200 200" role="img" aria-label="A generated tile"></svg></div>
+        <figcaption class="plate-cap" id="plate-cap"><span id="pwho">45-person logistics firm</span><span>Overall <b id="pov">53</b></span></figcaption>
+        <div class="sliders" id="sliders" aria-label="Scores that draw the tile"></div>
+        <div class="plate-act">
+          <span id="phint">Drag a score to redraw the tile.</span>
+          <span class="btns"><button type="button" class="chipbtn" id="next">Next sample</button><button type="button" class="chipbtn" id="reset">Reset</button></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec" id="dimensions" aria-labelledby="dim-h" style="padding-top:clamp(48px,6vw,88px)">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">The six dimensions</p>
+        <h2 class="disp h2" id="dim-h">Six dimensions, one <em>pattern.</em></h2>
+        <p class="body">Each dimension draws one part of the tile, and a stronger score draws it bolder. Choose a dimension to see where it sits.</p>
+      </div>
+      <div class="anat">
+        <div class="anat-tile" id="anat">
+          <div class="tile-frame"><svg class="tile" id="anat-tile" viewBox="0 0 200 200" role="img" aria-label="Tile anatomy"></svg></div>
+          <p class="anat-label" aria-live="polite"><b id="anat-name">All six dimensions</b><span id="anat-where">Sample pattern No. 047</span></p>
+        </div>
+        <ul class="dims" id="dims"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="floor-sec" aria-labelledby="ctx-h">
+    <div class="floor" id="floor" aria-hidden="true"></div>
+    <div class="floor-card">
+      <p class="eyebrow">Why measure</p>
+      <p class="stat" id="ctx-h">46.5<small>%</small></p>
+      <p>of people in Malta used generative AI tools in 2025, the third-highest share in the EU. The EU average was 32.7%.</p>
+      <p style="color:var(--ink);font-weight:600">Using AI is already common here. Readiness is what turns that use into results.</p>
+      <p class="src">Source: <a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20251216-3" target="_blank" rel="noopener">Eurostat, 16 December 2025</a></p>
+    </div>
+    <span class="floor-note">Every tile here is a sample pattern</span>
+  </section>
+
+  <section class="sec" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">How it works</p>
+        <h2 class="disp h2" id="how-h">From ten minutes to a <em>plan.</em></h2>
+      </div>
+      <ol class="steps">
+        <li>
+          <div class="tile-frame"><svg class="tile sketch" id="st1" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+          <span class="n">Answer</span>
+          <p>About ten minutes of questions on how you, or your organisation, work with AI today.</p>
+        </li>
+        <li>
+          <div class="tile-frame"><svg class="tile sk-part" id="st2" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+          <span class="n">See your pattern</span>
+          <p>Each dimension is scored out of 100 and drawn into your tile, alongside one overall score.</p>
+        </li>
+        <li>
+          <div class="tile-frame"><svg class="tile" id="st3" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+          <span class="n">Compare and act</span>
+          <p>Your report sets every score against the Malta average and the EU, then lists the next steps that matter most.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="report" aria-labelledby="rep-h" style="background:var(--paper-2)">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Your report</p>
+        <h2 class="disp h2" id="rep-h">Read your pattern, <em>then act on it.</em></h2>
+        <p class="body">Your tile goes on the cover. Inside, every score is set against the Malta average and the EU, followed by the three things to do first.</p>
+      </div>
+      <div class="book">
+        <div class="page cover">
+          <div class="mast"><span>Mesura</span><span>AI readiness report</span></div>
+          <div>
+            <h3>How ready are we for AI?</h3>
+            <p class="who" style="margin-top:8px">45-person logistics firm · September 2026</p>
+          </div>
+          <div class="tile-frame"><svg class="tile" id="cover-tile" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+          <div class="cfoot"><span class="score">53<small> / 100</small></span><span class="pno">Pattern No. 047</span></div>
+        </div>
+        <div class="page inside">
+          <h4>How you compare</h4>
+          <div class="lg"><span><i class="y"></i>This organisation</span><span><i class="m"></i>Malta average</span><span><i class="e"></i>EU</span></div>
+          <div class="bars" id="bars"></div>
+          <h4 style="margin-top:10px">Three things to do first</h4>
+          <ol class="todo">
+            <li><span><b>Governance.</b> Write a one-page AI use policy: approved tools, what data can go in, who signs off.</span></li>
+            <li><span><b>Data.</b> Map the data behind one priority process: where it lives, who owns it, how clean it is.</span></li>
+            <li><span><b>Skills.</b> Run a 90-minute hands-on session for customer-facing staff, built around their real tasks.</span></li>
+          </ol>
+        </div>
+      </div>
+      <p class="book-cap">Sample report. Figures are illustrative.</p>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="aud-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Two ways in</p>
+        <h2 class="disp h2" id="aud-h">For yourself, or for your <em>organisation.</em></h2>
+      </div>
+      <div class="aud">
+        <article class="acard">
+          <div class="tile-frame"><svg class="tile" id="t-me" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+          <div class="txt">
+            <p class="k">For individuals</p>
+            <h3>A personal pattern</h3>
+            <p>See how ready you are to work with AI: your skills, habits and confidence, with next steps you can act on this week.</p>
+            <a class="btn btn-ghost btn-sm" href="#top" data-start>Start as an individual <span class="arr" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+        <article class="acard">
+          <div class="tile-frame"><svg class="tile" id="t-org" viewBox="0 0 200 200" aria-hidden="true"></svg></div>
+          <div class="txt">
+            <p class="k">For organisations</p>
+            <h3>Your organisation’s pattern</h3>
+            <p>Score all six dimensions, see where you stand against the Malta average and the EU, and get a prioritised plan.</p>
+            <a class="btn btn-pri btn-sm" href="#top" data-start>Start for my organisation <span class="arr" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="faq" aria-labelledby="faq-h" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head center">
+        <div class="rule-orn" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M7 0l7 7-7 7-7-7z" fill="currentColor"/></svg></div>
+        <h2 class="disp h2" id="faq-h">Questions</h2>
+      </div>
+      <div class="faq">
+        <details open><summary>Is it really free?<span class="orn" aria-hidden="true"></span></summary><p class="a">Yes. The survey and your personalised report are free.</p></details>
+        <details><summary>How long does it take?<span class="orn" aria-hidden="true"></span></summary><p class="a">About ten minutes. You don’t need to prepare anything before you start.</p></details>
+        <details><summary>What does the Malta average show?<span class="orn" aria-hidden="true"></span></summary><p class="a">For each dimension it shows the average score of respondents in Malta, so you can see where you are ahead and where you are behind. The EU benchmark gives the same comparison at European level.</p></details>
+        <details><summary>Can I take it for myself rather than my company?<span class="orn" aria-hidden="true"></span></summary><p class="a">Yes. Choose “Myself” before you start and your report focuses on your own readiness.</p></details>
+        <details><summary>What happens to my answers?<span class="orn" aria-hidden="true"></span></summary><p class="a">Your answers build your report and, anonymised, the benchmarks. The privacy policy has the details.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final" aria-labelledby="fin-h">
+    <div class="wrap final-in">
+      <div class="rule-orn" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M7 0l7 7-7 7-7-7z" fill="currentColor"/></svg></div>
+      <h2 class="disp h2" id="fin-h" style="font-size:clamp(40px,6vw,84px)">Ten minutes to your <em>pattern.</em></h2>
+      <p class="sub">Free. Six dimensions. Benchmarked against Malta and the EU.</p>
+      <a class="btn btn-pri" href="#top" data-start style="min-height:58px;padding:0 34px;font-size:17px">Start the free survey <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+    <div class="fstrip" id="fstrip"></div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-in">
+      <div>
+        <a class="brand" href="#top" aria-label="Mesura, back to top" style="color:#fff">
+          <svg viewBox="0 0 30 30" aria-hidden="true"><rect x=".75" y=".75" width="28.5" height="28.5" fill="#F1EADB" stroke="#253E8F" stroke-width="1.5"/><circle cx="0" cy="0" r="7" fill="#8E2A1E"/><circle cx="30" cy="0" r="7" fill="#8E2A1E"/><circle cx="30" cy="30" r="7" fill="#8E2A1E"/><circle cx="0" cy="30" r="7" fill="#8E2A1E"/><path d="M15 6.5l2.3 5.4 5.6-1.4-3.4 4.5 3.4 4.5-5.6-1.4L15 23.5l-2.3-5.4-5.6 1.4 3.4-4.5-3.4-4.5 5.6 1.4z" fill="#253E8F"/><circle cx="15" cy="15" r="2.6" fill="#D29A2B"/></svg>
+          <span class="word">Mesura</span>
+        </a>
+        <p class="tagline">AI readiness, measured and drawn. For organisations and people in Malta.</p>
+      </div>
+      <div><h4>Survey</h4><ul><li><a href="#how">How it works</a></li><li><a href="#dimensions">The six dimensions</a></li><li><a href="#report">Your report</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+      <div><h4>Mesura</h4><ul><li><a href="#" data-proto>About</a></li><li><a href="#" data-proto>Privacy policy</a></li><li><a href="#" data-proto>Terms</a></li><li><a href="#" data-proto>LinkedIn</a></li></ul></div>
+      <div><h4>Contact</h4><div class="mail"><code id="mail">support@mesura.ai</code><button class="copy" type="button" data-copy="mail">Copy</button></div></div>
+    </div>
+    <div class="foot-base"><span>© 2026 Mesura</span><span>Made for Il-Gżejjer Maltin</span></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<nav class="rv" id="rv" aria-label="Prototype review">
+  <a href="index.html"><span aria-hidden="true">←</span><span class="full">Overview</span></a>
+  <span class="sep" aria-hidden="true"></span>
+  <a href="datum.html">A<span class="full">&nbsp;· Datum</span></a>
+  <a href="madum.html" aria-current="page">B<span class="full">&nbsp;· Madum</span></a>
+  <a href="six.html">C<span class="full">&nbsp;· Six</span></a>
+  <span class="sep" aria-hidden="true"></span>
+  <button type="button" class="rv-t" id="rv-t" aria-expanded="true" aria-label="Hide review bar">×</button>
+</nav>
+
+<script>
+(() => {
+'use strict';
+const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+/* ============ the tile generator ============
+   Six scores (0-100) draw six layers:
+   strategy = centre star · data = ring of dots · technology = four petals
+   skills = diagonal leaves · governance = border · culture = corner rosettes (they join neighbouring tiles) */
+const PAL = {ground:'#F1EADB', cobalt:'#253E8F', oxblood:'#8E2A1E', ochre:'#D29A2B', sage:'#5B7F69', char:'#23232B'};
+const f = n => Math.round(n * 10) / 10;
+function star(cx, cy, ro, ri, n, rot){ let d = ''; for (let i = 0; i < n * 2; i++){ const r = i % 2 ? ri : ro, a = rot + i * Math.PI / n; d += (i ? 'L' : 'M') + f(cx + r * Math.cos(a)) + ' ' + f(cy + r * Math.sin(a)); } return d + 'Z'; }
+function leaf(cx, cy, a, r0, r1, w){ const ux = Math.cos(a), uy = Math.sin(a), px = -uy, py = ux; const x0 = cx + ux * r0, y0 = cy + uy * r0, x1 = cx + ux * r1, y1 = cy + uy * r1, mx = (x0 + x1) / 2, my = (y0 + y1) / 2; return `M${f(x0)} ${f(y0)}Q${f(mx + px * w)} ${f(my + py * w)} ${f(x1)} ${f(y1)}Q${f(mx - px * w)} ${f(my - py * w)} ${f(x0)} ${f(y0)}Z`; }
+function petal(cx, cy, a, r0, r1, w){ const ux = Math.cos(a), uy = Math.sin(a), px = -uy, py = ux; const P = (r, o) => f(cx + ux * r + px * o) + ' ' + f(cy + uy * r + py * o); const L = r1 - r0; return `M${P(r0, w / 2)}C${P(r0 + L * .42, w * .78)} ${P(r0 + L * .8, w * .3)} ${P(r1, 0)}C${P(r0 + L * .8, -w * .3)} ${P(r0 + L * .42, -w * .78)} ${P(r0, -w / 2)}Z`; }
+function tile(v){
+  const [st, da, te, sk, go, cu] = v.map(x => clamp(x, 0, 100) / 100); const C = 100; let s = '';
+  s += `<rect class="g0" width="200" height="200" fill="${PAL.ground}"/>`;
+  const bw = 2.5 + 11 * go, ins = 5, il = ins + bw + 3.2;
+  s += `<g data-layer="governance"><path d="M${ins} ${ins}H${200 - ins}V${200 - ins}H${ins}ZM${f(ins + bw)} ${f(ins + bw)}V${f(200 - ins - bw)}H${f(200 - ins - bw)}V${f(ins + bw)}Z" fill="${PAL.cobalt}" fill-rule="evenodd"/><rect x="${f(il)}" y="${f(il)}" width="${f(200 - 2 * il)}" height="${f(200 - 2 * il)}" fill="none" stroke="${PAL.cobalt}" stroke-width="${f(.6 + .9 * go)}"/>`;
+  if (go > .25) { const ds = bw * .34 * Math.min(1, (go - .25) / .4), mid = ins + bw / 2; for (let k = 1; k <= 7; k++) { const t = 20 + k * 20; [[t, mid], [t, 200 - mid], [mid, t], [200 - mid, t]].forEach(([x, y]) => s += `<path d="M${f(x)} ${f(y - ds)}L${f(x + ds)} ${f(y)}L${f(x)} ${f(y + ds)}L${f(x - ds)} ${f(y)}Z" fill="${PAL.ground}"/>`); } }
+  s += `</g>`;
+  const rc = 18 + 40 * cu;
+  s += `<g data-layer="culture">`;
+  [[0, 0, 0], [200, 0, Math.PI / 2], [200, 200, Math.PI], [0, 200, -Math.PI / 2]].forEach(([x, y, a0]) => {
+    s += `<circle cx="${x}" cy="${y}" r="${f(rc)}" fill="${PAL.oxblood}"/>`;
+    for (let k = 0; k < 5; k++) { const a = a0 + (k + .5) * (Math.PI / 2) / 5; s += `<circle cx="${f(x + Math.cos(a) * rc)}" cy="${f(y + Math.sin(a) * rc)}" r="${f(rc * .17)}" fill="${PAL.oxblood}"/>`; }
+    s += `<circle cx="${x}" cy="${y}" r="${f(rc * .64)}" fill="${PAL.ochre}"/><circle cx="${x}" cy="${y}" r="${f(rc * .3)}" fill="${PAL.ground}"/>`;
+  });
+  s += `</g>`;
+  const r0s = 24, r1s = 32 + 46 * sk, ws = 5 + 10 * sk;
+  s += `<g data-layer="skills">`;
+  [45, 135, 225, 315].forEach(dg => { const a = dg * Math.PI / 180; s += `<path d="${leaf(C, C, a, r0s, r1s, ws)}" fill="${PAL.sage}"/><path d="M${f(C + Math.cos(a) * (r0s + 2))} ${f(C + Math.sin(a) * (r0s + 2))}L${f(C + Math.cos(a) * (r1s - 4))} ${f(C + Math.sin(a) * (r1s - 4))}" stroke="${PAL.ground}" stroke-width=".9" opacity=".75"/>`; });
+  s += `</g>`;
+  const r0t = 18, r1t = 38 + 40 * te, wt = 11 + 15 * te;
+  s += `<g data-layer="technology">`;
+  [0, 90, 180, 270].forEach(dg => { const a = dg * Math.PI / 180; s += `<path d="${petal(C, C, a, r0t, r1t, wt)}" fill="${PAL.cobalt}"/><path d="${petal(C, C, a, r0t + 5, r0t + 5 + (r1t - r0t) * .55, wt * .42)}" fill="${PAL.ochre}"/>`; });
+  s += `</g>`;
+  const Rd = 50 + 5 * da, dr = .6 + 2.6 * da;
+  s += `<g data-layer="data">`;
+  for (let k = 0; k < 24; k++) { const a = k * Math.PI / 12 + Math.PI / 24; s += `<circle cx="${f(C + Math.cos(a) * Rd)}" cy="${f(C + Math.sin(a) * Rd)}" r="${f(k % 2 ? dr * .6 : dr)}" fill="${PAL.char}"/>`; }
+  s += `</g>`;
+  const ro = 12 + 26 * st, ri = ro * .52;
+  s += `<g data-layer="strategy"><path d="${star(C, C, ro, ri, 8, -Math.PI / 2)}" fill="${PAL.oxblood}"/><circle cx="${C}" cy="${C}" r="${f(ro * .36)}" fill="${PAL.ochre}"/><circle cx="${C}" cy="${C}" r="${f(Math.max(1.2, ro * .1))}" fill="${PAL.char}"/></g>`;
+  return s;
+}
+const svgTile = (v, cls) => `<svg class="tile${cls ? ' ' + cls : ''}" viewBox="0 0 200 200" aria-hidden="true">${tile(v)}</svg>`;
+function rng(seed){ return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
+
+/* ============ data ============ */
+const DIMS = [
+  {k:'strategy', n:'Strategy', where:'The centre star', d:'A clear view of where AI creates value, and someone accountable for it.', c:'#8E2A1E'},
+  {k:'data', n:'Data', where:'The ring of dots', d:'Data that is findable, well kept and safe to use with AI tools.', c:'#23232B'},
+  {k:'technology', n:'Technology', where:'The four petals', d:'Tools and infrastructure to use AI securely, at the right scale.', c:'#253E8F'},
+  {k:'skills', n:'Skills', where:'The diagonal leaves', d:'People who know how to use AI well, and when not to.', c:'#5B7F69'},
+  {k:'governance', n:'Governance', where:'The border', d:'Policies, risk checks and compliance, including the EU AI Act.', c:'#253E8F'},
+  {k:'culture', n:'Culture', where:'The corner rosettes', d:'Teams that try things and share what works. The rosettes join the tiles around yours.', c:'#8E2A1E'}
+];
+const SAMPLES = [
+  {no:'047', who:'45-person logistics firm', v:[58, 44, 63, 51, 37, 66]},
+  {no:'112', who:'Hotel group in Għawdex', v:[46, 39, 52, 57, 41, 72]},
+  {no:'203', who:'Fintech start-up, 30 people', v:[79, 72, 85, 74, 58, 81]},
+  {no:'318', who:'Family-run retailer', v:[31, 28, 35, 40, 22, 48]},
+  {no:'391', who:'Public entity, 400 people', v:[62, 55, 49, 45, 74, 38]}
+];
+const MALTA = [52, 47, 55, 46, 42, 57], EU = [56, 50, 58, 49, 48, 52];
+const avg = a => Math.round(a.reduce((x, y) => x + y, 0) / a.length);
+
+/* ============ hero plate ============ */
+const heroTile = document.getElementById('hero-tile');
+const slWrap = document.getElementById('sliders');
+let cur = SAMPLES[0].v.slice(), idx = 0, auto = true, anim = 0, cycleT;
+DIMS.forEach((d, i) => {
+  const w = document.createElement('div'); w.className = 'sl';
+  w.innerHTML = `<label for="s-${d.k}"><span>${d.n}</span><output id="o-${d.k}" for="s-${d.k}">${cur[i]}</output></label><input type="range" id="s-${d.k}" min="0" max="100" step="1" value="${cur[i]}" style="--c:${d.c}">`;
+  slWrap.appendChild(w);
+});
+const inputs = DIMS.map(d => document.getElementById('s-' + d.k));
+const outs = DIMS.map(d => document.getElementById('o-' + d.k));
+function paint(v, meta){
+  heroTile.innerHTML = tile(v);
+  v.forEach((x, i) => { const r = Math.round(x); inputs[i].value = r; outs[i].textContent = r; inputs[i].style.setProperty('--p', r + '%'); });
+  document.getElementById('pov').textContent = avg(v);
+  if (meta) { document.getElementById('pno').innerHTML = 'Pattern No. <b>' + meta.no + '</b>'; document.getElementById('pwho').textContent = meta.who; }
+  heroTile.setAttribute('aria-label', 'Tile drawn from scores: ' + DIMS.map((d, i) => d.n + ' ' + Math.round(v[i])).join(', '));
+}
+function morph(to, meta, dur = 1100){
+  cancelAnimationFrame(anim);
+  const from = cur.slice();
+  if (reduceMQ.matches) { cur = to.slice(); paint(cur, meta); return; }
+  const t0 = performance.now(); let metaSet = false;
+  const step = now => {
+    const k = ease(clamp((now - t0) / dur, 0, 1));
+    cur = from.map((x, i) => x + (to[i] - x) * k);
+    paint(cur, !metaSet && k > .5 ? (metaSet = true, meta) : null);
+    if (k < 1) anim = requestAnimationFrame(step);
+  };
+  anim = requestAnimationFrame(step);
+}
+function scheduleCycle(){
+  clearTimeout(cycleT);
+  if (!auto || reduceMQ.matches) return;
+  cycleT = setTimeout(() => { if (!auto || document.hidden) return scheduleCycle(); idx = (idx + 1) % SAMPLES.length; morph(SAMPLES[idx].v, SAMPLES[idx]); scheduleCycle(); }, 3600);
+}
+function takeOver(){
+  if (!auto) return; auto = false; clearTimeout(cycleT);
+  document.getElementById('ptag').textContent = 'Your pattern';
+  document.getElementById('pno').innerHTML = 'Pattern No. <b>—</b>';
+  document.getElementById('pwho').textContent = 'Drawn from your scores';
+  document.getElementById('phint').textContent = 'Take the survey to draw it from real answers.';
+}
+inputs.forEach((inp, i) => inp.addEventListener('input', () => { takeOver(); cancelAnimationFrame(anim); cur[i] = +inp.value; paint(cur); }));
+document.getElementById('next').addEventListener('click', () => {
+  auto = false; clearTimeout(cycleT); idx = (idx + 1) % SAMPLES.length;
+  document.getElementById('ptag').textContent = 'Sample';
+  document.getElementById('phint').textContent = 'Drag a score to redraw the tile.';
+  morph(SAMPLES[idx].v, SAMPLES[idx], 800);
+});
+document.getElementById('reset').addEventListener('click', () => {
+  idx = 0; auto = true; document.getElementById('ptag').textContent = 'Sample';
+  document.getElementById('phint').textContent = 'Drag a score to redraw the tile.';
+  morph(SAMPLES[0].v, SAMPLES[0], 800); scheduleCycle();
+});
+paint(cur, SAMPLES[0]);
+const heroIO = new IntersectionObserver(es => { if (es[0].isIntersecting) scheduleCycle(); else clearTimeout(cycleT); });
+heroIO.observe(heroTile);
+
+/* ============ anatomy ============ */
+const anat = document.getElementById('anat');
+document.getElementById('anat-tile').innerHTML = tile(SAMPLES[0].v);
+const dimsEl = document.getElementById('dims');
+DIMS.forEach((d, i) => {
+  const li = document.createElement('li');
+  const solo = Array(6).fill(0); solo[i] = 78;
+  li.innerHTML = `<button type="button" aria-pressed="false" data-k="${d.k}"><span class="sw">${svgTile(solo, 'solo-' + d.k)}</span><span class="where">${d.where}</span><span class="nm">${d.n}</span><span class="ds">${d.d}</span></button>`;
+  dimsEl.appendChild(li);
+});
+// in each swatch, show only its own layer
+const swStyle = document.createElement('style');
+swStyle.textContent = DIMS.map(d => `.solo-${d.k} g[data-layer]:not([data-layer="${d.k}"]){display:none}`).join('');
+document.head.appendChild(swStyle);
+const nameEl = document.getElementById('anat-name'), whereEl = document.getElementById('anat-where');
+let pinned = null;
+function focusDim(k){
+  if (k) anat.setAttribute('data-focus', k); else anat.removeAttribute('data-focus');
+  const d = DIMS.find(x => x.k === k);
+  nameEl.textContent = d ? d.n : 'All six dimensions';
+  whereEl.textContent = d ? d.where : 'Sample pattern No. 047';
+}
+dimsEl.querySelectorAll('button').forEach(b => {
+  const k = b.dataset.k;
+  b.addEventListener('pointerenter', () => { if (!pinned) focusDim(k); });
+  b.addEventListener('pointerleave', () => { if (!pinned) focusDim(null); });
+  b.addEventListener('focus', () => { if (!pinned) focusDim(k); });
+  b.addEventListener('blur', () => { if (!pinned) focusDim(null); });
+  b.addEventListener('click', () => {
+    pinned = pinned === k ? null : k;
+    dimsEl.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.k === pinned)));
+    focusDim(pinned);
+  });
+});
+
+/* ============ floors ============ */
+const floor = document.getElementById('floor'), fstrip = document.getElementById('fstrip');
+function buildFloor(){
+  const w = floor.clientWidth || innerWidth;
+  const size = w < 560 ? 92 : w < 1000 ? 112 : 128;
+  const cols = Math.max(4, Math.round(w / size)), rows = w < 560 ? 4 : 3;
+  floor.style.setProperty('--cols', cols);
+  const r = rng(7);
+  let h = '';
+  for (let i = 0; i < cols * rows; i++) h += svgTile([0, 0, 0, 0, 0, 0].map(() => 18 + r() * 72));
+  floor.innerHTML = h;
+  const fc = Math.max(5, Math.round(w / (w < 560 ? 80 : 150))), mid = Math.floor(fc / 2), r2 = rng(19);
+  fstrip.style.setProperty('--cols', fc);
+  let s = '';
+  for (let i = 0; i < fc; i++) s += i === mid ? `<a class="slot" href="#top" data-start>Your tile</a>` : svgTile([0, 0, 0, 0, 0, 0].map(() => 18 + r2() * 72));
+  fstrip.innerHTML = s;
+  fstrip.querySelector('.slot').addEventListener('click', startClick);
+}
+let fw = 0, frz;
+new ResizeObserver(() => { const w = floor.clientWidth; if (Math.abs(w - fw) < 8) return; fw = w; clearTimeout(frz); frz = setTimeout(buildFloor, 60); }).observe(floor);
+buildFloor();
+
+/* ============ steps, report, audiences ============ */
+document.getElementById('st1').innerHTML = tile(SAMPLES[0].v);
+document.getElementById('st2').innerHTML = tile(SAMPLES[0].v);
+document.getElementById('st3').innerHTML = tile(SAMPLES[0].v);
+document.getElementById('cover-tile').innerHTML = tile(SAMPLES[0].v);
+document.getElementById('t-me').innerHTML = tile([40, 30, 55, 68, 35, 60]);
+document.getElementById('t-org').innerHTML = tile(SAMPLES[0].v);
+const bars = document.getElementById('bars');
+DIMS.forEach((d, i) => {
+  const y = SAMPLES[0].v[i];
+  const row = document.createElement('div'); row.className = 'brow';
+  row.innerHTML = `<span class="nm">${d.n}</span><span class="track" role="img" aria-label="${d.n}: ${y}. Malta average ${MALTA[i]}. EU ${EU[i]}."><span class="you" style="width:${y}%"></span><span class="mk m" style="left:${MALTA[i]}%"></span><span class="mk e" style="left:${EU[i]}%"></span></span><span class="v">${y}</span>`;
+  bars.appendChild(row);
+});
+
+/* ============ page chrome ============ */
+const toastEl = document.getElementById('toast'); let tt;
+const toast = m => { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('on'), 3400); };
+function startClick(e){ e.preventDefault(); toast('Prototype: this opens the survey.'); }
+document.querySelectorAll('[data-start]').forEach(a => a.addEventListener('click', startClick));
+document.querySelectorAll('[data-proto]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); toast('This page isn’t part of the homepage prototype.'); }));
+document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+  const el = document.getElementById(b.getAttribute('data-copy'));
+  const done = () => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1600); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Press Ctrl/Cmd+C to copy the address.'); };
+  try { navigator.clipboard.writeText(el.textContent).then(done, fallback); } catch (err) { fallback(); }
+}));
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', scrollY > 8);
+addEventListener('scroll', onScroll, {passive:true}); onScroll();
+const menu = document.getElementById('menu'), mnav = document.getElementById('mnav');
+menu.addEventListener('click', () => { const open = menu.getAttribute('aria-expanded') !== 'true'; menu.setAttribute('aria-expanded', open); mnav.hidden = !open; menu.textContent = open ? 'Close' : 'Menu'; });
+mnav.addEventListener('click', e => { if (e.target.closest('a')) { menu.setAttribute('aria-expanded', 'false'); mnav.hidden = true; menu.textContent = 'Menu'; } });
+const spy = new IntersectionObserver(es => es.forEach(en => {
+  const a = document.querySelector('.links a[href="#' + en.target.id + '"]');
+  if (a && en.isIntersecting) { document.querySelectorAll('.links a').forEach(x => x.removeAttribute('aria-current')); a.setAttribute('aria-current', 'true'); }
+}), {rootMargin:'-45% 0px -50% 0px'});
+['how', 'dimensions', 'report', 'faq'].forEach(id => spy.observe(document.getElementById(id)));
+const rv = document.getElementById('rv'), rvt = document.getElementById('rv-t');
+rvt.addEventListener('click', () => { const min = rv.classList.toggle('min'); rvt.textContent = min ? '⋯' : '×'; rvt.setAttribute('aria-expanded', String(!min)); rvt.setAttribute('aria-label', min ? 'Show review bar' : 'Hide review bar'); });
+})();
+</script>
+</body>
+</html>

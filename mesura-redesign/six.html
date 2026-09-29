@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="en-MT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mesura · Six</title>
+<meta name="description" content="Mesura homepage prototype, route C: a product-led, dark stage built around the six-dimension readiness hexagon.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Onest:wght@400;500;600&family=Unbounded:wght@400..700&display=swap">
+<style>
+:root{
+  /* Layout: a dark stage with one instrument. The hexagon radar is the hero and the spine of a sticky scroll story; copy sits in a narrow column beside it. Single dark theme by choice. */
+  --bg:#070A0E;
+  --bg-2:#0C1117;
+  --bg-3:#121A23;
+  --line:#1B2530;
+  --line-2:#2B3846;
+  --fg:#ECF1F5;
+  --fg-2:#A9B5C1;
+  --fg-3:#8594A3;
+  --you:#FFB547;
+  --you-ink:#1B1204;
+  --malta:#FF5C6E;
+  --eu:#6E97FF;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-sans:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+  --measure:1320px;
+  --gutter:clamp(16px,4vw,48px);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:80px;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0px)}
+svg,canvas{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--you);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--measure);margin-inline:auto;padding-inline:var(--gutter)}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3);display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:8px;height:8px;background:var(--you);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.h1{font-family:var(--f-display);font-weight:560;font-size:clamp(38px,4.5vw,66px);line-height:1.04;letter-spacing:-.035em}
+.h1 .you{color:var(--you)}
+.h2{font-family:var(--f-display);font-weight:500;font-size:clamp(30px,3.6vw,50px);line-height:1.08;letter-spacing:-.025em}
+.h3{font-family:var(--f-display);font-weight:500;font-size:20px;line-height:1.2;letter-spacing:-.01em}
+.lede{font-size:clamp(18px,1.5vw,20px);line-height:1.55;color:var(--fg-2);max-width:31em}
+.body{color:var(--fg-2);max-width:34em}
+.mono{font-family:var(--f-mono)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.6em;min-height:50px;padding:0 24px;border-radius:8px;border:1px solid transparent;font-family:var(--f-sans);font-size:16px;font-weight:600;text-decoration:none;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s,transform .2s}
+.btn .arr{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.btn:hover .arr{transform:translateX(4px)}
+.btn-pri{background:var(--you);color:var(--you-ink)}
+.btn-pri:hover{background:#FFC46E}
+.btn-sec{border-color:var(--line-2);color:var(--fg);background:transparent}
+.btn-sec:hover{background:var(--bg-3);border-color:var(--fg-3)}
+.btn-sm{min-height:40px;padding:0 16px;font-size:14.5px}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:border-color .3s}
+.nav.scrolled{border-bottom-color:var(--line)}
+.nav-in{display:flex;align-items:center;gap:28px;min-height:68px}
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{width:28px;height:28px}
+.word{font-family:var(--f-display);font-weight:600;font-size:19px;letter-spacing:-.02em}
+.links{display:flex;gap:26px;margin-left:auto}
+.links a{font-size:14.5px;font-weight:500;color:var(--fg-2);text-decoration:none;padding:8px 0;position:relative}
+.links a:hover,.links a[aria-current="true"]{color:var(--fg)}
+.links a[aria-current="true"]::after{content:"";position:absolute;left:0;right:0;bottom:1px;height:2px;background:var(--you);border-radius:2px}
+.menu{display:none;margin-left:auto;min-height:40px;padding:0 14px;border:1px solid var(--line-2);background:transparent;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer}
+.mnav{border-top:1px solid var(--line);padding-block:6px 16px}
+.mnav a{display:block;padding:13px 0;font-family:var(--f-display);font-size:18px;text-decoration:none;border-bottom:1px solid var(--line)}
+@media (max-width:920px){.links{display:none}.menu{display:inline-flex;align-items:center}.nav .btn-sm{display:none}}
+
+/* hero */
+.hero{position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:64px 64px;opacity:.35;mask-image:radial-gradient(ellipse 70% 60% at 70% 45%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse 70% 60% at 70% 45%,#000 20%,transparent 75%);pointer-events:none}
+.hero-in{position:relative;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);grid-template-areas:"copy stage" "taste stage";column-gap:clamp(28px,4vw,64px);row-gap:22px;align-items:start;padding-block:clamp(28px,4.5vw,64px) clamp(56px,7vw,96px)}
+.hero-copy{grid-area:copy;display:flex;flex-direction:column;gap:22px;min-width:0}
+.hero-in>.taste{grid-area:taste}
+.hero-in>.stage{grid-area:stage;align-self:center}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.cta-meta{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--fg-3);text-transform:uppercase}
+@media (max-width:1000px){.hero-in{grid-template-columns:minmax(0,1fr);grid-template-areas:"copy" "stage" "taste"}}
+
+.taste{border:1px solid var(--line-2);background:linear-gradient(180deg,var(--bg-2),var(--bg));border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px;max-width:560px}
+.taste-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.taste-top .t{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--you)}
+.pips{display:flex;gap:6px}
+.pips i{width:22px;height:4px;border-radius:2px;background:var(--line-2);transition:background-color .3s}
+.pips i.on{background:var(--you)}
+.q{font-family:var(--f-display);font-size:19px;font-weight:500;line-height:1.3;letter-spacing:-.01em;min-height:2.6em}
+.ans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ans button{min-height:46px;padding:8px 10px;border-radius:8px;border:1px solid var(--line-2);background:var(--bg-3);font-size:14.5px;font-weight:600;cursor:pointer;transition:border-color .2s,background-color .2s,transform .15s;line-height:1.2}
+.ans button:hover{border-color:var(--you);background:#1A1F24}
+.ans button:active{transform:scale(.98)}
+.taste-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--fg-3)}
+.linkbtn{border:0;background:transparent;padding:0;min-height:32px;color:var(--fg-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:13px}
+.linkbtn:hover{color:var(--fg)}
+.done{display:flex;flex-direction:column;gap:12px}
+.done p{color:var(--fg-2);font-size:15.5px}
+@media (max-width:480px){.ans{grid-template-columns:minmax(0,1fr)}}
+
+.stage{position:relative;aspect-ratio:1;width:100%;max-width:640px;justify-self:center;min-width:0}
+.stage canvas,.stage svg{position:absolute;inset:0;width:100%;height:100%}
+.rd .spoke{stroke:var(--line-2);stroke-width:1}
+.rd .ring{fill:none;stroke:var(--line-2);stroke-width:1.2;stroke-dasharray:.1 7;stroke-linecap:round}
+.rd .lab{font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;fill:var(--fg-2);text-transform:uppercase}
+.rd .lab.short{display:none}
+@media (max-width:600px){.rd .lab.full{display:none}.rd .lab.short{display:inline;font-size:22px}.rd .val{font-size:30px}.rd .dlt{font-size:18px}.rd .ctr-l{font-size:15px}.stage canvas,.stage svg,.sbox svg{inset:7%;width:86%;height:86%}.stage-cap{top:-4px}}
+.rd .val{font-family:var(--f-display);font-size:19px;font-weight:500;fill:var(--fg)}
+.rd .q{font-family:var(--f-mono);font-size:16px;fill:var(--you)}
+.rd .shape{fill:color-mix(in srgb,var(--you) 18%,transparent);stroke:var(--you);stroke-width:2.5;stroke-linejoin:round}
+.rd .vtx{fill:var(--bg);stroke:var(--you);stroke-width:2.5}
+.rd .ctr-n{font-family:var(--f-display);font-weight:600;font-size:46px;fill:var(--fg);letter-spacing:-.03em}
+.rd .ctr-bg{fill:var(--bg);opacity:.88}
+.rd .ctr-l{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;fill:var(--fg-3);text-transform:uppercase}
+.rd .unk{stroke:var(--you);stroke-width:1.5;stroke-dasharray:3 5;opacity:.7}
+.rd .pulse{fill:none;stroke:var(--you);stroke-width:1.5;transform-box:fill-box;transform-origin:center;animation:pulse 2.2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.2);opacity:0}}
+.stage-cap{position:absolute;left:0;top:0;display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3)}
+.stage-cap::before{content:"";width:18px;height:0;border-top:2.5px solid var(--you)}
+.rd{overflow:visible}
+.rd .dlt{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.04em}
+.rd .dm{fill:var(--malta)}.rd .de{fill:var(--eu)}.rd .dsep{fill:var(--fg-3)}
+.rd.mini .lab,.fin-hex .lab{font-size:26px}
+.rd.mini .shape,.fin-hex .shape{stroke-width:4}
+.rd.mini .vtx,.fin-hex .vtx{stroke-width:4;r:9px}
+.rd.mini .ring,.fin-hex .ring{stroke-width:3;stroke-dasharray:.1 14}
+
+/* sections */
+.sec{padding-block:clamp(72px,9vw,128px);border-top:1px solid var(--line)}
+.sec-head{display:flex;flex-direction:column;gap:18px;max-width:780px;margin-bottom:clamp(36px,5vw,64px)}
+
+/* context */
+.ctx{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,96px);align-items:center}
+.nums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.num{display:flex;flex-direction:column;gap:8px;padding-top:18px;border-top:2px solid var(--c)}
+.num .n{font-family:var(--f-display);font-weight:500;font-size:clamp(52px,6vw,88px);line-height:.9;letter-spacing:-.04em;color:var(--c)}
+.num .n small{font-size:.45em}
+.num .l{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2)}
+.num.malta{--c:var(--malta)}.num.eu{--c:var(--eu)}
+.dotplot{margin-top:34px}
+.dotplot svg{width:100%;height:auto;overflow:visible}
+.dotplot .ax{stroke:var(--line-2)}
+.dotplot .tk{font-family:var(--f-mono);font-size:11px;fill:var(--fg-3)}
+.dotplot .cl{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;fill:var(--fg-2)}
+.src{font-size:13px;color:var(--fg-3);margin-top:18px}
+.src a{color:var(--fg-2)}
+@media (max-width:900px){.ctx{grid-template-columns:minmax(0,1fr)}}
+
+/* story */
+.story{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,5vw,80px)}
+.story-stage{position:sticky;top:84px;height:calc(100vh - 110px);max-height:760px;display:grid;place-items:center;min-width:0}
+.sbox{position:relative;width:min(100%,calc(100vh - 200px),620px);aspect-ratio:1;margin-bottom:34px}
+.sbox svg{position:absolute;inset:0;width:100%;height:100%}
+.sbox .shape,.sbox .bm,.sbox .be{transform-origin:300px 300px;transition:transform .9s cubic-bezier(.2,.8,.2,1),opacity .6s}
+.sbox .bm{fill:none;stroke:var(--malta);stroke-width:2;stroke-dasharray:8 6}
+.sbox .be{fill:none;stroke:var(--eu);stroke-width:2;stroke-dasharray:2 5;stroke-linecap:round}
+.sbox .vals,.sbox .ctr,.sbox .deltas{transition:opacity .5s}
+.sbox[data-step="1"] .shape{transform:scale(0);opacity:0}
+.sbox[data-step="1"] .vals,.sbox[data-step="1"] .ctr,.sbox[data-step="1"] .vx{opacity:0}
+.sbox .vx,.sbox svg{transition:opacity .5s}
+.sbox[data-step="4"] svg{opacity:.22}
+.sbox:not([data-step="3"]) .bm,.sbox:not([data-step="3"]) .be{transform:scale(.3);opacity:0}
+.sbox:not([data-step="3"]) .deltas{opacity:0}
+.qcards,.acts{position:absolute;inset:0;pointer-events:none}
+.qc{position:absolute;padding:10px 14px;border:1px solid var(--line-2);background:var(--bg-2);border-radius:10px;font-size:13.5px;max-width:230px;line-height:1.35;color:var(--fg);box-shadow:0 20px 40px -20px #000;transition:opacity .5s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.qc b{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--you);font-weight:500;margin-bottom:3px}
+.sbox:not([data-step="1"]) .qc{opacity:0;transform:translateY(16px) scale(.96)}
+.ac{position:absolute;left:8%;right:8%;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;padding:12px 14px;border:1px solid var(--line-2);background:color-mix(in srgb,var(--bg-2) 94%,transparent);border-radius:10px;font-size:14px;line-height:1.4;box-shadow:0 20px 40px -20px #000;transition:opacity .5s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.ac .tg{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--malta);grid-row:span 2;padding-top:2px}
+.ac .tg.ok{color:var(--fg-3)}
+.ac span:last-child{color:var(--fg-2)}
+.sbox:not([data-step="4"]) .ac{opacity:0;transform:translateY(24px)}
+.sbox[data-step="4"] .ac:nth-child(2){transition-delay:.1s}
+.sbox[data-step="4"] .ac:nth-child(3){transition-delay:.2s}
+.legend{position:absolute;left:0;right:0;bottom:-34px;display:flex;justify-content:center;flex-wrap:wrap;gap:6px 18px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-2);transition:opacity .5s}
+.legend i{display:inline-block;width:18px;height:0;border-top:2.5px solid var(--you);margin-right:8px;vertical-align:middle}
+.legend i.m{border-top:2px dashed var(--malta)}.legend i.e{border-top:2px dotted var(--eu)}
+.sbox:not([data-step="3"]) .legend{opacity:0}
+.steps{display:flex;flex-direction:column}
+.step{min-height:82vh;display:flex;flex-direction:column;justify-content:center;gap:16px;padding-block:24px;opacity:.35;transition:opacity .4s}
+.step.on{opacity:1}
+.step .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--you)}
+.step p{color:var(--fg-2);max-width:26em}
+@media (max-width:900px){
+  .story{grid-template-columns:minmax(0,1fr);gap:0}
+  .story-stage{top:68px;height:auto;z-index:2;background:var(--bg);padding-block:8px;border-bottom:1px solid var(--line)}
+  .sbox{width:min(100%,38vh)}
+  .step{min-height:70vh;justify-content:flex-start;padding-top:28px}
+  .qc{font-size:12px;max-width:170px;padding:8px 10px}
+  .ac{font-size:12.5px;padding:8px 10px}
+}
+
+/* dimensions */
+.dims{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.dim{display:flex;flex-direction:column;gap:12px;padding:clamp(20px,2.4vw,32px);background:var(--bg);min-width:0;transition:background-color .3s}
+.dim:hover{background:var(--bg-2)}
+.dim svg{width:44px;height:44px}
+.dim .mh{fill:none;stroke:var(--line-2);stroke-width:1.5}
+.dim .ms{stroke:var(--fg-3);stroke-width:1.5}
+.dim .md{fill:var(--you)}
+.dim p{color:var(--fg-2);font-size:16px}
+.dim .eg{margin-top:auto;padding-top:10px;border-top:1px dashed var(--line-2);font-family:var(--f-mono);font-size:12.5px;line-height:1.5;color:var(--fg-3)}
+@media (max-width:900px){.dims{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.dims{grid-template-columns:minmax(0,1fr)}}
+
+/* audiences */
+.tabs{display:inline-flex;padding:4px;border:1px solid var(--line-2);border-radius:10px;gap:4px;margin-bottom:28px;flex-wrap:wrap}
+.tabs button{min-height:42px;padding:0 18px;border:0;border-radius:7px;background:transparent;font-weight:600;font-size:15px;color:var(--fg-2);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--fg);color:var(--bg)}
+.panel{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(24px,5vw,72px);align-items:center;padding:clamp(22px,3vw,44px);border:1px solid var(--line);border-radius:12px;background:var(--bg-2)}
+.panel ul{list-style:none;margin:18px 0 26px;padding:0;display:flex;flex-direction:column;gap:12px;color:var(--fg-2)}
+.panel li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:12px;align-items:baseline}
+.panel li::before{content:"";width:10px;height:10px;background:var(--you);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);transform:translateY(1px)}
+.panel .mini{width:100%;max-width:300px;justify-self:center}
+.panel .mini .shape{transition:all .6s}
+@media (max-width:820px){.panel{grid-template-columns:minmax(0,1fr)}.panel .mini{max-width:220px}}
+
+/* faq */
+.faq{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(24px,5vw,80px)}
+.qa details{border-bottom:1px solid var(--line)}
+.qa details:first-child{border-top:1px solid var(--line)}
+.qa summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 0;cursor:pointer;font-family:var(--f-display);font-weight:500;font-size:clamp(17px,1.6vw,20px);letter-spacing:-.01em}
+.qa summary::-webkit-details-marker{display:none}
+.qa .pm{flex:none;width:28px;height:28px;border:1px solid var(--line-2);border-radius:50%;position:relative}
+.qa .pm::before,.qa .pm::after{content:"";position:absolute;left:8px;right:8px;top:13px;height:1.5px;background:var(--fg);transition:transform .25s}
+.qa .pm::after{transform:rotate(90deg)}
+.qa details[open] .pm::after{transform:rotate(0)}
+.qa .a{padding:0 48px 24px 0;color:var(--fg-2);max-width:40em}
+@media (max-width:860px){.faq{grid-template-columns:minmax(0,1fr)}}
+
+/* final */
+.final{text-align:left}
+.final-in{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:clamp(24px,5vw,72px);align-items:center}
+.final .fin-hex{max-width:340px;width:100%;justify-self:center}
+.final .fin-hex .shape{transform-origin:300px 300px}
+@media (max-width:820px){.final-in{grid-template-columns:minmax(0,1fr)}.final .fin-hex{max-width:220px;justify-self:start}}
+
+/* footer */
+.foot{border-top:1px solid var(--line);padding-block:48px 120px}
+.foot-in{display:grid;grid-template-columns:minmax(0,5fr) repeat(3,minmax(0,2fr));gap:32px}
+.foot h4{margin:0 0 12px;font-family:var(--f-mono);font-size:11.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-3)}
+.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.foot a{text-decoration:none;color:var(--fg-2);font-size:15px}
+.foot a:hover{color:var(--fg);text-decoration:underline;text-underline-offset:3px}
+.foot .tagline{margin-top:14px;color:var(--fg-2);max-width:26em;font-size:15px}
+.mail{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mail code{font-family:var(--f-mono);font-size:13.5px;user-select:all}
+.copy{min-height:32px;padding:0 12px;border:1px solid var(--line-2);background:transparent;border-radius:6px;font-size:12.5px;cursor:pointer;color:var(--fg-2)}
+.copy:hover{border-color:var(--fg-3);color:var(--fg)}
+.foot-base{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--f-mono);font-size:12px;color:var(--fg-3)}
+@media (max-width:860px){.foot-in{grid-template-columns:repeat(2,minmax(0,1fr))}.foot-in>div:first-child{grid-column:1/-1}}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:70;transform:translate(-50%,20px);opacity:0;pointer-events:none;max-width:min(92vw,440px);padding:12px 16px;background:var(--fg);color:var(--bg);font-size:14px;line-height:1.45;border-radius:10px;transition:opacity .25s,transform .25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* prototype review bar (presentation chrome, not part of the design) */
+.rv{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:2px;padding:5px;background:rgba(244,244,245,.94);color:#18181b;border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.4);font:500 12.5px/1 system-ui,-apple-system,"Segoe UI",sans-serif;max-width:calc(100vw - 24px)}
+.rv a,.rv button{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:999px;color:#3f3f46;text-decoration:none;border:0;background:transparent;cursor:pointer;font:inherit;white-space:nowrap}
+.rv a:hover,.rv button:hover{background:rgba(0,0,0,.07);color:#000}
+.rv a[aria-current="page"]{background:#18181b;color:#fff}
+.rv .sep{width:1px;height:18px;background:rgba(0,0,0,.14);margin:0 4px}
+@media (max-width:560px){.rv .full{display:none}.rv a,.rv button{padding:0 10px}}
+.rv.min{padding:4px}
+.rv.min>*:not(.rv-t){display:none}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="mk" viewBox="0 0 28 28"><path d="M14 1.5l11 6.3v12.4L14 26.5 3 20.2V7.8z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 6.5l6.6 4.6-1.6 7.6L14 22l-6.4-4.6.9-6.9z" fill="#FFB547"/></symbol>
+</svg>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Mesura, back to top"><svg aria-hidden="true"><use href="#mk"/></svg><span class="word">mesura</span></a>
+    <nav class="links" aria-label="Main">
+      <a href="#story">How it works</a>
+      <a href="#dimensions">Dimensions</a>
+      <a href="#who">Who it’s for</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-pri btn-sm" href="#top" data-start>Take the survey</a>
+    <button class="menu" id="menu" aria-expanded="false" aria-controls="mnav">Menu</button>
+  </div>
+  <div class="wrap mnav" id="mnav" hidden><a href="#story">How it works</a><a href="#dimensions">Dimensions</a><a href="#who">Who it’s for</a><a href="#faq">FAQ</a></div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="h1">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <p class="eyebrow">AI readiness · Malta · EU</p>
+        <h1 class="h1" id="h1">Measure your AI readiness in <span class="you">ten minutes.</span></h1>
+        <p class="lede">Six dimensions, benchmarked against the Malta average and the EU, with a personalised report and clear next steps. Free, for you or your organisation.</p>
+        <div class="cta-row">
+          <a class="btn btn-pri" href="#top" data-start>Start the free survey <span class="arr" aria-hidden="true">→</span></a>
+          <span class="cta-meta">Free · ≈10 min</span>
+        </div>
+      </div>
+      <div class="taste" id="taste" aria-live="polite">
+        <div class="taste-top"><span class="t" id="t-label">Try three questions</span><span class="pips" aria-hidden="true"><i></i><i></i><i></i></span></div>
+        <div id="t-q">
+          <p class="q" id="q-text">Is someone accountable for how your organisation uses AI?</p>
+          <div class="ans" id="ans" role="group" aria-label="Answers"></div>
+        </div>
+        <div class="done" id="t-done" hidden>
+          <p class="q" style="min-height:0">That’s a rough sketch of 3 of 6 dimensions.</p>
+          <p>The full survey measures all six properly and benchmarks you against Malta and the EU.</p>
+          <div class="cta-row"><a class="btn btn-pri btn-sm" href="#top" data-start>Finish the picture <span class="arr" aria-hidden="true">→</span></a><button type="button" class="linkbtn" id="t-again">Start over</button></div>
+        </div>
+        <div class="taste-foot"><span>A preview, not a score.</span><button type="button" class="linkbtn" id="t-skip">Show the sample again</button></div>
+      </div>
+      <div class="stage" id="stage">
+        <canvas id="dots" aria-hidden="true"></canvas>
+        <svg class="rd" id="hero-rd" viewBox="0 0 600 600" role="img" aria-labelledby="hero-rd-t"><title id="hero-rd-t">Readiness hexagon</title></svg>
+        <p class="stage-cap" id="stage-cap">Sample organisation</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="ctx-h">
+    <div class="wrap ctx">
+      <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+        <p class="eyebrow">Why measure</p>
+        <h2 class="h2" id="ctx-h" style="font-size:clamp(28px,3vw,42px)">Malta ranks third in the EU for generative AI use. Readiness is the next question.</h2>
+        <p class="body">Using a tool is the easy part. Readiness is whether your strategy, data, skills and safeguards can support what comes next.</p>
+      </div>
+      <div style="min-width:0">
+        <div class="nums">
+          <div class="num malta"><span class="n">46.5<small>%</small></span><span class="l">People in Malta</span></div>
+          <div class="num eu"><span class="n">32.7<small>%</small></span><span class="l">EU average</span></div>
+        </div>
+        <div class="dotplot"><svg id="dotplot" viewBox="0 0 560 96" role="img" aria-label="Share of people aged 16 to 74 who used generative AI tools in 2025: Denmark 48.4%, Estonia 46.6%, Malta 46.5%, EU average 32.7%."></svg></div>
+        <p class="src">People aged 16–74 who used generative AI tools in 2025. Source: <a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20251216-3" target="_blank" rel="noopener">Eurostat, 16 December 2025</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="story" aria-labelledby="story-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">How it works</p>
+        <h2 class="h2" id="story-h">From ten minutes of questions to a plan you can use.</h2>
+      </div>
+      <div class="story">
+        <div class="story-stage">
+          <div class="sbox" id="sbox" data-step="3">
+            <svg class="rd" id="story-rd" viewBox="0 0 600 600" role="img" aria-label="Sample report: readiness hexagon with Malta and EU benchmarks"></svg>
+            <div class="qcards" aria-hidden="true">
+              <div class="qc" style="left:2%;top:8%"><b>Strategy</b>Is one person accountable for AI?</div>
+              <div class="qc" style="right:2%;top:30%"><b>Data</b>Could you gather the data a project needs in a week?</div>
+              <div class="qc" style="left:6%;bottom:14%"><b>Governance</b>Do you have written rules for AI and company data?</div>
+            </div>
+            <div class="acts" aria-hidden="true">
+              <div class="ac" style="top:18%"><span class="tg">Gov −11</span><span><b>Write a one-page AI use policy.</b></span><span>Approved tools, what data can go in, who signs off.</span></div>
+              <div class="ac" style="top:42%"><span class="tg">Data −6</span><span><b>Map the data behind one process.</b></span><span>Where it lives, who owns it, how clean it is.</span></div>
+              <div class="ac" style="top:66%"><span class="tg ok">Skills +2</span><span><b>Run a hands-on session.</b></span><span>90 minutes for customer-facing staff, on their real tasks.</span></div>
+            </div>
+            <div class="legend" aria-hidden="true"><span><i></i>Sample</span><span><i class="m"></i>Malta avg</span><span><i class="e"></i>EU</span></div>
+          </div>
+        </div>
+        <div class="steps">
+          <article class="step" data-s="1"><p class="k">01 · Answer</p><h3 class="h2" style="font-size:clamp(24px,2.4vw,34px)">About ten minutes of questions.</h3><p>How you, or your organisation, work with AI today: from strategy and data to skills and safeguards. No preparation needed.</p></article>
+          <article class="step" data-s="2"><p class="k">02 · Score</p><h3 class="h2" style="font-size:clamp(24px,2.4vw,34px)">Six scores and one overall reading.</h3><p>Each dimension is scored out of 100. Together they make your shape and your overall readiness.</p></article>
+          <article class="step" data-s="3"><p class="k">03 · Benchmark</p><h3 class="h2" style="font-size:clamp(24px,2.4vw,34px)">See where you stand.</h3><p>Every score is set against the Malta average and the EU, so you can see where you lead and where you lag.</p></article>
+          <article class="step" data-s="4"><p class="k">04 · Act</p><h3 class="h2" style="font-size:clamp(24px,2.4vw,34px)">Know what to do first.</h3><p>Your personalised report ranks the next steps that close your biggest gaps. Sample figures are illustrative.</p></article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="dimensions" aria-labelledby="dim-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">What we measure</p>
+        <h2 class="h2" id="dim-h">Six dimensions, one shape.</h2>
+        <p class="body">Readiness is more than having the right tools. A weak side pulls the whole shape in, so the survey looks at all six.</p>
+      </div>
+      <div class="dims" id="dims"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="who" aria-labelledby="who-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Who it’s for</p>
+        <h2 class="h2" id="who-h">For yourself, or for your organisation.</h2>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Choose who the survey is for">
+        <button role="tab" id="tab-org" aria-selected="true" aria-controls="panel">My organisation</button>
+        <button role="tab" id="tab-me" aria-selected="false" aria-controls="panel" tabindex="-1">Myself</button>
+      </div>
+      <div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-org">
+        <div>
+          <h3 class="h2" style="font-size:clamp(26px,2.6vw,36px)" id="p-h">Your organisation’s readiness</h3>
+          <ul id="p-list"></ul>
+          <a class="btn btn-pri" href="#top" data-start id="p-cta">Start for my organisation <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+        <svg class="rd mini" id="mini-rd" viewBox="0 0 600 600" aria-hidden="true"></svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="faq" aria-labelledby="faq-h">
+    <div class="wrap faq">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <p class="eyebrow">FAQ</p>
+        <h2 class="h2" id="faq-h">Questions</h2>
+        <p class="body">Something else? Write to <span class="mono" style="font-size:.9em">support@mesura.ai</span>.</p>
+      </div>
+      <div class="qa">
+        <details open><summary>Is it really free?<span class="pm" aria-hidden="true"></span></summary><p class="a">Yes. The survey and your personalised report are free.</p></details>
+        <details><summary>How long does it take?<span class="pm" aria-hidden="true"></span></summary><p class="a">About ten minutes. You don’t need to prepare anything before you start.</p></details>
+        <details><summary>What does the Malta average show?<span class="pm" aria-hidden="true"></span></summary><p class="a">For each dimension it shows the average score of respondents in Malta, so you can see where you are ahead and where you are behind. The EU benchmark gives the same comparison at European level.</p></details>
+        <details><summary>Can I take it for myself rather than my company?<span class="pm" aria-hidden="true"></span></summary><p class="a">Yes. Choose “Myself” before you start and your report focuses on your own readiness.</p></details>
+        <details><summary>What happens to my answers?<span class="pm" aria-hidden="true"></span></summary><p class="a">Your answers build your report and, anonymised, the benchmarks. The privacy policy has the details.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec final" aria-labelledby="fin-h">
+    <div class="wrap final-in">
+      <div style="display:flex;flex-direction:column;gap:22px;align-items:flex-start">
+        <p class="eyebrow">Ten minutes</p>
+        <h2 class="h1" id="fin-h" style="font-size:clamp(38px,5vw,72px)">Finish the <span class="you" style="color:var(--you)">picture.</span></h2>
+        <p class="lede">Free. Six dimensions. Benchmarked against Malta and the EU.</p>
+        <a class="btn btn-pri" href="#top" data-start style="min-height:56px;padding:0 28px;font-size:17px">Start the free survey <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <svg class="rd fin-hex" id="fin-rd" viewBox="0 0 600 600" aria-hidden="true"></svg>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-in">
+      <div>
+        <a class="brand" href="#top" aria-label="Mesura, back to top"><svg aria-hidden="true"><use href="#mk"/></svg><span class="word">mesura</span></a>
+        <p class="tagline">AI readiness, measured. For organisations and people in Malta.</p>
+      </div>
+      <div><h4>Survey</h4><ul><li><a href="#story">How it works</a></li><li><a href="#dimensions">Dimensions</a></li><li><a href="#who">Who it’s for</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+      <div><h4>Mesura</h4><ul><li><a href="#" data-proto>About</a></li><li><a href="#" data-proto>Privacy policy</a></li><li><a href="#" data-proto>Terms</a></li><li><a href="#" data-proto>LinkedIn</a></li></ul></div>
+      <div><h4>Contact</h4><div class="mail"><code id="mail">support@mesura.ai</code><button class="copy" type="button" data-copy="mail">Copy</button></div></div>
+    </div>
+    <div class="foot-base"><span>© 2026 Mesura</span><span>6 dimensions · MT · EU</span></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<nav class="rv" id="rv" aria-label="Prototype review">
+  <a href="index.html"><span aria-hidden="true">←</span><span class="full">Overview</span></a>
+  <span class="sep" aria-hidden="true"></span>
+  <a href="datum.html">A<span class="full">&nbsp;· Datum</span></a>
+  <a href="madum.html">B<span class="full">&nbsp;· Madum</span></a>
+  <a href="six.html" aria-current="page">C<span class="full">&nbsp;· Six</span></a>
+  <span class="sep" aria-hidden="true"></span>
+  <button type="button" class="rv-t" id="rv-t" aria-expanded="true" aria-label="Hide review bar">×</button>
+</nav>
+
+<script>
+(() => {
+'use strict';
+const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = t => 1 - Math.pow(1 - t, 3);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+
+const DIMS = [
+  {n:'Strategy', s:'STR', d:'A clear view of where AI creates value, and someone accountable for it.', q:'Who is accountable for how your organisation uses AI?'},
+  {n:'Data', s:'DAT', d:'Data that is findable, well kept and safe to use with AI tools.', q:'Could you gather the data an AI project needs within a week?'},
+  {n:'Technology', s:'TEC', d:'Tools and infrastructure to use AI securely, at the right scale.', q:'Do people have approved AI tools they can use today?'},
+  {n:'Skills', s:'SKL', d:'People who know how to use AI well, and when not to.', q:'How confident is your team at checking an AI answer?'},
+  {n:'Governance', s:'GOV', d:'Policies, risk checks and compliance, including the EU AI Act.', q:'Do you have written rules for using AI with company data?'},
+  {n:'Culture', s:'CUL', d:'Leaders and teams who try things, share what works and keep going.', q:'When someone finds a better way with AI, does it spread?'}
+];
+const SAMPLE = [58, 44, 63, 51, 37, 66], MALTA = [52, 47, 55, 46, 42, 57], EU = [56, 50, 58, 49, 48, 52];
+const avg = a => Math.round(a.reduce((x, y) => x + y, 0) / a.length);
+const C = 300, RR = 190;
+const ang = i => (-90 + i * 60) * Math.PI / 180;
+const P = (i, v, r = RR) => [C + Math.cos(ang(i)) * r * v / 100, C + Math.sin(ang(i)) * r * v / 100];
+const pts = vals => vals.map((v, i) => P(i, v).map(n => n.toFixed(1)).join(',')).join(' ');
+
+/* radar builder: returns handles for live updates */
+function radar(svg, opt = {}){
+  const g = el('g', {}, svg);
+  if (opt.rings !== false) for (let k = 1; k <= 5; k++) el('polygon', {points: pts(Array(6).fill(k * 20)), class: 'ring'}, g);
+  for (let i = 0; i < 6; i++) { const [x, y] = P(i, 100); el('line', {x1: C, y1: C, x2: x, y2: y, class: 'spoke'}, g); }
+  const extra = el('g', {}, svg);
+  const shape = el('polygon', {points: pts(opt.values || SAMPLE), class: 'shape'}, svg);
+  const vtx = el('g', {class: 'vx'}, svg);
+  const vdots = DIMS.map((_, i) => el('circle', {r: 5.5, class: 'vtx'}, vtx));
+  const labs = el('g', {class: 'labs'}, svg), vals = el('g', {class: 'vals'}, svg);
+  const dlG = el('g', {class: 'deltas'}, svg);
+  const valEls = [];
+  DIMS.forEach((d, i) => {
+    const [x, y] = P(i, 100, RR + (opt.labelGap || 44));
+    const anchor = Math.abs(x - C) < 5 ? 'middle' : x > C ? 'start' : 'end';
+    const up = y < C - 5, dy = Math.abs(x - C) < 5 ? (up ? -6 : 18) : 4;
+    if (opt.labels !== false) { const lx = x + (anchor === 'start' ? -12 : anchor === 'end' ? 12 : 0); if (opt.short) { el('text', {x: lx, y: y + dy, 'text-anchor': anchor, class: 'lab'}, labs).textContent = d.s; } else { el('text', {x: lx, y: y + dy, 'text-anchor': anchor, class: 'lab full'}, labs).textContent = d.n; el('text', {x: lx, y: y + dy, 'text-anchor': anchor, class: 'lab short'}, labs).textContent = d.s; } }
+    if (opt.values !== null && opt.showVals !== false) {
+      const vt = el('text', {x: x + (anchor === 'start' ? -12 : anchor === 'end' ? 12 : 0), y: y + dy + (Math.abs(x - C) < 5 ? (up ? -24 : 24) : 24), 'text-anchor': anchor, class: 'val'}, vals);
+      valEls.push(vt);
+    }
+    if (opt.deltas) {
+      const fm = n => (n >= 0 ? '+' : '−') + Math.abs(n);
+      const dt = el('text', {x: x + (anchor === 'start' ? -12 : anchor === 'end' ? 12 : 0), y: y + dy + (Math.abs(x - C) < 5 ? (up ? -46 : 44) : 44), 'text-anchor': anchor, class: 'dlt'}, dlG);
+      el('tspan', {class: 'dm'}, dt).textContent = fm(SAMPLE[i] - MALTA[i]) + ' MT';
+      el('tspan', {class: 'dsep'}, dt).textContent = ' · ';
+      el('tspan', {class: 'de'}, dt).textContent = fm(SAMPLE[i] - EU[i]) + ' EU';
+    }
+  });
+  const set = v => {
+    shape.setAttribute('points', pts(v));
+    v.forEach((x, i) => { const [px, py] = P(i, x); vdots[i].setAttribute('cx', px.toFixed(1)); vdots[i].setAttribute('cy', py.toFixed(1)); if (valEls[i]) valEls[i].textContent = Math.round(x); });
+  };
+  set(opt.values || SAMPLE);
+  return {g, extra, shape, vtx, vdots, labs, vals, valEls, set};
+}
+
+/* ============ hero radar + particles ============ */
+const heroSvg = document.getElementById('hero-rd');
+const H = radar(heroSvg, {rings:false});
+const ctrG = el('g', {}, heroSvg);
+el('circle', {cx: C, cy: C, r: 50, class: 'ctr-bg'}, ctrG);
+const ctrN = el('text', {x: C, y: C + 10, 'text-anchor': 'middle', class: 'ctr-n'}, ctrG); ctrN.textContent = avg(SAMPLE);
+const ctrL = el('text', {x: C, y: C + 32, 'text-anchor': 'middle', class: 'ctr-l'}, ctrG); ctrL.textContent = 'overall';
+const unkG = el('g', {}, heroSvg);
+let heroVals = SAMPLE.slice(), heroAnim = 0;
+function heroTo(to, dur = 900){
+  cancelAnimationFrame(heroAnim);
+  const from = heroVals.slice();
+  if (reduceMQ.matches) { heroVals = to.slice(); H.set(heroVals); return; }
+  const t0 = performance.now();
+  const step = now => { const k = ease(clamp((now - t0) / dur, 0, 1)); heroVals = from.map((v, i) => v + (to[i] - v) * k); H.set(heroVals); if (k < 1) heroAnim = requestAnimationFrame(step); };
+  heroAnim = requestAnimationFrame(step);
+}
+// dots that settle into the hexagon rings and spokes
+const stage = document.getElementById('stage'), cv = document.getElementById('dots'), cx2 = cv.getContext('2d');
+let parts = [], dpr = 1, sz = 0, t0 = 0, mouse = null, running = false;
+function targets(){
+  const T = [];
+  for (let k = 1; k <= 5; k++) {
+    const r = RR * k / 5, per = 14 * k;
+    for (let s = 0; s < 6; s++) {
+      const [ax, ay] = [C + Math.cos(ang(s)) * r, C + Math.sin(ang(s)) * r], [bx, by] = [C + Math.cos(ang(s + 1)) * r, C + Math.sin(ang(s + 1)) * r];
+      for (let j = 0; j < per / 6 * 3; j++) { const t = j / (per / 6 * 3); T.push([ax + (bx - ax) * t, ay + (by - ay) * t, k === 5 ? 1 : .7]); }
+    }
+  }
+  for (let i = 0; i < 6; i++) for (let j = 1; j <= 24; j++) { const [x, y] = P(i, j / 24 * 100); T.push([x, y, .45]); }
+  return T;
+}
+function sizeStage(){
+  const r = cv.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); sz = r.width;
+  cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+}
+function initParts(){
+  const T = targets(); let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  parts = T.map(([x, y, a]) => { const ang0 = rnd() * Math.PI * 2, d = 260 + rnd() * 340; return {tx: x, ty: y, sx: C + Math.cos(ang0) * d, sy: C + Math.sin(ang0) * d, a, dl: rnd() * .5, ph: rnd() * 6.28}; });
+}
+function frame(now){
+  const t = (now - t0) / 1000, s = sz / 600;
+  cx2.setTransform(dpr * s, 0, 0, dpr * s, 0, 0);
+  cx2.clearRect(0, 0, 600, 600);
+  let settled = true;
+  for (const p of parts) {
+    const k = reduceMQ.matches ? 1 : ease(clamp((t - p.dl) / 1.6, 0, 1));
+    if (k < 1) settled = false;
+    let x = p.sx + (p.tx - p.sx) * k, y = p.sy + (p.ty - p.sy) * k;
+    if (mouse && k === 1) { const dx = x - mouse[0], dy = y - mouse[1], d2 = dx * dx + dy * dy; if (d2 < 3600) { const f = (1 - Math.sqrt(d2) / 60) * 10; const d = Math.sqrt(d2) || 1; x += dx / d * f; y += dy / d * f; } }
+    const tw = .75 + .25 * Math.sin(t * 1.4 + p.ph);
+    cx2.globalAlpha = p.a * tw * (.35 + .65 * k);
+    cx2.fillStyle = '#8FA0B2';
+    cx2.beginPath(); cx2.arc(x, y, 1.6, 0, 6.283); cx2.fill();
+  }
+  cx2.globalAlpha = 1;
+  if (running) requestAnimationFrame(frame);
+  if (settled && !mouse && reduceMQ.matches) running = false;
+}
+function startDots(){ sizeStage(); initParts(); t0 = performance.now(); if (!running) { running = true; requestAnimationFrame(frame); } }
+let seen = false;
+const vis = new IntersectionObserver(es => { const on = es[0].isIntersecting; if (on && !seen) { seen = true; t0 = performance.now(); } if (on && !running) { running = true; requestAnimationFrame(frame); } else if (!on) running = false; });
+vis.observe(stage);
+new ResizeObserver(() => sizeStage()).observe(stage);
+stage.addEventListener('pointermove', e => { const r = cv.getBoundingClientRect(); mouse = [(e.clientX - r.left) / r.width * 600, (e.clientY - r.top) / r.height * 600]; });
+stage.addEventListener('pointerleave', () => mouse = null);
+// the SVG layer eases in after the dots arrive
+if (!reduceMQ.matches) { heroSvg.animate([{opacity: 0, transform: 'scale(.94)'}, {opacity: 1, transform: 'scale(1)'}], {duration: 900, delay: 900, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards'}); }
+startDots();
+
+/* ============ three-question taste ============ */
+const QS = [
+  {i: 0, q: 'Is someone accountable for how your organisation uses AI?', a: [['Yes, clearly', 84], ['Informally', 52], ['Not yet', 18]]},
+  {i: 3, q: 'How confident are most of your people using AI tools at work?', a: [['Confident', 78], ['Some are', 48], ['Mostly not', 20]]},
+  {i: 4, q: 'Do you have written rules for using AI with company data?', a: [['Yes', 80], ['In progress', 46], ['No', 14]]}
+];
+let qi = 0, mine = null;
+const ansEl = document.getElementById('ans'), qText = document.getElementById('q-text'), pips = [...document.querySelectorAll('.pips i')];
+const cap = document.getElementById('stage-cap');
+function unknowns(){
+  unkG.textContent = '';
+  if (!mine) return;
+  DIMS.forEach((d, i) => {
+    if (mine[i] !== null) return;
+    const [x, y] = P(i, 55);
+    el('line', {x1: C, y1: C, x2: P(i, 100)[0], y2: P(i, 100)[1], class: 'unk'}, unkG);
+    el('circle', {cx: x, cy: y, r: 9, class: 'pulse'}, unkG);
+    const t = el('text', {x, y: y + 6, 'text-anchor': 'middle', class: 'q'}, unkG); t.textContent = '?';
+  });
+}
+function showQ(){
+  const Q = QS[qi];
+  qText.textContent = Q.q;
+  ansEl.textContent = '';
+  Q.a.forEach(([label, v]) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.addEventListener('click', () => answer(v)); ansEl.appendChild(b); });
+  pips.forEach((p, i) => p.classList.toggle('on', i < qi));
+  document.getElementById('t-label').textContent = `Question ${qi + 1} of 3`;
+}
+function answer(v){
+  if (!mine) mine = Array(6).fill(null);
+  mine[QS[qi].i] = v;
+  heroTo(mine.map(x => x === null ? 0 : x), 800);
+  H.valEls.forEach((t, i) => t.style.opacity = mine[i] === null ? 0 : 1);
+  unknowns();
+  const n = mine.filter(x => x !== null).length;
+  ctrN.textContent = n; ctrL.textContent = 'of 6 sketched';
+  cap.textContent = 'Your rough sketch';
+  qi++;
+  if (qi < QS.length) showQ();
+  else {
+    pips.forEach(p => p.classList.add('on'));
+    document.getElementById('t-q').hidden = true; document.getElementById('t-done').hidden = false;
+    document.getElementById('t-label').textContent = 'Sketch complete';
+  }
+}
+function resetTaste(sample){
+  qi = 0; mine = null; unknowns();
+  document.getElementById('t-q').hidden = false; document.getElementById('t-done').hidden = true;
+  H.valEls.forEach(t => t.style.opacity = 1);
+  showQ(); pips.forEach(p => p.classList.remove('on'));
+  document.getElementById('t-label').textContent = 'Try three questions';
+  if (sample) { heroTo(SAMPLE, 800); ctrN.textContent = avg(SAMPLE); ctrL.textContent = 'overall'; cap.textContent = 'Sample organisation'; }
+}
+document.getElementById('t-again').addEventListener('click', () => resetTaste(true));
+document.getElementById('t-skip').addEventListener('click', () => resetTaste(true));
+showQ(); document.getElementById('t-label').textContent = 'Try three questions';
+
+/* ============ context dot plot ============ */
+(() => {
+  const s = document.getElementById('dotplot'), L = 20, R = 540, x = v => L + v / 50 * (R - L), y = 56;
+  el('line', {x1: L, x2: R, y1: y, y2: y, class: 'ax'}, s);
+  [0, 10, 20, 30, 40, 50].forEach(v => { el('line', {x1: x(v), x2: x(v), y1: y - 4, y2: y + 4, class: 'ax'}, s); const t = el('text', {x: x(v), y: y + 24, 'text-anchor': 'middle', class: 'tk'}, s); t.textContent = v + (v === 50 ? '%' : ''); });
+  const pt2 = (v, lab, col, up, r = 6) => { el('circle', {cx: x(v), cy: y, r, fill: col}, s); const t = el('text', {x: x(v), y: up ? y - 16 : y + 24, 'text-anchor': 'middle', class: 'cl', fill: col}, s); t.textContent = lab; };
+  pt2(32.7, 'EU 32.7', 'var(--eu)', true, 7);
+  pt2(46.5, 'MT', 'var(--malta)', true, 7);
+  el('circle', {cx: x(46.6), cy: y, r: 4, fill: 'var(--fg-3)'}, s);
+  el('circle', {cx: x(48.4), cy: y, r: 4, fill: 'var(--fg-3)'}, s);
+  const t1 = el('text', {x: x(48.4), y: y - 16, 'text-anchor': 'start', class: 'cl'}, s); t1.textContent = ' DK · EE';
+  s.querySelectorAll('text.cl').forEach(t => { if (t.getAttribute('fill')) t.style.fill = t.getAttribute('fill'); });
+})();
+
+/* ============ scroll story ============ */
+const sbox = document.getElementById('sbox'), sSvg = document.getElementById('story-rd');
+const S = radar(sSvg, {labelGap: 36, deltas: true});
+const bm = el('polygon', {points: pts(MALTA), class: 'bm'}, S.extra), be = el('polygon', {points: pts(EU), class: 'be'}, S.extra);
+S.shape.parentNode.insertBefore(S.extra, S.shape.nextSibling);
+const sc = el('g', {class: 'ctr'}, sSvg);
+el('circle', {cx: C, cy: C, r: 50, class: 'ctr-bg'}, sc);
+const sN = el('text', {x: C, y: C + 10, 'text-anchor': 'middle', class: 'ctr-n'}, sc); sN.textContent = avg(SAMPLE);
+const sL = el('text', {x: C, y: C + 32, 'text-anchor': 'middle', class: 'ctr-l'}, sc); sL.textContent = 'overall';
+let curStep = '3';
+const stepEls = [...document.querySelectorAll('.step')];
+function setStep(s){
+  if (s === curStep) return; curStep = s; sbox.setAttribute('data-step', s);
+  stepEls.forEach(x => x.classList.toggle('on', x.dataset.s === s));
+  if (s === '2' && !reduceMQ.matches) { const t1 = performance.now(), target = avg(SAMPLE); const st = now => { const k = ease(clamp((now - t1) / 900, 0, 1)); sN.textContent = Math.round(target * k); if (k < 1) requestAnimationFrame(st); }; requestAnimationFrame(st); }
+}
+const sio = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) setStep(en.target.dataset.s); }), {rootMargin: innerWidth <= 900 ? '-66% 0px -24% 0px' : '-50% 0px -45% 0px'});
+stepEls.forEach(x => sio.observe(x));
+stepEls[2].classList.add('on');
+
+/* ============ dimensions ============ */
+const dimsEl = document.getElementById('dims');
+DIMS.forEach((d, i) => {
+  const a = document.createElement('article'); a.className = 'dim';
+  const hx = Array.from({length: 6}, (_, k) => { const t = (-90 + k * 60) * Math.PI / 180; return (22 + Math.cos(t) * 18).toFixed(1) + ',' + (22 + Math.sin(t) * 18).toFixed(1); }).join(' ');
+  const t = (-90 + i * 60) * Math.PI / 180, vx = 22 + Math.cos(t) * 18, vy = 22 + Math.sin(t) * 18;
+  a.innerHTML = `<svg viewBox="0 0 44 44" aria-hidden="true"><polygon class="mh" points="${hx}"/><line class="ms" x1="22" y1="22" x2="${vx.toFixed(1)}" y2="${vy.toFixed(1)}"/><circle class="md" cx="${vx.toFixed(1)}" cy="${vy.toFixed(1)}" r="4"/></svg><h3 class="h3">${d.n}</h3><p>${d.d}</p><p class="eg">e.g. ${d.q}</p>`;
+  dimsEl.appendChild(a);
+});
+
+/* ============ audiences ============ */
+const AUD = {
+  org: {h: 'Your organisation’s readiness', l: ['Score your organisation on all six dimensions.', 'See where you stand against the Malta average and the EU.', 'Get a prioritised plan for closing the gaps.'], c: 'Start for my organisation', v: SAMPLE},
+  me: {h: 'Your own readiness', l: ['See how ready you are to work with AI: skills, habits and confidence.', 'Compare yourself with people across Malta and the EU.', 'Get next steps you can act on this week.'], c: 'Start as an individual', v: [44, 38, 60, 72, 40, 58]}
+};
+const mini = radar(document.getElementById('mini-rd'), {short: true, showVals: false});
+function setAud(k){
+  const A = AUD[k];
+  document.getElementById('p-h').textContent = A.h;
+  document.getElementById('p-list').innerHTML = A.l.map(x => `<li>${x}</li>`).join('');
+  document.getElementById('p-cta').innerHTML = `${A.c} <span class="arr" aria-hidden="true">→</span>`;
+  mini.set(A.v);
+  ['org', 'me'].forEach(x => { const b = document.getElementById('tab-' + x); b.setAttribute('aria-selected', String(x === k)); b.tabIndex = x === k ? 0 : -1; });
+  document.getElementById('panel').setAttribute('aria-labelledby', 'tab-' + k);
+}
+['org', 'me'].forEach(k => {
+  const b = document.getElementById('tab-' + k);
+  b.addEventListener('click', () => setAud(k));
+  b.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); const n = k === 'org' ? 'me' : 'org'; setAud(n); document.getElementById('tab-' + n).focus(); } });
+});
+setAud('org');
+
+/* ============ final hexagon ============ */
+const F = radar(document.getElementById('fin-rd'), {short: true, showVals: false, values: [100, 100, 100, 100, 100, 100]});
+const finSvg = document.getElementById('fin-rd');
+const fio = new IntersectionObserver(es => {
+  if (!es[0].isIntersecting || reduceMQ.matches) return; fio.disconnect();
+  const from = [58, 0, 0, 51, 37, 0], to = [100, 100, 100, 100, 100, 100], t1 = performance.now();
+  const st = now => { const k = ease(clamp((now - t1) / 1400, 0, 1)); F.set(from.map((v, i) => v + (to[i] - v) * clamp(k * 1.4 - i * .08, 0, 1))); if (k < 1) requestAnimationFrame(st); };
+  requestAnimationFrame(st);
+}, {threshold: .5});
+fio.observe(finSvg);
+
+/* ============ chrome ============ */
+const toastEl = document.getElementById('toast'); let tt;
+const toast = m => { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('on'), 3400); };
+document.addEventListener('click', e => { const a = e.target.closest('[data-start]'); if (a) { e.preventDefault(); toast('Prototype: this opens the survey.'); } });
+document.querySelectorAll('[data-proto]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); toast('This page isn’t part of the homepage prototype.'); }));
+document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+  const el2 = document.getElementById(b.getAttribute('data-copy'));
+  const done = () => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1600); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(el2); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Press Ctrl/Cmd+C to copy the address.'); };
+  try { navigator.clipboard.writeText(el2.textContent).then(done, fallback); } catch (err) { fallback(); }
+}));
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', scrollY > 8);
+addEventListener('scroll', onScroll, {passive: true}); onScroll();
+const menu = document.getElementById('menu'), mnav = document.getElementById('mnav');
+menu.addEventListener('click', () => { const open = menu.getAttribute('aria-expanded') !== 'true'; menu.setAttribute('aria-expanded', open); mnav.hidden = !open; menu.textContent = open ? 'Close' : 'Menu'; });
+mnav.addEventListener('click', e => { if (e.target.closest('a')) { menu.setAttribute('aria-expanded', 'false'); mnav.hidden = true; menu.textContent = 'Menu'; } });
+const spy = new IntersectionObserver(es => es.forEach(en => {
+  const a = document.querySelector('.links a[href="#' + en.target.id + '"]');
+  if (a && en.isIntersecting) { document.querySelectorAll('.links a').forEach(x => x.removeAttribute('aria-current')); a.setAttribute('aria-current', 'true'); }
+}), {rootMargin: '-45% 0px -50% 0px'});
+['story', 'dimensions', 'who', 'faq'].forEach(id => spy.observe(document.getElementById(id)));
+const rv = document.getElementById('rv'), rvt = document.getElementById('rv-t');
+rvt.addEventListener('click', () => { const min = rv.classList.toggle('min'); rvt.textContent = min ? '⋯' : '×'; rvt.setAttribute('aria-expanded', String(!min)); rvt.setAttribute('aria-label', min ? 'Show review bar' : 'Hide review bar'); });
+})();
+</script>
+</body>
+</html>

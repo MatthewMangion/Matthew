@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="en-MT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mesura · Datum</title>
+<meta name="description" content="Mesura homepage prototype, route A: a surveyor’s benchmark for AI readiness in Malta.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@1&family=Martian+Mono:wdth,wght@75..112.5,300..700&display=swap">
+<style>
+:root{
+  /* Layout: a survey sheet. 1320px measure; copy hangs left, a framed map plate sits right; readouts in mono, one neatline per figure. */
+  --paper:#F2F4F3;
+  --paper-2:#E6EBE9;
+  --panel:#FAFBFA;
+  --ink:#0E1B24;
+  --ink-2:#3B4A54;
+  --ink-3:#55646E;
+  --rule:#C4CED1;
+  --grid:#D6DEE0;
+  --land:#E7E3D6;
+  --contour:#B25F28;
+  --bathy:#3C83AE;
+  --malta:#C8102E;
+  --eu:#1B45B0;
+  --on-ink:#F2F4F3;
+  --f-sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"Martian Mono",ui-monospace,Menlo,Consolas,monospace;
+  --f-carto:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --measure:1320px;
+  --gutter:clamp(16px,4vw,48px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0A131A; --paper-2:#0F1B24; --panel:#0C171F;
+    --ink:#E3EBEE; --ink-2:#A6B4BC; --ink-3:#8B9AA3;
+    --rule:#253541; --grid:#1A2A35; --land:#13222C;
+    --contour:#D08A55; --bathy:#5AA5D2;
+    --malta:#FF5B6F; --eu:#7C9DFF; --on-ink:#0A131A;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0A131A; --paper-2:#0F1B24; --panel:#0C171F;
+  --ink:#E3EBEE; --ink-2:#A6B4BC; --ink-3:#8B9AA3;
+  --rule:#253541; --grid:#1A2A35; --land:#13222C;
+  --contour:#D08A55; --bathy:#5AA5D2;
+  --malta:#FF5B6F; --eu:#7C9DFF; --on-ink:#0A131A;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;padding-bottom:env(safe-area-inset-bottom,0px)}
+img,svg,canvas{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--eu);outline-offset:3px;border-radius:2px}
+.wrap{max-width:var(--measure);margin-inline:auto;padding-inline:var(--gutter)}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+.mono{font-family:var(--f-mono);font-stretch:87.5%}
+h1,h2,h3{margin:0;text-wrap:balance;font-weight:600}
+p{margin:0}
+
+/* ---------- type scale ---------- */
+.kicker{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-stretch:87.5%;font-size:11.5px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.kicker svg{width:18px;height:15px;color:var(--ink)}
+.h2{font-size:clamp(32px,4.2vw,58px);line-height:1.02;font-stretch:112%;font-weight:620;letter-spacing:-.022em}
+.h3{font-size:21px;line-height:1.2;font-stretch:108%;font-weight:620;letter-spacing:-.01em}
+.lede{font-size:clamp(18px,1.6vw,21px);line-height:1.5;color:var(--ink-2);max-width:34em}
+.body{color:var(--ink-2);max-width:36em}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.65em;min-height:48px;padding:0 22px;border:1.5px solid transparent;border-radius:2px;font-family:var(--f-sans);font-size:15.5px;font-weight:600;font-stretch:108%;letter-spacing:.005em;text-decoration:none;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s,transform .2s}
+.btn .arr{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.btn:hover .arr{transform:translateX(4px)}
+.btn-ink{background:var(--ink);color:var(--on-ink)}
+.btn-ink:hover{background:var(--ink-2)}
+.btn-line{border-color:var(--ink);color:var(--ink);background:transparent}
+.btn-line:hover{background:var(--ink);color:var(--on-ink)}
+.btn-sm{min-height:40px;padding:0 16px;font-size:14px}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--paper) 90%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .3s}
+.nav.scrolled{border-bottom-color:var(--rule)}
+.nav-in{display:flex;align-items:center;gap:28px;min-height:68px}
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink)}
+.brand svg{width:27px;height:23px}
+.word{font-weight:720;font-stretch:125%;font-size:21px;letter-spacing:-.015em;line-height:1}
+.links{display:flex;gap:26px;margin-left:auto}
+.links a{position:relative;font-size:14.5px;font-weight:500;text-decoration:none;color:var(--ink-2);padding:8px 0}
+.links a:hover,.links a[aria-current="true"]{color:var(--ink)}
+.links a[aria-current="true"]::after{content:"";position:absolute;left:0;right:0;bottom:2px;height:2px;background:var(--ink)}
+.menu{display:none;margin-left:auto;min-height:40px;padding:0 14px;border:1.5px solid var(--ink);background:transparent;border-radius:2px;font-weight:600;font-size:14px;cursor:pointer}
+.mnav{border-top:1px solid var(--rule);padding-block:8px 16px}
+.mnav a{display:block;padding:12px 0;font-size:18px;font-weight:560;font-stretch:108%;text-decoration:none;border-bottom:1px solid var(--grid)}
+@media (max-width:900px){.links{display:none}.menu{display:inline-flex;align-items:center}.nav .btn-sm{display:none}}
+
+/* ---------- hero ---------- */
+.hero{border-bottom:1px solid var(--rule)}
+.hero-in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:clamp(32px,5vw,80px);align-items:center;padding-block:clamp(28px,4.4vw,64px) clamp(48px,6vw,88px)}
+.hero-copy{display:flex;flex-direction:column;gap:28px;min-width:0}
+.h1{font-size:clamp(44px,5.7vw,88px);line-height:.95;font-stretch:116%;font-weight:640;letter-spacing:-.03em}
+.h1 em{font-style:normal;position:relative;white-space:nowrap}
+.h1 em::after{content:"";position:absolute;left:.03em;right:.03em;bottom:-.03em;height:.1em;background:repeating-linear-gradient(90deg,var(--ink) 0 .46em,transparent .46em .92em);box-shadow:inset 0 0 0 .022em var(--ink)}
+.start{display:flex;flex-direction:column;gap:14px;margin:0}
+.who{display:flex;align-items:center;gap:14px;border:0;margin:0;padding:0;flex-wrap:wrap}
+.who legend{float:left;margin-right:4px;padding:0;font-family:var(--f-mono);font-stretch:87.5%;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:2px;padding:2px;gap:2px}
+.seg label{position:relative;display:inline-flex;align-items:center;min-height:38px;padding:0 14px;font-size:14.5px;font-weight:560;cursor:pointer;border-radius:1px;user-select:none}
+.seg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.seg label:has(input:checked){background:var(--ink);color:var(--on-ink)}
+.seg label:has(input:focus-visible){outline:2px solid var(--eu);outline-offset:2px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.cta-note{font-family:var(--f-mono);font-stretch:87.5%;font-size:12px;color:var(--ink-3);letter-spacing:.02em}
+.facts{list-style:none;margin:6px 0 0;padding:14px 0 0;display:flex;flex-wrap:wrap;border-top:1px solid var(--rule);font-family:var(--f-mono);font-stretch:87.5%;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.facts li{display:flex;align-items:center;gap:8px;padding-right:18px;margin-right:18px;border-right:1px solid var(--rule);line-height:2}
+.facts li:last-child{border-right:0;margin-right:0;padding-right:0}
+.facts b{color:var(--ink);font-weight:600}
+
+.plate{position:relative;width:100%;aspect-ratio:1000/860;max-width:100%;touch-action:pan-y;min-width:0}
+.plate canvas{position:absolute;inset:0;width:100%;height:100%}
+.xh{position:absolute;inset:0;pointer-events:none}
+.xh-v,.xh-h{position:absolute;background:var(--ink);opacity:.55}
+.xh-v{width:1px;top:0;left:0}
+.xh-h{height:1px;left:0;top:0}
+.xh-ret{position:absolute;left:0;top:0;width:26px;height:26px;margin:-13px 0 0 -13px;border:1.5px solid var(--ink);border-radius:50%}
+.xh-ret::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;background:var(--malta);border-radius:50%}
+.xh-read{position:absolute;left:0;top:0;display:flex;flex-direction:column;gap:2px;padding:7px 9px;background:var(--panel);border:1px solid var(--ink);font-family:var(--f-mono);font-stretch:87.5%;font-size:10.5px;line-height:1.35;letter-spacing:.02em;white-space:nowrap;color:var(--ink)}
+.xh-read span+span{color:var(--ink-3)}
+.xh.glide .xh-v,.xh.glide .xh-h,.xh.glide .xh-ret,.xh.glide .xh-read{transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+@media (max-width:560px){.xh-read{display:none}.plate-cap{flex-direction:column;gap:4px}}
+.osm{margin-top:4px;font-family:var(--f-mono);font-stretch:87.5%;font-size:10.5px;color:var(--ink-3)}
+.osm a{color:inherit}
+.plate-cap{margin-top:10px;display:flex;justify-content:space-between;gap:16px;font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;letter-spacing:.04em;color:var(--ink-3)}
+
+@media (max-width:1000px){
+  .hero-in{grid-template-columns:minmax(0,1fr)}
+  .plate{aspect-ratio:1000/900}
+}
+
+/* ---------- sections ---------- */
+.sec{padding-block:clamp(64px,8vw,112px)}
+.sec+.sec{border-top:1px solid var(--rule)}
+.sec-head{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,4vw,64px);align-items:end;margin-bottom:clamp(40px,5vw,64px)}
+.sec-head .left{display:flex;flex-direction:column;gap:18px;min-width:0}
+.sec-head .body{justify-self:end}
+@media (max-width:900px){.sec-head{grid-template-columns:minmax(0,1fr)}.sec-head .body{justify-self:start}}
+
+/* context: measuring tape */
+.ctx{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,6vw,96px);align-items:center}
+.ctx .left{display:flex;flex-direction:column;gap:22px;min-width:0}
+@media (max-width:900px){.ctx{grid-template-columns:minmax(0,1fr)}}
+.tape{margin:0;display:flex;flex-direction:column;gap:22px;min-width:0}
+.tape figcaption{font-family:var(--f-mono);font-stretch:87.5%;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.scale{position:relative;height:30px;border-bottom:1px solid var(--ink);margin-bottom:-8px}
+.scale span{position:absolute;bottom:8px;transform:translateX(-50%);font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;color:var(--ink-3)}
+.scale span:first-child{transform:none}
+.scale span:last-child{transform:translateX(-100%)}
+.scale::after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;background:repeating-linear-gradient(90deg,var(--ink) 0 1px,transparent 1px 2%)}
+.bar{--v:0;position:relative;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.bar .track{position:relative;height:34px;background:var(--paper-2)}
+.bar .fill{position:absolute;inset:0 auto 0 0;width:calc(var(--v) * 2%);background:var(--c);transform-origin:left center}
+.bar .fill::after{content:"";position:absolute;inset:0 0 auto 0;height:9px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--paper) 70%,transparent) 0 1px,transparent 1px 10px);opacity:.9}
+.bar .lab{display:flex;justify-content:space-between;gap:12px;align-items:baseline;font-size:15px;font-weight:560}
+.bar .val{font-family:var(--f-mono);font-stretch:87.5%;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--c)}
+.bar.malta{--c:var(--malta)}
+.bar.eu{--c:var(--eu)}
+.bar.top{--c:var(--ink-3)}
+.bar.top .track{height:10px;background:transparent;border-bottom:1px dashed var(--rule)}
+.bar.top .fill{background:transparent;border-right:2px solid var(--ink-3)}
+.bar.top .fill::after{display:none}
+.src{font-size:13px;color:var(--ink-3)}
+.src a{color:var(--ink-2)}
+
+/* how: traverse */
+.trav{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;position:relative}
+.trav::before{content:"";position:absolute;left:0;right:0;top:15px;height:0;border-top:1.5px dashed var(--ink)}
+.trav li{position:relative;display:flex;flex-direction:column;gap:14px;padding-right:clamp(20px,3vw,48px);min-width:0}
+.st{position:relative;display:flex;align-items:center;gap:12px;height:32px;background:var(--paper);width:max-content;padding-right:12px;font-family:var(--f-mono);font-stretch:87.5%;font-size:12px;font-weight:600;letter-spacing:.06em}
+.st svg{width:30px;height:28px;color:var(--ink)}
+.trav p{color:var(--ink-2);max-width:26em}
+@media (max-width:820px){
+  .trav{grid-template-columns:minmax(0,1fr);gap:36px}
+  .trav::before{left:14px;right:auto;top:0;bottom:0;border-top:0;border-left:1.5px dashed var(--ink)}
+  .trav li{padding-left:0}
+  .st{background:var(--paper)}
+}
+
+/* dimensions: map key */
+.key{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1.5px solid var(--ink)}
+.key article{display:grid;grid-template-columns:48px minmax(0,1fr);gap:6px 18px;padding:28px 28px 30px 0;border-bottom:1px solid var(--rule);min-width:0}
+.key article:nth-child(odd){border-right:1px solid var(--rule)}
+.key article:nth-child(even){padding-left:28px}
+.key .glyph{grid-row:span 3;width:44px;height:44px;border:1.5px solid var(--ink);display:grid;place-items:center}
+.key .glyph svg{width:26px;height:26px}
+.key h3{display:flex;align-items:baseline;gap:12px}
+.key .code{font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--ink-3)}
+.key p{color:var(--ink-2);font-size:16px}
+.key .q{margin-top:6px;font-family:var(--f-mono);font-stretch:87.5%;font-size:12px;line-height:1.55;color:var(--ink-3)}
+.key .q::before{content:"e.g. ";color:var(--ink-2)}
+@media (max-width:760px){.key{grid-template-columns:minmax(0,1fr)}.key article:nth-child(odd){border-right:0}.key article:nth-child(even){padding-left:0}}
+
+/* report sheet */
+.sheet{position:relative;background:var(--panel);border:1.5px solid var(--ink)}
+.sheet-grid{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr)}
+.pf{padding:clamp(18px,2.4vw,32px);border-right:1px solid var(--rule);min-width:0;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;background-position:-1px -1px}
+.pf-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.pf-title{font-family:var(--f-mono);font-stretch:87.5%;font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.bench{display:inline-flex;align-items:center;gap:10px}
+.bench .lbl{font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.tog{display:inline-flex;border:1.5px solid var(--ink);border-radius:2px;padding:2px;gap:2px;background:var(--panel)}
+.tog button{min-height:34px;padding:0 12px;border:0;background:transparent;font-size:13.5px;font-weight:600;border-radius:1px;cursor:pointer}
+.tog button[aria-checked="true"]{background:var(--ink);color:var(--on-ink)}
+.chart{position:relative}
+.chart svg{width:100%;height:auto;overflow:visible}
+.chart .ax{font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;fill:var(--ink-3)}
+.chart .dl{font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;font-weight:600;letter-spacing:.06em;fill:var(--ink)}
+.chart .vl{font-family:var(--f-mono);font-stretch:87.5%;font-size:12px;font-weight:600;fill:var(--ink)}
+.chart .bv{font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;font-weight:500}
+.chart .col{fill:transparent;cursor:crosshair}
+.chart .col:focus{outline:none}
+.chart .col:focus-visible{stroke:var(--eu);stroke-width:2}
+.tip{position:absolute;pointer-events:none;min-width:168px;padding:10px 12px;background:var(--panel);border:1.5px solid var(--ink);font-size:13px;line-height:1.45;transform:translate(-50%,-100%);opacity:0;transition:opacity .15s}
+.tip.on{opacity:1}
+.tip b{display:block;font-size:14px;font-stretch:108%}
+.tip .r{display:flex;justify-content:space-between;gap:16px;font-family:var(--f-mono);font-stretch:87.5%;font-size:11.5px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:10px;font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;letter-spacing:.03em;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend i{display:inline-block;width:22px;height:0;border-top:2.5px solid var(--ink)}
+.legend i.b{border-top:2px dashed var(--c)}
+.legend i.h{height:10px;border:0;background:repeating-linear-gradient(135deg,var(--c) 0 1.5px,transparent 1.5px 5px)}
+.legend i.l{height:10px;border:0;background:radial-gradient(circle,var(--ink-3) 1px,transparent 1.3px) 0 0/5px 5px}
+
+.sum{display:flex;flex-direction:column;min-width:0}
+.sum-block{padding:clamp(18px,2.4vw,32px);border-bottom:1px solid var(--rule)}
+.overall{display:flex;align-items:flex-end;gap:14px}
+.big{font-size:clamp(72px,8vw,112px);line-height:.8;font-weight:640;font-stretch:118%;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.of{font-family:var(--f-mono);font-stretch:87.5%;font-size:13px;color:var(--ink-3);padding-bottom:4px}
+.fb{margin:22px 0 0;display:flex;flex-direction:column;gap:10px}
+.fb div{display:flex;align-items:baseline;gap:10px;min-width:0}
+.fb dt{font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap}
+.fb .ld{flex:1;min-width:16px;border-bottom:1.5px dotted var(--rule);transform:translateY(-4px)}
+.fb dd{margin:0;font-size:17px;font-weight:620;font-stretch:108%;font-variant-numeric:tabular-nums;white-space:nowrap}
+.steps{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:14px;counter-reset:s}
+.steps li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 12px;counter-increment:s;font-size:15px;color:var(--ink-2)}
+.steps li::before{content:counter(s);grid-row:span 2;width:26px;height:26px;display:grid;place-items:center;border:1.5px solid var(--ink);font-family:var(--f-mono);font-stretch:87.5%;font-size:11.5px;font-weight:600;color:var(--ink)}
+.chip{display:inline-flex;gap:8px;align-items:center;width:max-content;font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink)}
+.chip .d{padding:1px 6px;border:1px solid currentColor;color:var(--c,var(--ink));font-variant-numeric:tabular-nums}
+.tblock{display:grid;grid-template-columns:repeat(4,minmax(0,auto));border-top:1.5px solid var(--ink);font-family:var(--f-mono);font-stretch:87.5%;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase}
+.tblock div{padding:10px 14px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:2px;min-width:0}
+.tblock div:last-child{border-right:0}
+.tblock span{color:var(--ink-3)}
+.tblock b{font-weight:600;color:var(--ink)}
+@media (max-width:980px){.sheet-grid{grid-template-columns:minmax(0,1fr)}.pf{border-right:0;border-bottom:1px solid var(--rule)}.tblock{grid-template-columns:repeat(2,minmax(0,1fr))}.tblock div:nth-child(2){border-right:0}.tblock div:nth-child(-n+2){border-bottom:1px solid var(--rule)}}
+
+/* audiences */
+.aud{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.4vw,32px)}
+.card{display:flex;flex-direction:column;gap:18px;padding:clamp(22px,3vw,40px);border:1.5px solid var(--ink);background:var(--panel);min-width:0}
+.card .tag{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-stretch:87.5%;font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.card .tag span:last-child{color:var(--ink-3);font-weight:500}
+.card ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;color:var(--ink-2)}
+.card li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;align-items:baseline}
+.card li::before{content:"";width:10px;height:10px;border:1.5px solid var(--ink);transform:translateY(1px) rotate(45deg)}
+.card .btn{align-self:flex-start;margin-top:auto}
+.card.org{background:var(--ink);color:var(--on-ink);border-color:var(--ink)}
+.card.org .tag span:last-child,.card.org ul{color:color-mix(in srgb,var(--on-ink) 78%,transparent)}
+.card.org li::before{border-color:var(--on-ink)}
+.card.org .btn-ink{background:var(--on-ink);color:var(--ink)}
+.card.org .btn-ink:hover{background:var(--paper-2)}
+@media (max-width:820px){.aud{grid-template-columns:minmax(0,1fr)}}
+
+/* faq */
+.faq{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:clamp(24px,5vw,80px)}
+.faq .left{display:flex;flex-direction:column;gap:18px}
+.qa{border-top:1.5px solid var(--ink)}
+.qa details{border-bottom:1px solid var(--rule)}
+.qa summary{list-style:none;display:grid;grid-template-columns:40px minmax(0,1fr) 24px;gap:12px;align-items:center;padding:20px 0;cursor:pointer;font-size:19px;font-weight:600;font-stretch:106%}
+.qa summary::-webkit-details-marker{display:none}
+.qa summary .n{font-family:var(--f-mono);font-stretch:87.5%;font-size:11.5px;font-weight:500;color:var(--ink-3)}
+.qa summary .pm{position:relative;width:16px;height:16px;justify-self:end}
+.qa summary .pm::before,.qa summary .pm::after{content:"";position:absolute;left:0;right:0;top:7px;height:1.5px;background:var(--ink);transition:transform .25s}
+.qa summary .pm::after{transform:rotate(90deg)}
+.qa details[open] .pm::after{transform:rotate(0)}
+.qa .a{padding:0 36px 22px 52px;color:var(--ink-2);max-width:40em}
+@media (max-width:820px){.faq{grid-template-columns:minmax(0,1fr)}.qa .a{padding-left:52px;padding-right:0}}
+
+/* final */
+.final{position:relative;overflow:hidden}
+.final-in{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end}
+.final h2{font-size:clamp(40px,6.4vw,96px);line-height:.95;font-stretch:118%;font-weight:640;letter-spacing:-.03em}
+.final .sub{margin-top:18px;color:var(--ink-2);font-size:19px}
+.datum-line{position:relative;margin-top:clamp(40px,6vw,72px);height:44px}
+.datum-line::before{content:"";position:absolute;left:0;right:0;top:21px;border-top:1.5px solid var(--ink)}
+.datum-line .bm{position:absolute;left:clamp(40%,52%,60%);top:0;width:52px;height:44px;background:var(--paper);padding:0 6px}
+.datum-line .t{position:absolute;right:0;top:28px;font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;letter-spacing:.06em;color:var(--ink-3)}
+.datum-line .t2{position:absolute;left:0;top:28px;font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;letter-spacing:.06em;color:var(--ink-3)}
+@media (max-width:760px){.final-in{grid-template-columns:minmax(0,1fr)}}
+
+/* footer */
+.foot{border-top:1.5px solid var(--ink);padding-block:48px 120px}
+.foot-in{display:grid;grid-template-columns:minmax(0,5fr) repeat(3,minmax(0,2fr));gap:32px}
+.foot h4{margin:0 0 12px;font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.foot a{text-decoration:none;color:var(--ink-2);font-size:15px}
+.foot a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.foot .tagline{margin-top:14px;color:var(--ink-2);max-width:26em;font-size:15px}
+.mail{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mail code{font-family:var(--f-mono);font-stretch:87.5%;font-size:13px;user-select:all}
+.copy{min-height:30px;padding:0 10px;border:1px solid var(--rule);background:transparent;border-radius:2px;font-size:12px;cursor:pointer;color:var(--ink-2)}
+.copy:hover{border-color:var(--ink);color:var(--ink)}
+.foot-base{margin-top:48px;padding-top:16px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--f-mono);font-stretch:87.5%;font-size:11px;letter-spacing:.04em;color:var(--ink-3)}
+@media (max-width:860px){.foot-in{grid-template-columns:repeat(2,minmax(0,1fr))}.foot-in>div:first-child{grid-column:1/-1}}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:70;transform:translate(-50%,20px);opacity:0;pointer-events:none;max-width:min(92vw,440px);padding:12px 16px;background:var(--ink);color:var(--on-ink);font-size:14px;line-height:1.45;border-radius:2px;transition:opacity .25s,transform .25s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* prototype review bar (presentation chrome, not part of the design) */
+.rv{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:2px;padding:5px;background:rgba(18,18,20,.92);color:#f4f4f5;border-radius:999px;box-shadow:0 8px 30px rgba(0,0,0,.25);font:500 12.5px/1 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);max-width:calc(100vw - 24px)}
+.rv a,.rv button{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:999px;color:#d4d4d8;text-decoration:none;border:0;background:transparent;cursor:pointer;font:inherit;white-space:nowrap}
+.rv a:hover,.rv button:hover{background:rgba(255,255,255,.1);color:#fff}
+.rv a[aria-current="page"]{background:#f4f4f5;color:#111}
+.rv .sep{width:1px;height:18px;background:rgba(255,255,255,.18);margin:0 4px}
+.rv .full{display:inline}
+@media (max-width:560px){.rv .full{display:none}.rv a,.rv button{padding:0 10px}}
+.rv.min{padding:4px}
+.rv.min>*:not(.rv-t){display:none}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="bm" viewBox="0 0 28 24"><path d="M2 3.5h24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"/><path d="M14 7.2V22.5M14 7.2L5.2 22.5M14 7.2l8.8 15.3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+</svg>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="Mesura, back to top"><svg aria-hidden="true"><use href="#bm"/></svg><span class="word">mesura</span></a>
+    <nav class="links" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#dimensions">Dimensions</a>
+      <a href="#report">Sample report</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-ink btn-sm" href="#top" data-start>Take the survey</a>
+    <button class="menu" id="menu" aria-expanded="false" aria-controls="mnav">Menu</button>
+  </div>
+  <div class="wrap mnav" id="mnav" hidden>
+    <a href="#how">How it works</a><a href="#dimensions">Dimensions</a><a href="#report">Sample report</a><a href="#faq">FAQ</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="h1">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <p class="kicker"><svg aria-hidden="true"><use href="#bm"/></svg>AI readiness survey · Malta &amp; EU benchmark</p>
+        <h1 class="h1" id="h1">Know exactly where you <em>stand</em> on AI.</h1>
+        <p class="lede">Mesura is a free, ten-minute survey. It scores your AI readiness across six dimensions, measures you against the Malta average and the EU, and gives you a personalised report with clear next steps.</p>
+        <form class="start" id="start" novalidate>
+          <fieldset class="who">
+            <legend>I’m answering for</legend>
+            <span class="seg">
+              <label><input type="radio" name="who" id="who-org" value="org" checked>My organisation</label>
+              <label><input type="radio" name="who" id="who-me" value="me">Myself</label>
+            </span>
+          </fieldset>
+          <div class="cta-row">
+            <button class="btn btn-ink" type="submit" id="go">Start the free survey <span class="arr" aria-hidden="true">→</span></button>
+            <a class="btn btn-line" href="#report">See a sample report</a>
+          </div>
+          <p class="cta-note" id="who-note" aria-live="polite">Organisation survey · about 10 minutes · report at the end</p>
+        </form>
+        <ul class="facts" aria-label="At a glance">
+          <li><b>Free</b></li>
+          <li><b>≈10</b>&nbsp;min</li>
+          <li><b>6</b>&nbsp;dimensions</li>
+          <li><b>MT + EU</b>&nbsp;benchmark</li>
+        </ul>
+      </div>
+      <figure class="plate-fig" style="margin:0;min-width:0">
+        <div class="plate" id="plate" role="img" aria-label="Survey map of the Maltese Islands (Malta, Gozo and Comino) with water-lines offshore. Move over it to read coordinates.">
+          <canvas id="map"></canvas>
+          <div class="xh glide" id="xh" aria-hidden="true">
+            <div class="xh-v" id="xh-v"></div>
+            <div class="xh-h" id="xh-h"></div>
+            <div class="xh-ret" id="xh-ret"></div>
+            <div class="xh-read" id="xh-read"><span id="xh-ll">35.8860° N · 14.4032° E</span><span id="xh-at">Land · Mdina</span></div>
+          </div>
+        </div>
+        <figcaption class="plate-cap"><span>Il-Gżejjer Maltin · The Maltese Islands</span><span id="plate-hint">Move over the map to take a reading</span></figcaption>
+        <p class="osm">Coastline © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></p>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="ctx-h">
+    <div class="wrap ctx">
+      <div class="left">
+        <p class="kicker"><svg aria-hidden="true"><use href="#bm"/></svg>Why measure</p>
+        <h2 class="h2" id="ctx-h" style="font-size:clamp(30px,3.5vw,48px)">Malta uses AI more than most of Europe. Readiness is a different measurement.</h2>
+        <p class="body">Using a tool is the easy part. Readiness asks whether your strategy, data, skills and safeguards can support what comes next. That is what Mesura measures.</p>
+      </div>
+      <figure class="tape" id="tape">
+        <figcaption>People aged 16–74 who used generative AI tools, 2025</figcaption>
+        <div class="scale" aria-hidden="true"><span style="left:0">0%</span><span style="left:20%">10</span><span style="left:40%">20</span><span style="left:60%">30</span><span style="left:80%">40</span><span style="left:100%">50%</span></div>
+        <div class="bar top" style="--v:48.4"><div class="lab"><span>Denmark, highest in the EU</span><span class="val">48.4%</span></div><div class="track"><div class="fill"></div></div></div>
+        <div class="bar malta" style="--v:46.5"><div class="lab"><span>Malta, 3rd in the EU</span><span class="val">46.5%</span></div><div class="track"><div class="fill"></div></div></div>
+        <div class="bar eu" style="--v:32.7"><div class="lab"><span>EU average</span><span class="val">32.7%</span></div><div class="track"><div class="fill"></div></div></div>
+        <p class="src">Source: <a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20251216-3" target="_blank" rel="noopener">Eurostat news release, 16 December 2025</a></p>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="left">
+          <p class="kicker"><svg aria-hidden="true"><use href="#bm"/></svg>How it works</p>
+          <h2 class="h2" id="how-h">Three stations. About ten minutes.</h2>
+        </div>
+        <p class="body">No preparation and no cost. You answer, Mesura measures, and you leave with a report you can act on.</p>
+      </div>
+      <ol class="trav">
+        <li>
+          <span class="st"><svg viewBox="0 0 30 28" aria-hidden="true"><path d="M15 3L28 25H2Z" fill="var(--paper)" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="17" r="2.6" fill="currentColor"/></svg>ST.1</span>
+          <h3 class="h3">Answer</h3>
+          <p>A short set of questions about how you, or your organisation, work with AI today. It takes about ten minutes.</p>
+        </li>
+        <li>
+          <span class="st"><svg viewBox="0 0 30 28" aria-hidden="true"><path d="M15 3L28 25H2Z" fill="var(--paper)" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="17" r="2.6" fill="currentColor"/></svg>ST.2</span>
+          <h3 class="h3">Measure</h3>
+          <p>Your answers become a score for each of six dimensions, plus one overall reading of your readiness.</p>
+        </li>
+        <li>
+          <span class="st"><svg viewBox="0 0 30 28" aria-hidden="true"><path d="M15 3L28 25H2Z" fill="var(--paper)" stroke="currentColor" stroke-width="1.8"/><circle cx="15" cy="17" r="2.6" fill="currentColor"/></svg>ST.3</span>
+          <h3 class="h3">Compare and act</h3>
+          <p>See each score against the Malta average and the EU. Your personalised report ranks the next steps that close your biggest gaps.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="sec" id="dimensions" aria-labelledby="dim-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="left">
+          <p class="kicker"><svg aria-hidden="true"><use href="#bm"/></svg>What we measure</p>
+          <h2 class="h2" id="dim-h">Six dimensions. One reading.</h2>
+        </div>
+        <p class="body">Readiness is more than having the right tools. A gap in any one of these holds the other five back, so the survey looks at all six.</p>
+      </div>
+      <div class="key">
+        <article>
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 26 26"><path d="M13 2l6 21-6-4.6L7 23z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M13 2v16.4L7 23z" fill="currentColor"/></svg></span>
+          <h3 class="h3">Strategy <span class="code">STR</span></h3>
+          <p>A clear view of where AI creates value, and someone accountable for getting there.</p>
+          <p class="q">Who is accountable for how your organisation uses AI?</p>
+        </article>
+        <article>
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 26 26"><rect x="3" y="3" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3 9.7h20M3 16.3h20M9.7 3v20M16.3 3v20" stroke="currentColor" stroke-width="1.2"/><rect x="9.7" y="9.7" width="6.6" height="6.6" fill="currentColor"/><rect x="16.3" y="16.3" width="6.7" height="6.7" fill="currentColor"/></svg></span>
+          <h3 class="h3">Data <span class="code">DAT</span></h3>
+          <p>Data that is findable, well kept and safe to use with AI tools.</p>
+          <p class="q">Could you gather the data an AI project needs within a week?</p>
+        </article>
+        <article>
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 26 26"><path d="M4 21L13 5l9 16zM13 5v16M4 21l9-5.5 9 5.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="13" cy="5" r="2.4" fill="currentColor"/><circle cx="4" cy="21" r="2.4" fill="currentColor"/><circle cx="22" cy="21" r="2.4" fill="currentColor"/></svg></span>
+          <h3 class="h3">Technology <span class="code">TEC</span></h3>
+          <p>Tools and infrastructure that let people use AI securely and at the right scale.</p>
+          <p class="q">Do people have approved AI tools they can use today?</p>
+        </article>
+        <article>
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 26 26"><path d="M2 23h6v-6h5v-6h5V5h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="miter"/><path d="M2 23h22" stroke="currentColor" stroke-width="1.2"/></svg></span>
+          <h3 class="h3">Skills <span class="code">SKL</span></h3>
+          <p>People who know how to use AI well, and when not to.</p>
+          <p class="q">How confident is your team at checking an AI answer?</p>
+        </article>
+        <article>
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 26 26"><path d="M2 13h22" stroke="currentColor" stroke-width="1.8" stroke-dasharray="4.5 2.5"/><path d="M5 8v10M13 8v10M21 8v10" stroke="currentColor" stroke-width="1.8"/></svg></span>
+          <h3 class="h3">Governance <span class="code">GOV</span></h3>
+          <p>Policies, risk checks and compliance, including the EU AI Act.</p>
+          <p class="q">Do you have written rules for using AI with company data?</p>
+        </article>
+        <article>
+          <span class="glyph" aria-hidden="true"><svg viewBox="0 0 26 26"><rect x="4" y="4" width="7" height="7" fill="currentColor"/><rect x="14" y="6" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="6" y="14" width="7" height="7" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="16" y="16" width="6" height="6" fill="currentColor"/></svg></span>
+          <h3 class="h3">Culture <span class="code">CUL</span></h3>
+          <p>Leaders and teams who try things, share what works and keep going.</p>
+          <p class="q">When someone finds a better way with AI, does it spread?</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="report" aria-labelledby="rep-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="left">
+          <p class="kicker"><svg aria-hidden="true"><use href="#bm"/></svg>Sample report</p>
+          <h2 class="h2" id="rep-h">Your readiness, drawn to scale.</h2>
+        </div>
+        <p class="body">Every report plots your six scores against the benchmark you choose, shades the gaps and ranks what to do first. Switch the benchmark to see it redraw.</p>
+      </div>
+
+      <div class="sheet">
+        <div class="sheet-grid">
+          <div class="pf">
+            <div class="pf-top">
+              <span class="pf-title">Readiness profile</span>
+              <span class="bench">
+                <span class="lbl" id="cmp-l">Compare with</span>
+                <span class="tog" role="radiogroup" aria-labelledby="cmp-l">
+                  <button type="button" role="radio" aria-checked="true" data-b="malta" id="b-malta">Malta average</button>
+                  <button type="button" role="radio" aria-checked="false" data-b="eu" id="b-eu">EU</button>
+                </span>
+              </span>
+            </div>
+            <div class="chart" id="chart">
+              <svg id="pf" viewBox="0 0 760 392" role="img" aria-labelledby="pf-desc"><desc id="pf-desc">Sample readiness profile. Scores out of 100 for Strategy, Data, Technology, Skills, Governance and Culture, compared with a benchmark.</desc></svg>
+              <div class="tip" id="tip" role="status" aria-live="polite"></div>
+            </div>
+            <div class="legend" id="legend">
+              <span><i></i>Sample organisation</span>
+              <span style="--c:var(--malta)" id="lg-b"><i class="b"></i><em style="font-style:normal" id="lg-bt">Malta average</em></span>
+              <span style="--c:var(--malta)" id="lg-g"><i class="h"></i>Gap to close</span>
+              <span><i class="l"></i>Ahead</span>
+            </div>
+            <div class="sr"><table id="pf-table">
+              <caption>Sample scores by dimension</caption>
+              <thead><tr><th scope="col">Dimension</th><th scope="col">Sample organisation</th><th scope="col">Malta average</th><th scope="col">EU</th></tr></thead>
+              <tbody></tbody>
+            </table></div>
+          </div>
+
+          <div class="sum">
+            <div class="sum-block">
+              <p class="kicker">Overall readiness</p>
+              <div class="overall" style="margin-top:14px"><span class="big" id="overall">53</span><span class="of">/ 100</span></div>
+              <dl class="fb">
+                <div><dt id="d-k">vs Malta average</dt><i class="ld" aria-hidden="true"></i><dd id="d-v">+3</dd></div>
+                <div><dt>Strongest</dt><i class="ld" aria-hidden="true"></i><dd id="d-s">Culture +9</dd></div>
+                <div><dt>Biggest gap</dt><i class="ld" aria-hidden="true"></i><dd id="d-g">Governance −5</dd></div>
+              </dl>
+            </div>
+            <div class="sum-block" style="border-bottom:0">
+              <p class="kicker">Next steps, in order</p>
+              <ol class="steps" id="steps">
+                <li><span class="chip" data-dim="4">Governance <span class="d">−5</span></span><span>Write a one-page AI use policy: approved tools, what data can go in, who signs off.</span></li>
+                <li><span class="chip" data-dim="1">Data <span class="d">−3</span></span><span>Map the data behind one priority process: where it lives, who owns it, how clean it is.</span></li>
+                <li><span class="chip" data-dim="3">Skills <span class="d">+5</span></span><span>Run a 90-minute hands-on session for customer-facing staff, built around their real tasks.</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="tblock" aria-label="Report details">
+          <div><span>Sheet</span><b>Sample report</b></div>
+          <div><span>Respondent</span><b>45-person logistics firm</b></div>
+          <div><span>Benchmark</span><b id="tb-b">Malta average</b></div>
+          <div><span>Figures</span><b>Illustrative</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="aud-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="left">
+          <p class="kicker"><svg aria-hidden="true"><use href="#bm"/></svg>Two ways in</p>
+          <h2 class="h2" id="aud-h">For yourself, or for your organisation.</h2>
+        </div>
+        <p class="body">Same six dimensions, same benchmarks. The questions and the report are shaped around who is answering.</p>
+      </div>
+      <div class="aud">
+        <article class="card">
+          <p class="tag"><span>For individuals</span><span>≈10 min</span></p>
+          <h3 class="h2" style="font-size:clamp(28px,2.8vw,40px)">Your own readiness</h3>
+          <ul>
+            <li>See how ready you are to work with AI: skills, habits and confidence.</li>
+            <li>Compare yourself with people across Malta and the EU.</li>
+            <li>Get next steps you can act on this week.</li>
+          </ul>
+          <a class="btn btn-line" href="#top" data-start="me">Start as an individual <span class="arr" aria-hidden="true">→</span></a>
+        </article>
+        <article class="card org">
+          <p class="tag"><span>For organisations</span><span>≈10 min</span></p>
+          <h3 class="h2" style="font-size:clamp(28px,2.8vw,40px)">Your organisation’s readiness</h3>
+          <ul>
+            <li>Score your organisation on all six dimensions.</li>
+            <li>See where you stand against the Malta average and the EU.</li>
+            <li>Get a prioritised plan for closing the gaps.</li>
+          </ul>
+          <a class="btn btn-ink" href="#top" data-start="org">Start for my organisation <span class="arr" aria-hidden="true">→</span></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="faq" aria-labelledby="faq-h">
+    <div class="wrap faq">
+      <div class="left">
+        <p class="kicker"><svg aria-hidden="true"><use href="#bm"/></svg>FAQ</p>
+        <h2 class="h2" id="faq-h">Questions, answered plainly.</h2>
+        <p class="body">Something else? Write to <span class="mono" style="font-size:.92em">support@mesura.ai</span>.</p>
+      </div>
+      <div class="qa">
+        <details open>
+          <summary><span class="n">Q.01</span>Is it really free?<span class="pm" aria-hidden="true"></span></summary>
+          <p class="a">Yes. The survey and your personalised report are free.</p>
+        </details>
+        <details>
+          <summary><span class="n">Q.02</span>How long does it take?<span class="pm" aria-hidden="true"></span></summary>
+          <p class="a">About ten minutes. You don’t need to prepare anything before you start.</p>
+        </details>
+        <details>
+          <summary><span class="n">Q.03</span>What does the Malta average show?<span class="pm" aria-hidden="true"></span></summary>
+          <p class="a">For each dimension it shows the average score of respondents in Malta, so you can see where you are ahead and where you are behind. The EU benchmark gives the same comparison at European level.</p>
+        </details>
+        <details>
+          <summary><span class="n">Q.04</span>Can I take it for myself rather than my company?<span class="pm" aria-hidden="true"></span></summary>
+          <p class="a">Yes. Choose “Myself” before you start and your report focuses on your own readiness.</p>
+        </details>
+        <details>
+          <summary><span class="n">Q.05</span>What happens to my answers?<span class="pm" aria-hidden="true"></span></summary>
+          <p class="a">Your answers build your report and, anonymised, the benchmarks. The privacy policy has the details.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec final" aria-labelledby="fin-h">
+    <div class="wrap">
+      <div class="final-in">
+        <div>
+          <h2 id="fin-h">Ten minutes to your&nbsp;benchmark.</h2>
+          <p class="sub">Free. Six dimensions. Measured against Malta and the EU.</p>
+        </div>
+        <a class="btn btn-ink" href="#top" data-start style="min-height:56px;padding:0 28px;font-size:17px">Start the free survey <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <div class="datum-line" aria-hidden="true">
+        <svg class="bm" viewBox="0 0 28 24"><use href="#bm"/></svg>
+        <span class="t2">BM —.— · YOUR ORGANISATION</span>
+        <span class="t">READY IN ≈10 MIN</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-in">
+      <div>
+        <a class="brand" href="#top" aria-label="Mesura, back to top"><svg aria-hidden="true"><use href="#bm"/></svg><span class="word">mesura</span></a>
+        <p class="tagline">AI readiness, measured. For organisations and people in Malta.</p>
+      </div>
+      <div>
+        <h4>Survey</h4>
+        <ul><li><a href="#how">How it works</a></li><li><a href="#dimensions">Dimensions</a></li><li><a href="#report">Sample report</a></li><li><a href="#faq">FAQ</a></li></ul>
+      </div>
+      <div>
+        <h4>Mesura</h4>
+        <ul><li><a href="#" data-proto>About</a></li><li><a href="#" data-proto>Privacy policy</a></li><li><a href="#" data-proto>Terms</a></li><li><a href="#" data-proto>LinkedIn</a></li></ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <div class="mail"><code id="mail">support@mesura.ai</code><button class="copy" type="button" data-copy="mail">Copy</button></div>
+      </div>
+    </div>
+    <div class="foot-base"><span>© 2026 Mesura</span><span>35°56′15″ N · 14°22′31″ E</span></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<nav class="rv" id="rv" aria-label="Prototype review">
+  <a href="index.html"><span aria-hidden="true">←</span><span class="full">Overview</span></a>
+  <span class="sep" aria-hidden="true"></span>
+  <a href="datum.html" aria-current="page">A<span class="full">&nbsp;· Datum</span></a>
+  <a href="madum.html">B<span class="full">&nbsp;· Madum</span></a>
+  <a href="six.html">C<span class="full">&nbsp;· Six</span></a>
+  <span class="sep" aria-hidden="true"></span>
+  <button type="button" class="rv-t" id="rv-t" aria-expanded="true" aria-label="Hide review bar">×</button>
+</nav>
+
+<script>
+(() => {
+'use strict';
+const MAP = {"w":1000,"h":720,"k":121094.5598,"tx":-29892.535,"ty":81865.684,"rings":[[[746.2,464.2],[763.6,461.8],[770.7,466],[759.7,472.3],[746,464.7],[743.9,467.8],[754.5,475.7],[753.4,484.3],[743.3,481.7],[732.7,487.4],[747.5,484.8],[747.9,494.2],[780.2,469.4],[796.9,468.6],[769.5,505.4],[773.5,499.2],[748.8,514.5],[756.4,525.8],[749,524.7],[746.4,531],[760.8,530.2],[766.1,514],[778.1,510.9],[788.7,525.5],[783,498.9],[795.7,524.2],[788.5,494.7],[810.9,505.2],[801.2,495.8],[812,491.8],[801.8,477.2],[834.4,487.7],[888.7,531.2],[912.3,561.2],[887.2,565.7],[883.8,571.4],[897.5,566.4],[914.9,576.6],[887,596.7],[890.8,606.3],[905.8,606.6],[895.9,618.9],[907.1,630.1],[888,625.1],[890.2,639.7],[879.2,637.9],[888.5,645.2],[885.5,673.3],[879,672.8],[884.9,684.8],[878.1,686.9],[870.7,653],[849.8,629],[847.7,660.1],[834.1,650.4],[818.3,652.2],[824.4,665.8],[815.5,674.9],[818.1,684.6],[824,679.9],[842,694.7],[835.2,680.9],[852.3,683],[844.1,701.8],[858.2,689.8],[844.1,707],[817.7,720],[779,718.4],[740.7,699.9],[701,699.9],[665.5,678.8],[647.1,685.3],[614.3,668.7],[577.1,662.9],[575.5,648.3],[534,636.3],[532.3,623.8],[499.4,610],[478.7,589.1],[478.7,592.5],[442.1,561.5],[445.7,553.1],[419.1,544.5],[407.6,528.4],[404.5,498.4],[392,485.6],[397.3,470.5],[389.9,459],[417.4,459],[399.6,427.9],[404.3,415.9],[423.5,421.1],[422.6,405.7],[412.9,404.4],[424.5,400.3],[423.9,388.2],[395.8,376],[390.9,365.5],[406.6,359],[418.6,334.7],[410.6,323.2],[418.6,317.8],[405.9,313.3],[405.5,292.2],[377,296.6],[370.4,289.6],[402.4,256.9],[387.1,247.8],[390.1,241.5],[411,251.4],[438.7,249.3],[442.9,236.3],[451.8,242.8],[467.9,235.5],[461.3,224.3],[473.8,219.3],[490.7,248.3],[471,253.5],[442.7,277.8],[437.9,294.8],[448,303.1],[498.3,289],[503.6,298.7],[535.7,298.7],[534.2,323.5],[520.3,324.3],[509.7,357.7],[541.2,343.3],[553.5,348.3],[601.7,316.7],[586.7,359],[612,332.4],[621.1,334.5],[641.6,346.2],[647.7,363.2],[657.7,352.5],[667,376.8],[702.9,376.5],[734.4,395.8],[727.2,407],[743.7,405.2],[742.6,425],[732.3,425.6],[739.9,437.6],[750.9,426.4],[785.3,457.1],[751.3,456.4],[746.2,464.2]],[[386.1,167.6],[390.9,163.4],[392.8,172.3],[399.4,163.4],[409.1,172],[412.9,162.3],[437.2,190.8],[430.3,198.4],[382.3,204.7],[393.7,190.8],[381,179.6],[379.1,166.8],[386.1,167.6]],[[368.8,84.2],[400.2,113.2],[403,135.4],[373.8,147.4],[328.2,144.8],[325.6,152.7],[334.9,149.5],[323.7,159.7],[286.5,173.3],[270.3,161.3],[273,171.5],[248.5,184.5],[227.1,166.5],[159.1,160],[144.9,142.2],[155.7,135.9],[139,128.1],[90,120.5],[97,96],[105,93.6],[94.4,89.2],[101.8,55.7],[85.5,44.7],[85.1,25.6],[167.5,0.8],[179.6,8.9],[185.1,0],[228.8,5.2],[242.2,27.5],[261.2,23],[292.2,53.6],[311.3,43.4],[332.8,65.9],[350.4,59.6],[355.9,77.4],[368.8,84.2]]],"towns":[["Valletta",784.1,478.5,1],["Mdina",548.6,512.2,1],["Victoria",202.4,98.8,1],["Sliema",762.1,443.8,0],["Birkirkara",671,483,0],["Marsaxlokk",844.3,627.2,0],["Mellieħa",462,328.5,0],["Qormi",694,538.3,0],["Żebbuġ",628.7,549,0],["Siġġiewi",622.8,593.8,0],["Żejtun",823.2,591,0],["Ħamrun",720.2,515.6,0],["St Paul’s Bay",544.2,349.6,0],["Birgu",800.8,506.7,0],["Dingli",504.2,576.4,0],["Nadur",318.2,115.8,0],["Xagħra",255.3,83.1,0],["Għajnsielem",298.8,145.4,0],["Rabat",539.5,523.4,0],["Mosta",597,450.4,0],["Gżira",728,460.5,0],["Pembroke",712.6,406.8,0],["Kalkara",822.5,503.8,0],["Żurrieq",698.7,655.4,0]]};
+const root = document.documentElement;
+const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+const cssv = n => getComputedStyle(root).getPropertyValue(n).trim();
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const ease = t => 1 - Math.pow(1 - t, 3);
+
+/* ============ toast ============ */
+const toastEl = document.getElementById('toast');
+let toastT;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => toastEl.classList.remove('on'), 3400);
+}
+
+/* ============ nav ============ */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', scrollY > 8);
+addEventListener('scroll', onScroll, {passive:true}); onScroll();
+const menu = document.getElementById('menu'), mnav = document.getElementById('mnav');
+menu.addEventListener('click', () => {
+  const open = menu.getAttribute('aria-expanded') !== 'true';
+  menu.setAttribute('aria-expanded', open); mnav.hidden = !open; menu.textContent = open ? 'Close' : 'Menu';
+});
+mnav.addEventListener('click', e => { if (e.target.closest('a')) { menu.setAttribute('aria-expanded', 'false'); mnav.hidden = true; menu.textContent = 'Menu'; } });
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    const a = document.querySelector('.links a[href="#' + en.target.id + '"]');
+    if (a && en.isIntersecting) { document.querySelectorAll('.links a').forEach(x => x.removeAttribute('aria-current')); a.setAttribute('aria-current', 'true'); }
+  });
+}, {rootMargin:'-45% 0px -50% 0px'});
+['how','dimensions','report','faq'].forEach(id => spy.observe(document.getElementById(id)));
+
+/* ============ audience + start ============ */
+const note = document.getElementById('who-note');
+const who = () => document.querySelector('input[name="who"]:checked').value;
+const setNote = () => { note.textContent = who() === 'org' ? 'Organisation survey · about 10 minutes · report at the end' : 'Individual survey · about 10 minutes · report at the end'; };
+document.querySelectorAll('input[name="who"]').forEach(r => r.addEventListener('change', setNote));
+document.getElementById('start').addEventListener('submit', e => {
+  e.preventDefault();
+  toast(who() === 'org' ? 'Prototype: this opens the organisation survey.' : 'Prototype: this opens the individual survey.');
+});
+document.querySelectorAll('[data-start]').forEach(a => a.addEventListener('click', e => {
+  const v = a.getAttribute('data-start');
+  if (v) { document.getElementById(v === 'me' ? 'who-me' : 'who-org').checked = true; setNote(); }
+  e.preventDefault();
+  window.scrollTo({top:0, behavior: reduceMQ.matches ? 'auto' : 'smooth'});
+  setTimeout(() => document.getElementById('go').focus({preventScroll:true}), reduceMQ.matches ? 0 : 450);
+}));
+document.querySelectorAll('[data-proto]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); toast('This page isn’t part of the homepage prototype.'); }));
+document.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => {
+  const el = document.getElementById(b.getAttribute('data-copy'));
+  const done = () => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1600); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast('Press Ctrl/Cmd+C to copy the address.'); };
+  try { navigator.clipboard.writeText(el.textContent).then(done, fallback); } catch (err) { fallback(); }
+}));
+
+/* ============ survey map ============ */
+const plate = document.getElementById('plate');
+const cv = document.getElementById('map');
+const ctx = cv.getContext('2d');
+const KM = 6371 * Math.cos(35.9 * Math.PI / 180) / MAP.k; // km per data unit
+let F = null, LV = null, G = null, start = 0, drawn = false;
+
+function buildField(){
+  const S = 5, x0 = -320, y0 = -260, x1 = 1320, y1 = 980;
+  const nx = Math.ceil((x1 - x0) / S) + 1, ny = Math.ceil((y1 - y0) / S) + 1;
+  const oc = document.createElement('canvas'); oc.width = nx; oc.height = ny;
+  const o = oc.getContext('2d');
+  o.setTransform(1 / S, 0, 0, 1 / S, -x0 / S, -y0 / S);
+  o.beginPath();
+  for (const r of MAP.rings) { r.forEach(([x, y], i) => i ? o.lineTo(x, y) : o.moveTo(x, y)); o.closePath(); }
+  o.fill('evenodd');
+  const img = o.getImageData(0, 0, nx, ny).data;
+  const seg = [];
+  for (const r of MAP.rings) for (let i = 0; i < r.length; i++) { const a = r[i], b = r[(i + 1) % r.length]; seg.push(a[0], a[1], b[0] - a[0], b[1] - a[1]); }
+  const n = seg.length;
+  const d = new Float32Array(nx * ny);
+  for (let j = 0; j < ny; j++) {
+    const py = y0 + j * S;
+    for (let i = 0; i < nx; i++) {
+      const px = x0 + i * S; let best = 1e12;
+      for (let s = 0; s < n; s += 4) {
+        const vx = seg[s + 2], vy = seg[s + 3], wx = px - seg[s], wy = py - seg[s + 1];
+        let t = (wx * vx + wy * vy) / (vx * vx + vy * vy || 1); t = t < 0 ? 0 : t > 1 ? 1 : t;
+        const dx = wx - t * vx, dy = wy - t * vy, q = dx * dx + dy * dy; if (q < best) best = q;
+      }
+      d[j * nx + i] = img[(j * nx + i) * 4 + 3] > 127 ? Math.sqrt(best) : -Math.sqrt(best);
+    }
+  }
+  // land "relief": distance inland, weighted to rise towards the west, with a gentle wobble
+  const e = new Float32Array(nx * ny);
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+    const k = j * nx + i, v = d[k], x = x0 + i * S, y = y0 + j * S;
+    if (v <= 0) { e[k] = v; continue; }
+    const west = clamp((900 - x) / 520, 0, 1);
+    e[k] = v * (0.55 + 0.95 * west * west) + 3.2 * Math.sin(x / 41 + y / 67) * Math.min(1, v / 20);
+  }
+  return {S, x0, y0, nx, ny, d, e};
+}
+function iso(arr, level){
+  const {S, x0, y0, nx, ny} = F; const p = new Path2D();
+  for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
+    const a = arr[j * nx + i], b = arr[j * nx + i + 1], c = arr[(j + 1) * nx + i + 1], e = arr[(j + 1) * nx + i];
+    const k = (a > level ? 8 : 0) | (b > level ? 4 : 0) | (c > level ? 2 : 0) | (e > level ? 1 : 0);
+    if (k === 0 || k === 15) continue;
+    const X = x0 + i * S, Y = y0 + j * S;
+    const T = () => [X + S * (level - a) / (b - a), Y], R = () => [X + S, Y + S * (level - b) / (c - b)];
+    const B = () => [X + S * (level - e) / (c - e), Y + S], L = () => [X, Y + S * (level - a) / (e - a)];
+    const sg = (m, q) => { p.moveTo(m[0], m[1]); p.lineTo(q[0], q[1]); };
+    switch (k) {
+      case 1: case 14: sg(L(), B()); break; case 2: case 13: sg(B(), R()); break;
+      case 3: case 12: sg(L(), R()); break; case 4: case 11: sg(T(), R()); break;
+      case 5: sg(L(), T()); sg(B(), R()); break; case 6: case 9: sg(T(), B()); break;
+      case 7: case 8: sg(L(), T()); break; case 10: sg(L(), B()); sg(T(), R()); break;
+    }
+  }
+  return p;
+}
+function buildLevels(){
+  const sea = [4, 10, 17, 25, 34, 44, 55, 67, 80, 94, 109, 125, 142, 160, 179, 199, 220, 242];
+  const land = []; for (let v = 14; v < 190; v += 14) land.push(v);
+  const out = [];
+  sea.forEach((v, i) => out.push({kind:'sea', p: iso(F.d, -v), a: clamp(0.95 - i * 0.052, 0.12, 1), t: 0.25 + i * 0.035}));
+  land.forEach((v, i) => out.push({kind:'land', p: iso(F.e, v), a: 0.6, t: 0.45 + i * 0.04}));
+  const coast = new Path2D();
+  for (const r of MAP.rings) { r.forEach(([x, y], i) => i ? coast.lineTo(x, y) : coast.moveTo(x, y)); coast.closePath(); }
+  let len = 0; for (const r of MAP.rings) for (let i = 0; i < r.length; i++) { const a = r[i], b = r[(i + 1) % r.length]; len += Math.hypot(b[0] - a[0], b[1] - a[1]); }
+  return {lv: out, coast, len};
+}
+function layout(){
+  const r = plate.getBoundingClientRect();
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+  const W = r.width, H = r.height, m = Math.max(22, W * 0.034);
+  const fr = {x: m, y: m, w: W - m * 2, h: H - m * 2};
+  const pad = fr.w * 0.06;
+  const s = Math.min((fr.w - pad * 2) / MAP.w, (fr.h - pad * 2) / MAP.h);
+  const ox = fr.x + (fr.w - MAP.w * s) / 2 + fr.w * 0.02, oy = fr.y + (fr.h - MAP.h * s) / 2;
+  G = {W, H, dpr, fr, s, ox, oy, m};
+}
+function toXY(lat, lon){
+  const xd = MAP.k * lon * Math.PI / 180 + MAP.tx;
+  const yd = -MAP.k * Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360)) + MAP.ty;
+  return [G.ox + xd * G.s, G.oy + yd * G.s];
+}
+function toLL(px, py){
+  const xd = (px - G.ox) / G.s, yd = (py - G.oy) / G.s;
+  const lon = (xd - MAP.tx) / MAP.k * 180 / Math.PI;
+  const lat = (2 * Math.atan(Math.exp(-(yd - MAP.ty) / MAP.k)) - Math.PI / 2) * 180 / Math.PI;
+  return {lat, lon, xd, yd};
+}
+function fieldAt(xd, yd){
+  const i = Math.round((xd - F.x0) / F.S), j = Math.round((yd - F.y0) / F.S);
+  if (i < 0 || j < 0 || i >= F.nx || j >= F.ny) return -999;
+  return F.d[j * F.nx + i];
+}
+const dms = (v, pos, neg) => { const h = v >= 0 ? pos : neg; v = Math.abs(v); const d = Math.floor(v), m = Math.round((v - d) * 60); return d + '°' + String(m === 60 ? 0 : m).padStart(2, '0') + '′' + h; };
+
+function draw(now){
+  if (!G || !LV) return;
+  const P = reduceMQ.matches ? 99 : (now - start) / 1000;
+  const c = ctx, {dpr, fr, s, ox, oy, W, H} = G;
+  const col = {paper: cssv('--panel'), ink: cssv('--ink'), ink3: cssv('--ink-3'), grid: cssv('--grid'), land: cssv('--land'), contour: cssv('--contour'), bathy: cssv('--bathy'), rule: cssv('--rule'), malta: cssv('--malta')};
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, W, H);
+  // sheet
+  c.fillStyle = col.paper; c.fillRect(fr.x, fr.y, fr.w, fr.h);
+  c.save(); c.beginPath(); c.rect(fr.x, fr.y, fr.w, fr.h); c.clip();
+  // graticule
+  const tl = toLL(fr.x, fr.y), br = toLL(fr.x + fr.w, fr.y + fr.h);
+  const lons = [], lats = [];
+  for (let v = Math.ceil(tl.lon * 12) / 12; v < br.lon; v += 1 / 12) lons.push(v);
+  for (let v = Math.ceil(br.lat * 12) / 12; v < tl.lat; v += 1 / 12) lats.push(v);
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.setLineDash([2, 4]);
+  c.beginPath();
+  lons.forEach(v => { const [x] = toXY(35.9, v); c.moveTo(Math.round(x) + .5, fr.y); c.lineTo(Math.round(x) + .5, fr.y + fr.h); });
+  lats.forEach(v => { const [, y] = toXY(v, 14.4); c.moveTo(fr.x, Math.round(y) + .5); c.lineTo(fr.x + fr.w, Math.round(y) + .5); });
+  c.stroke(); c.setLineDash([]);
+  // geometry in data space
+  c.save(); c.translate(ox, oy); c.scale(s, s);
+  const lw = 1 / s;
+  // land fill
+  const fa = clamp((P - 0.1) / 0.6, 0, 1);
+  c.globalAlpha = ease(fa); c.fillStyle = col.land; c.fill(LV.coast, 'evenodd'); c.globalAlpha = 1;
+  // contours and water-lines
+  for (const L of LV.lv) {
+    const k = clamp((P - L.t) / 0.5, 0, 1); if (k <= 0) continue;
+    c.globalAlpha = L.a * ease(k) * (L.kind === 'land' ? 0.55 : 0.62);
+    c.strokeStyle = L.kind === 'land' ? col.contour : col.bathy;
+    c.lineWidth = (L.kind === 'land' ? 0.8 : 0.9) * lw;
+    c.stroke(L.p);
+  }
+  c.globalAlpha = 1;
+  // coastline (drawn on)
+  const ck = clamp(P / 1.1, 0, 1);
+  c.strokeStyle = col.ink; c.lineWidth = 1.35 * lw; c.lineJoin = 'round';
+  if (ck < 1) { c.setLineDash([LV.len * ease(ck), LV.len]); }
+  c.stroke(LV.coast); c.setLineDash([]);
+  c.restore();
+  // labels
+  const la = ease(clamp((P - 0.9) / 0.6, 0, 1));
+  c.globalAlpha = la;
+  const mono = (sz, w) => `${w || 500} ${sz}px "Martian Mono", ui-monospace, monospace`;
+  const k = clamp(fr.w / 620, 0.72, 1.25);
+  // towns
+  MAP.towns.forEach(([n, x, y, major]) => {
+    const px = ox + x * s, py = oy + y * s;
+    c.fillStyle = col.ink;
+    if (major) { c.beginPath(); c.arc(px, py, 3.2, 0, 7); c.fill(); c.fillStyle = col.paper; c.beginPath(); c.arc(px, py, 1.3, 0, 7); c.fill(); }
+    else { c.globalAlpha = la * 0.55; c.beginPath(); c.arc(px, py, 1.5, 0, 7); c.fill(); c.globalAlpha = la; }
+  });
+  c.fillStyle = col.ink; c.font = mono(Math.round(10 * k), 600); c.textBaseline = 'middle';
+  const lab = (t, x, y, al) => { c.textAlign = al || 'left'; c.fillText(t, x, y); };
+  const T = n => MAP.towns.find(t => t[0] === n);
+  let t = T('Valletta'); lab('VALLETTA', ox + t[1] * s + 9, oy + t[2] * s - 10);
+  t = T('Mdina'); lab('MDINA', ox + t[1] * s - 9, oy + t[2] * s - 10, 'right');
+  t = T('Victoria'); lab('VICTORIA', ox + t[1] * s + 8, oy + t[2] * s + 13);
+  // islands, spaced caps
+  c.save(); c.font = `640 ${Math.round(15 * k)}px "Archivo", sans-serif`; c.fillStyle = col.ink3;
+  const spaced = (str, x, y, sp) => { c.letterSpacing = sp + 'px'; c.textAlign = 'center'; c.fillText(str, x, y); c.letterSpacing = '0px'; };
+  spaced('MALTA', ox + 646 * s, oy + 632 * s, 7 * k);
+  c.font = `600 ${Math.round(12 * k)}px "Archivo", sans-serif`;
+  spaced('GĦAWDEX', ox + 238 * s, oy - 30 * s, 5 * k);
+  c.font = `500 ${Math.round(9.5 * k)}px "Archivo", sans-serif`;
+  c.textAlign = 'left'; c.letterSpacing = 3 * k + 'px'; c.fillText('KEMMUNA', ox + 448 * s, oy + 180 * s); c.letterSpacing = '0px';
+  c.restore();
+  // water, italic serif (cartographic convention)
+  c.fillStyle = col.bathy; c.font = `italic ${Math.round(17 * k)}px "Instrument Serif", Georgia, serif`; c.textAlign = 'left';
+  c.fillText('Mediterranean Sea', fr.x + fr.w * 0.06, fr.y + fr.h * 0.9);
+  c.font = `italic ${Math.round(13 * k)}px "Instrument Serif", Georgia, serif`;
+  c.textAlign = 'center'; c.fillText('Gozo Channel', ox + 262 * s, oy + 244 * s); c.textAlign = 'left';
+  // scale bar: 5 km
+  const u = 1 / KM * s; // px per km
+  const sx = fr.x + fr.w - 22 - 5 * u, sy = fr.y + fr.h - 24;
+  c.fillStyle = col.ink; c.strokeStyle = col.ink; c.lineWidth = 1;
+  for (let i = 0; i < 5; i++) { if (i % 2 === 0) c.fillRect(sx + i * u, sy, u, 5); }
+  c.strokeRect(sx + .5, sy + .5, 5 * u, 5);
+  c.font = mono(9.5); c.textAlign = 'center'; c.fillStyle = col.ink3;
+  c.fillText('0', sx, sy - 8); c.fillText('5 km', sx + 5 * u, sy - 8);
+  // north arrow
+  const nx = fr.x + fr.w - 26, ny = fr.y + 30;
+  c.fillStyle = col.ink; c.beginPath(); c.moveTo(nx, ny - 14); c.lineTo(nx + 7, ny + 8); c.lineTo(nx, ny + 3); c.closePath(); c.fill();
+  c.strokeStyle = col.ink; c.beginPath(); c.moveTo(nx, ny - 14); c.lineTo(nx - 7, ny + 8); c.lineTo(nx, ny + 3); c.closePath(); c.stroke();
+  c.font = mono(10, 600); c.fillText('N', nx, ny + 20);
+  c.globalAlpha = 1;
+  c.restore();
+  // neatline + ticks + graticule labels (outside the frame)
+  c.strokeStyle = col.ink; c.lineWidth = 1.25; c.strokeRect(fr.x + .5, fr.y + .5, fr.w - 1, fr.h - 1);
+  c.lineWidth = 1; c.strokeRect(fr.x - 4.5, fr.y - 4.5, fr.w + 9, fr.h + 9);
+  c.fillStyle = col.ink3; c.font = mono(9); c.textBaseline = 'middle';
+  lons.forEach(v => { const [x] = toXY(35.9, v); c.beginPath(); c.moveTo(x, fr.y - 4); c.lineTo(x, fr.y + 6); c.moveTo(x, fr.y + fr.h + 4); c.lineTo(x, fr.y + fr.h - 6); c.stroke(); if (Math.abs(v * 6 - Math.round(v * 6)) < 1e-6) { c.textAlign = 'center'; c.fillText(dms(v, 'E', 'W'), x, fr.y + fr.h + G.m * 0.55); } });
+  lats.forEach(v => { const [, y] = toXY(v, 14.4); c.beginPath(); c.moveTo(fr.x - 4, y); c.lineTo(fr.x + 6, y); c.moveTo(fr.x + fr.w + 4, y); c.lineTo(fr.x + fr.w - 6, y); c.stroke(); if (Math.abs(v * 6 - Math.round(v * 6)) < 1e-6) { c.save(); c.translate(fr.x + fr.w + G.m * 0.55, y); c.rotate(Math.PI / 2); c.textAlign = 'center'; c.fillText(dms(v, 'N', 'S'), 0, 0); c.restore(); } });
+  if (P < 2.2) requestAnimationFrame(draw); else drawn = true;
+}
+
+/* crosshair */
+const xh = document.getElementById('xh'), xv = document.getElementById('xh-v'), xhh = document.getElementById('xh-h'), xr = document.getElementById('xh-ret'), xread = document.getElementById('xh-read');
+const xll = document.getElementById('xh-ll'), xat = document.getElementById('xh-at');
+const hav = (a, b, c, d) => { const R = 6371, r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); };
+const TOWNLL = [['Valletta',35.8989,14.5146],['Mdina',35.8860,14.4032],['Victoria',36.0443,14.2394],['Sliema',35.9122,14.5042],['Birkirkara',35.8972,14.4611],['Marsaxlokk',35.8419,14.5431],['Mellieħa',35.9564,14.3622],['Qormi',35.8760,14.4720],['Żebbuġ',35.8719,14.4411],['Siġġiewi',35.8547,14.4383],['Żejtun',35.8558,14.5331],['Ħamrun',35.8847,14.4844],['St Paul’s Bay',35.9483,14.4011],['Birgu',35.8881,14.5225],['Dingli',35.8614,14.3822],['Nadur',36.0378,14.2942],['Xagħra',36.0503,14.2644],['Għajnsielem',36.0265,14.2850],['Rabat',35.8817,14.3989],['Mosta',35.9097,14.4261],['Gżira',35.9058,14.4881],['Pembroke',35.9264,14.4808],['Kalkara',35.8892,14.5328],['Żurrieq',35.8311,14.4742]];
+function reading(px, py){
+  const {lat, lon, xd, yd} = toLL(px, py);
+  const v = fieldAt(xd, yd);
+  xll.textContent = lat.toFixed(4) + '° N · ' + lon.toFixed(4) + '° E';
+  if (v > 0) {
+    let best = null, bd = 1e9; TOWNLL.forEach(t => { const d = hav(lat, lon, t[1], t[2]); if (d < bd) { bd = d; best = t[0]; } });
+    xat.textContent = 'Land · ' + (bd < 0.6 ? best : best + ' ' + bd.toFixed(1) + ' km');
+  } else if (v > -998) {
+    xat.textContent = 'Sea · ' + Math.max(0.1, -v * KM).toFixed(1) + ' km offshore';
+  } else xat.textContent = 'Off sheet';
+}
+function place(px, py){
+  const {fr, W} = G;
+  px = clamp(px, fr.x, fr.x + fr.w); py = clamp(py, fr.y, fr.y + fr.h);
+  xv.style.height = fr.h + 'px'; xv.style.transform = `translate(${px}px, ${fr.y}px)`;
+  xhh.style.width = fr.w + 'px'; xhh.style.transform = `translate(${fr.x}px, ${py}px)`;
+  xr.style.transform = `translate(${px}px, ${py}px)`;
+  const rw = xread.offsetWidth || 180, rh = xread.offsetHeight || 40;
+  const cx = G.ox + 627 * G.s;
+  let rx = px < cx ? px - 18 - rw : px + 18;
+  if (rx < fr.x + 4) rx = px + 18; if (rx + rw > fr.x + fr.w - 4) rx = px - 18 - rw;
+  const ry = py + 18 + rh > fr.y + fr.h ? py - 18 - rh : py + 18;
+  xread.style.transform = `translate(${rx}px, ${ry}px)`;
+  reading(px, py);
+  if (narrowMap()) hint.textContent = xll.textContent + ' · ' + xat.textContent;
+}
+let home = [0, 0];
+const hint = document.getElementById('plate-hint');
+const narrowMap = () => G && G.fr.w < 460;
+function goHome(){ xh.classList.add('glide'); place(home[0], home[1]); }
+plate.addEventListener('pointermove', e => {
+  if (!G) return; const r = plate.getBoundingClientRect();
+  xh.classList.remove('glide'); place(e.clientX - r.left, e.clientY - r.top);
+});
+plate.addEventListener('pointerleave', () => G && goHome());
+plate.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' && G) { const r = plate.getBoundingClientRect(); xh.classList.add('glide'); place(e.clientX - r.left, e.clientY - r.top); } });
+
+
+function initMap(){
+  F = buildField(); LV = buildLevels(); layout();
+  home = toXY(35.8860, 14.4032);
+  goHome(); start = performance.now(); requestAnimationFrame(draw);
+}
+let rz; new ResizeObserver(() => { if (!F) return; clearTimeout(rz); rz = setTimeout(() => { layout(); home = toXY(35.8860, 14.4032); goHome(); start = performance.now() - 99999; requestAnimationFrame(draw); }, 60); }).observe(plate);
+const redrawNow = () => { if (F) { start = performance.now() - 99999; requestAnimationFrame(draw); } };
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redrawNow);
+new MutationObserver(redrawNow).observe(root, {attributes:true, attributeFilter:['data-theme']});
+(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(initMap));
+
+/* ============ measuring tape ============ */
+const tape = document.getElementById('tape');
+const once = (el, fn) => { const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { io.disconnect(); fn(); } }, {threshold: .35}); io.observe(el); };
+once(tape, () => {
+  if (reduceMQ.matches) return;
+  tape.querySelectorAll('.fill').forEach((f, i) => f.animate([{transform:'scaleX(0)'}, {transform:'scaleX(1)'}], {duration: 1100, delay: 120 * i, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards'}));
+});
+
+/* ============ readiness profile ============ */
+const DIMS = ['Strategy', 'Data', 'Technology', 'Skills', 'Governance', 'Culture'];
+const YOU = [58, 44, 63, 51, 37, 66];
+const BEN = {malta: [52, 47, 55, 46, 42, 57], eu: [56, 50, 58, 49, 48, 52]};
+const NAME = {malta: 'Malta average', eu: 'EU'};
+const avg = a => Math.round(a.reduce((x, y) => x + y, 0) / a.length);
+const svg = document.getElementById('pf');
+const NS = 'http://www.w3.org/2000/svg';
+const CODES = ['STR', 'DAT', 'TEC', 'SKL', 'GOV', 'CUL'];
+const tip = document.getElementById('tip'), chart = document.getElementById('chart');
+let W = 760, H = 392, L = 92, R = 744, T = 30, B = 318, xs = [], narrow = false;
+let bench = 'malta', cur = BEN.malta.slice(), anim = null, gFill, gLines, gMarks, hovLine;
+const y = v => B - v / 100 * (B - T);
+const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); (p || svg).appendChild(e); return e; };
+const STY = `.hbg-malta{fill:color-mix(in srgb,var(--malta) 10%,transparent)}.hbg-eu{fill:color-mix(in srgb,var(--eu) 10%,transparent)}
+.hl-malta{stroke:var(--malta);stroke-width:2}.hl-eu{stroke:var(--eu);stroke-width:2}.hdot{fill:var(--ink-3)}
+.gl{stroke:var(--grid);stroke-width:1}.gl.m{stroke:var(--rule)}.staff-b{fill:var(--ink)}.staff-w{fill:var(--panel);stroke:var(--ink);stroke-width:1}
+.stn{stroke:var(--rule);stroke-dasharray:2 4}.you{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linejoin:round}
+.bl{fill:none;stroke-width:2;stroke-dasharray:7 5}.bl.malta{stroke:var(--malta)}.bl.eu{stroke:var(--eu)}
+.mk{fill:var(--ink)}.mkb.malta{fill:var(--malta)}.mkb.eu{fill:var(--eu)}.bv.malta{fill:var(--malta)}.bv.eu{fill:var(--eu)}
+.hov{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3}.base{stroke:var(--ink);stroke-width:1.5}`;
+
+function build(){
+  const w = Math.max(300, Math.round(chart.clientWidth || 760));
+  narrow = w < 560; W = w; H = narrow ? 330 : 392;
+  L = narrow ? 50 : 92; R = W - (narrow ? 6 : 16); T = narrow ? 26 : 30; B = H - (narrow ? 48 : 74);
+  xs = DIMS.map((_, i) => L + (i + .5) * (R - L) / 6);
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.textContent = '';
+  const ds = el('desc', {id: 'pf-desc'}); ds.textContent = 'Sample readiness profile. Scores out of 100 for Strategy, Data, Technology, Skills, Governance and Culture, compared with a benchmark.';
+  const defs = el('defs', {});
+  ['malta', 'eu'].forEach(id => {
+    const p = el('pattern', {id: 'h-' + id, width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)'}, defs);
+    el('rect', {width: 6, height: 6, class: 'hbg-' + id}, p);
+    el('line', {x1: 0, y1: 0, x2: 0, y2: 6, class: 'hl-' + id}, p);
+  });
+  const pd = el('pattern', {id: 'h-lead', width: 5, height: 5, patternUnits: 'userSpaceOnUse'}, defs);
+  el('circle', {cx: 2.5, cy: 2.5, r: 0.9, class: 'hdot'}, pd);
+  const st = document.createElementNS(NS, 'style'); st.textContent = STY; defs.appendChild(st);
+  for (let v = 0; v <= 100; v += 10) el('line', {x1: L, x2: R, y1: y(v), y2: y(v), class: 'gl' + (v === 50 ? ' m' : '')});
+  // levelling staff (E pattern)
+  const sw = narrow ? 14 : 22, sx = L - sw - (narrow ? 6 : 24);
+  el('rect', {x: sx, y: T, width: sw, height: B - T, class: 'staff-w'});
+  for (let v = 0; v < 100; v += 10) {
+    const top = y(v + 10), h = (B - T) / 10, left = (v / 10) % 2 === 0, x0 = left ? sx : sx + sw / 2;
+    [0, .2, .4].forEach(o => el('rect', {x: x0, y: top + h * o, width: sw / 2, height: h * 0.1, class: 'staff-b'}));
+    el('rect', {x: left ? sx : sx + sw - 3, y: top, width: 3, height: h * 0.5, class: 'staff-b'});
+    if (!narrow || (v + 10) % 20 === 0) { const tx = el('text', {x: sx - 6, y: y(v + 10) + 4, 'text-anchor': 'end', class: 'ax'}); tx.textContent = v + 10; }
+  }
+  const t0 = el('text', {x: sx - 6, y: y(0) + 4, 'text-anchor': 'end', class: 'ax'}); t0.textContent = '0';
+  el('line', {x1: L, x2: R, y1: B, y2: B, class: 'base'});
+  xs.forEach((x, i) => {
+    el('line', {x1: x, x2: x, y1: T, y2: B, class: 'stn'});
+    const t = el('text', {x, y: B + (narrow ? 22 : 26), 'text-anchor': 'middle', class: 'dl'}); t.textContent = narrow ? CODES[i] : DIMS[i].toUpperCase();
+  });
+  gFill = el('g', {}); gLines = el('g', {}); gMarks = el('g', {}); const gHov = el('g', {});
+  hovLine = el('line', {y1: T - 6, y2: B, class: 'hov', visibility: 'hidden'}, gHov);
+  xs.forEach((x, i) => {
+    const w2 = (R - L) / 6;
+    const r = el('rect', {x: x - w2 / 2, y: T - 10, width: w2, height: B - T + 44, class: 'col', tabindex: 0, role: 'button', 'aria-label': `${DIMS[i]}: sample ${YOU[i]}`}, gHov);
+    const show = () => {
+      const b = BEN[bench][i], d = YOU[i] - b;
+      hovLine.setAttribute('x1', x); hovLine.setAttribute('x2', x); hovLine.setAttribute('visibility', 'visible');
+      tip.innerHTML = `<b>${DIMS[i]}</b><span class="r"><span>Sample</span><span>${YOU[i]}</span></span><span class="r" style="color:var(--${bench})"><span>${NAME[bench]}</span><span>${b}</span></span><span class="r"><span>${d < 0 ? 'Gap' : 'Ahead by'}</span><span>${d < 0 ? '−' + Math.abs(d) : '+' + d}</span></span>`;
+      const box = svg.getBoundingClientRect(), cb = chart.getBoundingClientRect(), sc = box.width / W;
+      const px = clamp(x * sc + (box.left - cb.left), 90, cb.width - 90);
+      tip.style.left = px + 'px'; tip.style.top = (y(Math.max(YOU[i], b)) * sc + (box.top - cb.top) - 26) + 'px';
+      tip.classList.add('on');
+    };
+    const hide = () => { tip.classList.remove('on'); hovLine.setAttribute('visibility', 'hidden'); };
+    r.addEventListener('pointerenter', show); r.addEventListener('pointerleave', hide);
+    r.addEventListener('focus', show); r.addEventListener('blur', hide);
+  });
+  render();
+}
+
+function polys(a, b){
+  const X = [L, ...xs, R], A = [a[0], ...a, a[5]], Bv = [b[0], ...b, b[5]];
+  const gap = [], lead = [];
+  for (let k = 0; k < X.length - 1; k++) {
+    const d0 = A[k] - Bv[k], d1 = A[k + 1] - Bv[k + 1];
+    const P = (x, v) => x.toFixed(1) + ',' + y(v).toFixed(1);
+    if (d0 * d1 >= 0) {
+      const poly = [P(X[k], A[k]), P(X[k + 1], A[k + 1]), P(X[k + 1], Bv[k + 1]), P(X[k], Bv[k])].join(' ');
+      (d0 + d1 < 0 ? gap : lead).push(poly);
+    } else {
+      const t = d0 / (d0 - d1), xc = X[k] + t * (X[k + 1] - X[k]), vc = A[k] + t * (A[k + 1] - A[k]);
+      (d0 < 0 ? gap : lead).push([P(X[k], A[k]), P(xc, vc), P(X[k], Bv[k])].join(' '));
+      (d1 < 0 ? gap : lead).push([P(xc, vc), P(X[k + 1], A[k + 1]), P(X[k + 1], Bv[k + 1])].join(' '));
+    }
+  }
+  return {gap, lead};
+}
+function line(vals){ return [L, ...xs, R].map((x, i) => x.toFixed(1) + ',' + y(vals[Math.max(0, Math.min(5, i - 1))]).toFixed(1)).join(' '); }
+function render(){
+  gFill.textContent = ''; gLines.textContent = ''; gMarks.textContent = '';
+  const {gap, lead} = polys(YOU, cur);
+  lead.forEach(p => el('polygon', {points: p, fill: 'url(#h-lead)'}, gFill));
+  gap.forEach(p => el('polygon', {points: p, fill: `url(#h-${bench})`}, gFill));
+  el('polyline', {points: line(cur), class: 'bl ' + bench}, gLines);
+  el('polyline', {points: line(YOU), class: 'you'}, gLines);
+  xs.forEach((x, i) => {
+    el('path', {d: `M${x} ${y(YOU[i]) - 7}l6.5 11h-13z`, class: 'mk'}, gMarks);
+    const up = YOU[i] >= cur[i];
+    const t = el('text', {x, y: up ? y(YOU[i]) - 14 : y(YOU[i]) + 22, 'text-anchor': 'middle', class: 'vl'}, gMarks); t.textContent = YOU[i];
+    el('rect', {x: x - 4, y: y(cur[i]) - 1.5, width: 8, height: 3, class: 'mkb ' + bench}, gMarks);
+    if (!narrow) { const bt = el('text', {x: x + 10, y: up ? y(cur[i]) + 16 : y(cur[i]) - 8, class: 'bv ' + bench}, gMarks); bt.textContent = Math.round(cur[i]); }
+  });
+}
+function summary(){
+  const b = BEN[bench], d = YOU.map((v, i) => v - b[i]);
+  const ov = avg(YOU), bo = avg(b), diff = ov - bo;
+  document.getElementById('d-k').textContent = bench === 'malta' ? 'vs Malta average' : 'vs EU';
+  document.getElementById('d-v').textContent = (diff >= 0 ? '+' : '−') + Math.abs(diff);
+  const sI = d.indexOf(Math.max(...d)), gI = d.indexOf(Math.min(...d));
+  document.getElementById('d-s').textContent = DIMS[sI] + ' ' + (d[sI] >= 0 ? '+' : '−') + Math.abs(d[sI]);
+  document.getElementById('d-g').textContent = DIMS[gI] + ' ' + (d[gI] >= 0 ? '+' : '−') + Math.abs(d[gI]);
+  document.querySelectorAll('#steps .chip').forEach(ch => {
+    const i = +ch.getAttribute('data-dim'), v = d[i];
+    ch.querySelector('.d').textContent = (v >= 0 ? '+' : '−') + Math.abs(v);
+    ch.style.setProperty('--c', v < 0 ? `var(--${bench})` : 'var(--ink-3)');
+  });
+  document.getElementById('lg-bt').textContent = NAME[bench];
+  document.getElementById('lg-b').style.setProperty('--c', `var(--${bench})`);
+  document.getElementById('lg-g').style.setProperty('--c', `var(--${bench})`);
+  document.getElementById('tb-b').textContent = NAME[bench];
+}
+function setBench(b){
+  if (b === bench) return;
+  const from = cur.slice(), to = BEN[b]; bench = b;
+  document.querySelectorAll('.tog button').forEach(x => x.setAttribute('aria-checked', String(x.dataset.b === b)));
+  summary();
+  cancelAnimationFrame(anim);
+  if (reduceMQ.matches) { cur = to.slice(); render(); return; }
+  const t0 = performance.now();
+  const step = now => { const k = ease(clamp((now - t0) / 650, 0, 1)); cur = from.map((v, i) => v + (to[i] - v) * k); render(); if (k < 1) anim = requestAnimationFrame(step); };
+  anim = requestAnimationFrame(step);
+}
+document.querySelectorAll('.tog button').forEach(bt => {
+  bt.addEventListener('click', () => setBench(bt.dataset.b));
+  bt.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); const nb = bench === 'malta' ? 'eu' : 'malta'; setBench(nb); document.getElementById('b-' + nb).focus(); } });
+});
+const tb = document.querySelector('#pf-table tbody');
+DIMS.forEach((d, i) => { const tr = document.createElement('tr'); tr.innerHTML = `<th scope="row">${d}</th><td>${YOU[i]}</td><td>${BEN.malta[i]}</td><td>${BEN.eu[i]}</td>`; tb.appendChild(tr); });
+build(); summary();
+let cw = chart.clientWidth, crz;
+new ResizeObserver(() => { if (Math.abs(chart.clientWidth - cw) < 2) return; cw = chart.clientWidth; clearTimeout(crz); crz = setTimeout(build, 80); }).observe(chart);
+
+// count-up on first view
+const ovEl = document.getElementById('overall');
+once(ovEl, () => {
+  if (reduceMQ.matches) return;
+  const target = avg(YOU), t0 = performance.now();
+  const step = now => { const k = ease(clamp((now - t0) / 1100, 0, 1)); ovEl.textContent = Math.round(target * k); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+});
+
+/* ============ review bar ============ */
+const rv = document.getElementById('rv'), rvt = document.getElementById('rv-t');
+rvt.addEventListener('click', () => {
+  const min = rv.classList.toggle('min');
+  rvt.textContent = min ? '⋯' : '×'; rvt.setAttribute('aria-expanded', String(!min)); rvt.setAttribute('aria-label', min ? 'Show review bar' : 'Hide review bar');
+});
+})();
+</script>
+</body>
+</html>

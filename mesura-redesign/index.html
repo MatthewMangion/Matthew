@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en-MT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mesura Homepage Redesign</title>
+<meta name="description" content="Three working homepage prototypes for Mesura, the free AI readiness survey for Malta.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:ital,wght@0,400..900;1,400..900&display=swap">
+<style>
+:root{
+  /* Layout: a studio case study. 1200px measure; a contact sheet of three heroes up top, then one long section per route with a scrolling browser frame and a phone. Neutral greys so each route's own colour carries the page. */
+  --bg:#F4F4F1;
+  --surface:#FFFFFF;
+  --fg:#131316;
+  --fg-2:#4F5058;
+  --fg-3:#63646C;
+  --line:#DFDFDA;
+  --line-2:#C9C9C3;
+  --chip:#EAEAE5;
+  --frame:#1B1B1F;
+  --shadow:rgba(19,19,22,.18);
+  --a-accent:#C8102E;
+  --b-accent:#253E8F;
+  --c-accent:#B87A12;
+  --f-sans:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --measure:1200px;
+  --gutter:clamp(16px,4vw,40px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F0F11; --surface:#18181B; --fg:#F2F2F3; --fg-2:#B1B2B9; --fg-3:#93949C;
+    --line:#29292E; --line-2:#3A3A40; --chip:#222226; --frame:#000000; --shadow:rgba(0,0,0,.5);
+    --a-accent:#FF5B6F; --b-accent:#8EA3FF; --c-accent:#FFB547;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F0F11; --surface:#18181B; --fg:#F2F2F3; --fg-2:#B1B2B9; --fg-3:#93949C;
+  --line:#29292E; --line-2:#3A3A40; --chip:#222226; --frame:#000000; --shadow:rgba(0,0,0,.5);
+  --a-accent:#FF5B6F; --b-accent:#8EA3FF; --c-accent:#FFB547;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--f-sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--fg);outline-offset:3px;border-radius:4px}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:var(--measure);margin-inline:auto;padding-inline:var(--gutter)}
+.mono{font-family:var(--f-mono)}
+.label{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3)}
+.body{color:var(--fg-2);max-width:36em}
+
+/* top */
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-block:22px;border-bottom:1px solid var(--line)}
+.top .brand{font-weight:800;letter-spacing:-.02em;font-size:18px}
+.top .brand span{font-weight:400;color:var(--fg-3)}
+.top nav{display:flex;gap:6px;flex-wrap:wrap}
+.top nav a{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:999px;text-decoration:none;font-size:14px;font-weight:600;color:var(--fg-2)}
+.top nav a:hover{background:var(--chip);color:var(--fg)}
+
+/* intro */
+.intro{padding-block:clamp(48px,7vw,96px) clamp(32px,4vw,56px);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:end}
+.intro h1{font-size:clamp(40px,6.2vw,84px);line-height:.98;font-weight:800;letter-spacing:-.04em}
+.intro h1 em{font-style:italic;font-weight:500}
+.intro .side{display:flex;flex-direction:column;gap:16px}
+.intro .facts{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:8px;min-height:30px;padding:0 12px;border:1px solid var(--line-2);border-radius:999px;font-size:13px;font-weight:600;color:var(--fg-2)}
+@media (max-width:860px){.intro{grid-template-columns:minmax(0,1fr)}}
+
+/* contact sheet */
+.sheet{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,24px);padding-bottom:clamp(56px,7vw,96px)}
+.thumb{display:flex;flex-direction:column;gap:12px;text-decoration:none;min-width:0}
+.thumb .img{border-radius:10px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 40px -26px var(--shadow);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.thumb:hover .img{transform:translateY(-4px);box-shadow:0 28px 50px -26px var(--shadow)}
+.thumb .cap{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.thumb .nm{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.thumb .nm i{font-style:normal;font-family:var(--f-mono);font-weight:500;font-size:12px;color:var(--fg-3);margin-right:8px;letter-spacing:.06em}
+.thumb .ln{font-size:14px;color:var(--fg-2)}
+@media (max-width:760px){.sheet{grid-template-columns:minmax(0,1fr)}}
+
+/* note */
+.note{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:start;padding:18px 20px;border:1px dashed var(--line-2);border-radius:12px;color:var(--fg-2);font-size:15.5px;max-width:880px}
+.note b{color:var(--fg)}
+.note .ic{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--fg-3);display:grid;place-items:center;font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--fg-2)}
+
+/* sections */
+.sec{padding-block:clamp(56px,7vw,104px);border-top:1px solid var(--line)}
+.sec-h{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:clamp(20px,4vw,64px);margin-bottom:clamp(28px,4vw,48px);align-items:start}
+.sec-h h2{font-size:clamp(28px,3.4vw,44px);line-height:1.05;font-weight:800;letter-spacing:-.03em}
+@media (max-width:860px){.sec-h{grid-template-columns:minmax(0,1fr)}}
+.jobs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(12px,2vw,24px);list-style:none;margin:0;padding:0}
+.jobs li{display:flex;flex-direction:column;gap:10px;padding:clamp(18px,2.4vw,28px);background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0}
+.jobs h3{font-size:19px;font-weight:750;letter-spacing:-.01em;line-height:1.25}
+.jobs p{color:var(--fg-2);font-size:15.5px}
+@media (max-width:860px){.jobs{grid-template-columns:minmax(0,1fr)}}
+
+.insight{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:clamp(24px,5vw,72px);align-items:center}
+.big{font-size:clamp(84px,11vw,152px);line-height:.85;font-weight:800;letter-spacing:-.05em}
+.big small{font-size:.4em;letter-spacing:-.02em}
+.vs{display:flex;gap:28px;margin-top:18px;flex-wrap:wrap}
+.vs>div{display:flex;flex-direction:column;gap:2px}
+.vs b{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.vs span{font-size:13px;color:var(--fg-3)}
+.insight .txt{display:flex;flex-direction:column;gap:16px}
+.insight .txt p:first-child{font-size:clamp(20px,2vw,26px);line-height:1.35;font-weight:600;letter-spacing:-.01em;color:var(--fg)}
+.src{font-size:13px;color:var(--fg-3)}
+@media (max-width:860px){.insight{grid-template-columns:minmax(0,1fr)}}
+
+/* routes */
+.route{padding-block:clamp(56px,7vw,104px);border-top:1px solid var(--line)}
+.r-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:clamp(24px,3vw,40px)}
+.r-head .t{display:flex;flex-direction:column;gap:10px;max-width:760px}
+.r-kick{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+.r-kick::before{content:"";width:22px;height:3px;background:var(--acc);border-radius:2px}
+.r-head h2{font-size:clamp(44px,6vw,80px);line-height:.95;font-weight:800;letter-spacing:-.045em}
+.r-head .one{font-size:clamp(18px,1.7vw,22px);line-height:1.4;color:var(--fg-2);max-width:34em}
+.open{display:inline-flex;align-items:center;gap:10px;min-height:50px;padding:0 22px;border-radius:999px;background:var(--fg);color:var(--bg);font-weight:700;text-decoration:none;font-size:15.5px;white-space:nowrap}
+.open:hover{opacity:.88}
+.open .arr{transition:transform .25s}
+.open:hover .arr{transform:translateX(4px)}
+.stagebox{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:clamp(16px,3vw,40px);align-items:end;margin-bottom:clamp(28px,4vw,48px)}
+.browser{border-radius:12px;background:var(--frame);padding:0 0 0;box-shadow:0 40px 70px -40px var(--shadow);overflow:hidden;min-width:0}
+.bar{display:flex;align-items:center;gap:8px;height:38px;padding:0 14px}
+.bar i{width:10px;height:10px;border-radius:50%;background:#3A3A40}
+.bar .url{margin-left:10px;flex:1;max-width:340px;height:24px;border-radius:6px;background:#2A2A30;color:#B9BAC2;font-family:var(--f-mono);font-size:11.5px;display:flex;align-items:center;padding:0 10px;white-space:nowrap;overflow:hidden}
+.vp{position:relative;aspect-ratio:16/10;overflow:hidden;background:#fff}
+.vp img{width:100%;height:auto;transform:translateY(0);transition:transform var(--dur,9s) cubic-bezier(.45,.05,.35,1)}
+.browser:hover .vp img,.browser:focus-within .vp img{transform:translateY(var(--shift,0px))}
+.vp .hint{position:absolute;right:12px;bottom:12px;padding:6px 10px;border-radius:999px;background:rgba(19,19,22,.78);color:#fff;font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;pointer-events:none;transition:opacity .3s}
+.browser:hover .hint{opacity:0}
+@media (hover:none){.vp{overflow-y:auto;-webkit-overflow-scrolling:touch}.vp .hint{display:none}}
+.phone{justify-self:center;width:100%;max-width:250px;padding:9px;border-radius:38px;background:var(--frame);box-shadow:0 40px 70px -40px var(--shadow)}
+.phone .scr{border-radius:30px;overflow:hidden;aspect-ratio:390/844;background:#fff}
+.phone .scr img{width:100%;height:100%;object-fit:cover;object-position:top}
+@media (max-width:760px){.stagebox{grid-template-columns:minmax(0,1fr) minmax(0,.55fr);align-items:start}.phone{padding:6px;border-radius:26px}.phone .scr{border-radius:21px}}
+@media (max-width:480px){.stagebox{grid-template-columns:minmax(0,1fr)}.phone{max-width:220px}}
+
+.facts4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.4vw,32px)}
+.facts4>div{display:flex;flex-direction:column;gap:8px;min-width:0}
+.facts4 h4{font-family:var(--f-mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3)}
+.facts4 p{color:var(--fg-2);font-size:15.5px}
+.facts4 p b{color:var(--fg)}
+.sw{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.sw span{width:26px;height:26px;border-radius:50%;border:1px solid var(--line-2)}
+@media (max-width:980px){.facts4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.facts4{grid-template-columns:minmax(0,1fr)}}
+.extra{margin-top:clamp(20px,3vw,32px);display:flex;gap:18px;align-items:center;flex-wrap:wrap;color:var(--fg-2);font-size:15px}
+.extra img{width:260px;border-radius:8px;border:1px solid var(--line)}
+
+/* compare */
+.tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:15px}
+th,td{text-align:left;padding:14px 18px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{font-family:var(--f-mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3)}
+tbody th{font-weight:800;font-size:17px;letter-spacing:-.01em;white-space:nowrap}
+tbody th i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:10px;background:var(--acc)}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+td{color:var(--fg-2)}
+
+/* foundations + questions */
+.found{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.found>div{background:var(--surface);padding:clamp(18px,2.4vw,28px);display:flex;flex-direction:column;gap:8px;min-width:0}
+.found h3{font-size:18px;font-weight:750;letter-spacing:-.01em}
+.found p{color:var(--fg-2);font-size:15.5px}
+.key{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:13.5px;color:var(--fg-2)}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.key i{width:18px;height:4px;border-radius:2px}
+@media (max-width:760px){.found{grid-template-columns:minmax(0,1fr)}}
+.qs{list-style:none;margin:0;padding:0;counter-reset:q;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px clamp(16px,3vw,40px)}
+.qs li{counter-increment:q;display:grid;grid-template-columns:34px minmax(0,1fr);gap:4px 12px;padding:16px 0;border-top:1px solid var(--line)}
+.qs li::before{content:counter(q,decimal-leading-zero);font-family:var(--f-mono);font-size:13px;color:var(--fg-3);padding-top:3px}
+.qs b{display:block;color:var(--fg);font-weight:750}
+.qs span{color:var(--fg-2);font-size:15.5px}
+@media (max-width:760px){.qs{grid-template-columns:minmax(0,1fr)}}
+.how{display:flex;flex-direction:column;gap:10px;color:var(--fg-2)}
+.how ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.foot{padding-block:40px 64px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:14px;color:var(--fg-3)}
+.foot a{color:var(--fg-2)}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.001ms!important;animation-duration:.001ms!important}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span class="brand">Mesura <span>/ homepage redesign</span></span>
+    <nav aria-label="Sections">
+      <a href="#datum">A · Datum</a><a href="#madum">B · Madum</a><a href="#six">C · Six</a><a href="#compare">Compare</a><a href="#questions">Open questions</a>
+    </nav>
+  </header>
+
+  <section class="intro" aria-labelledby="t">
+    <h1 id="t">Three ways to show Malta where it stands <em>on&nbsp;AI.</em></h1>
+    <div class="side">
+      <p class="body">A homepage redesign for Mesura, the free AI readiness survey. Each route is a working, responsive prototype built on the same content, so the comparison is about the idea rather than the copy.</p>
+      <div class="facts"><span class="pill">3 routes</span><span class="pill">3 live prototypes</span><span class="pill">Desktop + phone</span><span class="pill">29 Sept 2026</span></div>
+    </div>
+  </section>
+
+  <div class="sheet">
+    <a class="thumb" href="datum.html"><span class="img"><img src="shots/datum-hero.jpg" alt="Route A, Datum: a light survey-sheet homepage with a map of the Maltese Islands" width="1440" height="900"></span><span class="cap"><span class="nm"><i>A</i>Datum</span><span class="ln">Precise, institutional</span></span></a>
+    <a class="thumb" href="madum.html"><span class="img"><img src="shots/madum-hero.jpg" alt="Route B, Madum: a homepage led by a generated Maltese cement tile" width="1440" height="900"></span><span class="cap"><span class="nm"><i>B</i>Madum</span><span class="ln">Warm, local, collectable</span></span></a>
+    <a class="thumb" href="six.html"><span class="img"><img src="shots/six-hero.jpg" alt="Route C, Six: a dark homepage built around a readiness hexagon" width="1440" height="900"></span><span class="cap"><span class="nm"><i>C</i>Six</span><span class="ln">Product-led, energetic</span></span></a>
+  </div>
+
+  <div class="note" role="note"><span class="ic" aria-hidden="true">i</span><p><b>What this is built from.</b> The live mesura.ai site was blocked from the environment these were built in, so the work starts from Mesura’s public description: a free, ten-minute survey that scores six dimensions against the Malta average and the EU, with a personalised report and clear next steps, for individuals or organisations. Everything I could not confirm is listed under <a href="#questions">Open questions</a>.</p></div>
+
+  <section class="sec" aria-labelledby="jobs-h" style="margin-top:clamp(40px,5vw,64px)">
+    <div class="sec-h">
+      <h2 id="jobs-h">What the homepage has to do</h2>
+      <p class="body">One conversion matters: starting the ten-minute survey. Everything on the page either makes that feel worth it or makes it easier.</p>
+    </div>
+    <ul class="jobs">
+      <li><p class="label">Job 1</p><h3>Make the offer obvious in five seconds</h3><p>Free, about ten minutes, six dimensions, measured against Malta and the EU, with a report at the end. Every route says all of it above the fold.</p></li>
+      <li><p class="label">Job 2</p><h3>Earn trust before asking for ten minutes</h3><p>Show the report itself instead of describing it, cite real data with sources, and write plainly. A benchmark is only as good as it looks.</p></li>
+      <li><p class="label">Job 3</p><h3>Route two audiences without a fork</h3><p>Individuals and organisations take the same six dimensions against the same benchmarks. They choose who they’re answering for up front, and the page keeps one path.</p></li>
+    </ul>
+  </section>
+
+  <section class="sec" aria-labelledby="ins-h">
+    <div class="insight">
+      <div>
+        <p class="label" id="ins-h">The insight every route leads with</p>
+        <p class="big" style="margin-top:14px">46.5<small>%</small></p>
+        <div class="vs"><div><b>3rd</b><span>in the EU</span></div><div><b>32.7%</b><span>EU average</span></div><div><b>48.4%</b><span>Denmark, highest</span></div></div>
+      </div>
+      <div class="txt">
+        <p>Nearly half of people in Malta used generative AI tools in 2025. Usage is high. Readiness is unmeasured, and that gap is Mesura’s reason to exist.</p>
+        <p class="body">Each route uses this contrast as its “why measure” moment, then turns it into the product promise: know where you stand, then know what to do next.</p>
+        <p class="src">People aged 16–74. Source: <a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20251216-3" target="_blank" rel="noopener">Eurostat news release, 16 December 2025</a>.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="route" id="datum" aria-labelledby="a-h" style="--acc:var(--a-accent)">
+  <div class="wrap">
+    <div class="r-head">
+      <div class="t">
+        <span class="r-kick">Route A</span>
+        <h2 id="a-h">Datum</h2>
+        <p class="one">“Benchmark” began as a surveyor’s mark cut into stone: the fixed point you measure from. Datum treats Mesura as a precision instrument.</p>
+      </div>
+      <a class="open" href="datum.html">Open prototype <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+    <div class="stagebox">
+      <div class="browser" tabindex="0" aria-label="Full-page preview of route A. Hover or focus to scroll.">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span class="url">mesura.ai · route A</span></div>
+        <div class="vp"><img src="shots/datum-full.jpg" alt="Full page of route A, Datum" width="960" height="4565" loading="lazy"><span class="hint">Hover to scroll the page</span></div>
+      </div>
+      <div class="phone"><div class="scr"><img src="shots/datum-mobile.jpg" alt="Route A on a phone" width="780" height="1688" loading="lazy"></div></div>
+    </div>
+    <div class="facts4">
+      <div><h4>The idea</h4><p>The Maltese Islands drawn as a survey sheet, and every score plotted like a level against two datum lines: the Malta average and the EU.</p></div>
+      <div><h4>Signature moment</h4><p>A live map built from real coastline data: move over it for <b>true coordinates and distances</b>. In the sample report, gaps are hatched like cut-and-fill and redraw when you switch benchmark.</p></div>
+      <div><h4>Type &amp; colour</h4><p>Archivo, expanded for display. Martian Mono readouts. Instrument Serif italic for water, as on real maps. Ink on survey paper; red and blue only ever mean Malta and the EU.</p><div class="sw" aria-hidden="true"><span style="background:#F2F4F3"></span><span style="background:#0E1B24"></span><span style="background:#B25F28"></span><span style="background:#3C83AE"></span><span style="background:#C8102E"></span><span style="background:#1B45B0"></span></div></div>
+      <div><h4>Choose it if</h4><p>You want to be the credible, institutional reference for policy, finance and the public sector. <b>Watch-out:</b> the charm is in the details, so it rewards careful build.</p></div>
+    </div>
+    <div class="extra"><img src="shots/datum-dark.jpg" alt="Route A in dark mode: the survey sheet turns into a night survey" width="1200" height="750" loading="lazy"><p>Datum ships with a dark “night survey” theme that follows the visitor’s system setting.</p></div>
+  </div>
+</section>
+
+<section class="route" id="madum" aria-labelledby="b-h" style="--acc:var(--b-accent)">
+  <div class="wrap">
+    <div class="r-head">
+      <div class="t">
+        <span class="r-kick">Route B</span>
+        <h2 id="b-h">Madum</h2>
+        <p class="one">Malta’s cement tiles, the madum in almost every older home, become a data visualisation. Six scores draw six layers, so every result is a pattern of its own.</p>
+      </div>
+      <a class="open" href="madum.html">Open prototype <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+    <div class="stagebox">
+      <div class="browser" tabindex="0" aria-label="Full-page preview of route B. Hover or focus to scroll.">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span class="url">mesura.ai · route B</span></div>
+        <div class="vp"><img src="shots/madum-full.jpg" alt="Full page of route B, Madum" width="960" height="5101" loading="lazy"><span class="hint">Hover to scroll the page</span></div>
+      </div>
+      <div class="phone"><div class="scr"><img src="shots/madum-mobile.jpg" alt="Route B on a phone" width="780" height="1688" loading="lazy"></div></div>
+    </div>
+    <div class="facts4">
+      <div><h4>The idea</h4><p>Strategy draws the centre star, data the ring of dots, technology the petals, skills the leaves, governance the border and culture the corner rosettes.</p></div>
+      <div><h4>Signature moment</h4><p>A tile generator in the hero: <b>drag any score and the tile redraws</b>. Corner rosettes join neighbouring tiles, so a floor of results becomes a picture of readiness across Malta.</p></div>
+      <div><h4>Type &amp; colour</h4><p>Bodoni Moda, in the tradition of the tile-maker’s pattern book, with Hanken Grotesk. Cobalt, oxblood, ochre and sage on bone; oxblood marks Malta and cobalt the EU.</p><div class="sw" aria-hidden="true"><span style="background:#FAFAF7"></span><span style="background:#F1EADB"></span><span style="background:#253E8F"></span><span style="background:#8E2A1E"></span><span style="background:#D29A2B"></span><span style="background:#5B7F69"></span></div></div>
+      <div><h4>Choose it if</h4><p>You want warmth, local pride and something people share: the tile is a ready-made LinkedIn post and report cover. <b>Watch-out:</b> it’s a product feature, not just a homepage.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="route" id="six" aria-labelledby="c-h" style="--acc:var(--c-accent)">
+  <div class="wrap">
+    <div class="r-head">
+      <div class="t">
+        <span class="r-kick">Route C</span>
+        <h2 id="c-h">Six</h2>
+        <p class="one">The product is the hero. Six dimensions make a hexagon, and the whole page is built around it: a dark stage, a live shape and a scroll story that assembles a report.</p>
+      </div>
+      <a class="open" href="six.html">Open prototype <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+    <div class="stagebox">
+      <div class="browser" tabindex="0" aria-label="Full-page preview of route C. Hover or focus to scroll.">
+        <div class="bar" aria-hidden="true"><i></i><i></i><i></i><span class="url">mesura.ai · route C</span></div>
+        <div class="vp" style="background:#070A0E"><img src="shots/six-full.jpg" alt="Full page of route C, Six" width="960" height="5738" loading="lazy"><span class="hint">Hover to scroll the page</span></div>
+      </div>
+      <div class="phone"><div class="scr"><img src="shots/six-mobile.jpg" alt="Route C on a phone" width="780" height="1688" loading="lazy"></div></div>
+    </div>
+    <div class="facts4">
+      <div><h4>The idea</h4><p>Dots gather into the hexagon’s rings as the page loads. Then the scroll story moves from answers to scores, to Malta and EU benchmarks, to next steps.</p></div>
+      <div><h4>Signature moment</h4><p>Three quick questions in the hero <b>sketch your shape in real time</b>, leaving three sides as question marks. It’s a preview, never a score, and it pulls people into the full survey.</p></div>
+      <div><h4>Type &amp; colour</h4><p>Unbounded for display, Onest for text, Geist Mono for data. A near-black stage where amber is you, red is Malta and blue is the EU.</p><div class="sw" aria-hidden="true"><span style="background:#070A0E"></span><span style="background:#121A23"></span><span style="background:#ECF1F5"></span><span style="background:#FFB547"></span><span style="background:#FF5C6E"></span><span style="background:#6E97FF"></span></div></div>
+      <div><h4>Choose it if</h4><p>Conversion comes first and you want a product-led, tech-forward feel for start-ups, fintech and iGaming. <b>Watch-out:</b> heaviest to build, and the taste has to hand answers to the real survey.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="sec" id="compare" aria-labelledby="cmp-h">
+    <div class="sec-h">
+      <h2 id="cmp-h">Side by side</h2>
+      <p class="body">All three are buildable on the current offer. The difference is how much each asks of the product behind the page.</p>
+    </div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th scope="col">Route</th><th scope="col">Feels like</th><th scope="col">Hero does</th><th scope="col">Product asks</th><th scope="col">Build effort</th></tr></thead>
+        <tbody>
+          <tr style="--acc:var(--a-accent)"><th scope="row"><i></i>Datum</th><td>Precise, institutional, calm</td><td>Survey map with live readings</td><td>None beyond the report</td><td>Medium</td></tr>
+          <tr style="--acc:var(--b-accent)"><th scope="row"><i></i>Madum</th><td>Warm, local, collectable</td><td>Tile you can redraw</td><td>Tile generated from each result</td><td>Medium to high</td></tr>
+          <tr style="--acc:var(--c-accent)"><th scope="row"><i></i>Six</th><td>Product-led, energetic</td><td>Three questions sketch your shape</td><td>Carry quick answers into the survey</td><td>High</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="fnd-h">
+    <div class="sec-h">
+      <h2 id="fnd-h">Shared foundations</h2>
+      <p class="body">Whichever route goes forward, these decisions come with it.</p>
+    </div>
+    <div class="found">
+      <div><h3>One content model</h3><p>Hero, why measure, how it works, the six dimensions, a sample report, two audiences, FAQ and a final call. Same order, same copy in every route.</p></div>
+      <div><h3>Colour that means something</h3><p>Across every chart, one colour is always you, red is always Malta and blue is always the EU, taken from the two flags.</p><div class="key" aria-hidden="true"><span><i style="background:var(--fg)"></i>You</span><span><i style="background:#C8102E"></i>Malta</span><span><i style="background:#1B45B0"></i>EU</span></div></div>
+      <div><h3>Accessible by default</h3><p>Real buttons and links, keyboard-operable charts with data tables behind them, checked contrast, reduced-motion support, and typefaces tested for ħ, ġ, ż and ċ.</p></div>
+      <div><h3>Light to run</h3><p>Plain HTML, CSS and JavaScript. No frameworks and no tracking; the only outside requests are web fonts.</p></div>
+    </div>
+  </section>
+
+  <section class="sec" id="questions" aria-labelledby="q-h">
+    <div class="sec-h">
+      <h2 id="q-h">Open questions</h2>
+      <p class="body">Assumptions I made to get to working prototypes. Each one is quick to swap once confirmed.</p>
+    </div>
+    <ol class="qs">
+      <li><span><b>The six dimensions</b>Strategy, Data, Technology, Skills, Governance and Culture are stand-ins. Mesura’s own six drop straight in.</span></li>
+      <li><span><b>Scores and benchmarks</b>Samples use a 0–100 scale and illustrative figures, labelled as such. How are the Malta average and EU benchmark built?</span></li>
+      <li><span><b>FAQ and privacy wording</b>Answers are drafted from the public description. Privacy and methodology lines need sign-off.</span></li>
+      <li><span><b>Logo</b>Each route sketches a mark that fits its idea. If the current logo stays, the routes adapt around it.</span></li>
+      <li><span><b>Maltese</b>Should the site also run in Maltese? Every typeface already handles the Maltese alphabet.</span></li>
+      <li><span><b>Proposed features</b>The shareable tile (B) and the three-question taste (C) need product work beyond the homepage.</span></li>
+    </ol>
+  </section>
+
+  <section class="sec" aria-labelledby="rev-h">
+    <div class="sec-h">
+      <h2 id="rev-h">How to review</h2>
+      <div class="how">
+        <p>Open any prototype; the bar at the bottom switches routes and returns here. Worth trying:</p>
+        <ul>
+          <li>Datum: move over the map, then switch the report between Malta and the EU.</li>
+          <li>Madum: drag a score and watch the tile redraw; choose a dimension to see its layer.</li>
+          <li>Six: answer the three questions, then scroll through “How it works”.</li>
+        </ul>
+        <p>Each one works on a phone too.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Mesura homepage redesign · September 2026</span>
+    <span>Data: <a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20251216-3" target="_blank" rel="noopener">Eurostat</a> · Coastline © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL), via geo-maps</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  // Long-shot previews: scroll the full-page image through the browser frame on hover or focus.
+  const set = fr => {
+    const vp = fr.querySelector('.vp'), img = fr.querySelector('.vp img');
+    const go = () => {
+      const shift = Math.max(0, img.getBoundingClientRect().height - vp.clientHeight);
+      fr.style.setProperty('--shift', -shift + 'px');
+      fr.style.setProperty('--dur', Math.max(4, Math.min(16, shift / 420)) + 's');
+    };
+    if (img.complete) go(); else img.addEventListener('load', go);
+    new ResizeObserver(go).observe(vp);
+  };
+  document.querySelectorAll('.browser').forEach(set);
+})();
+</script>
+</body>
+</html>
