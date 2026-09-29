@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="mt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI bil-Malti — 7 Qwiel tan-Nanna</title>
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #out { display: block; width: 1080px; height: 1920px; }
+  #dbg { position: fixed; left: 8px; top: 8px; color: #0f0; font: 14px monospace; z-index: 2; }
+</style>
+</head>
+<body>
+<canvas id="out" width="1080" height="1920"></canvas>
+<div id="dbg"></div>
+<script src="src/core.js"></script>
+<script src="src/fonts.js"></script>
+<script src="src/post.js"></script>
+<script src="src/main.js"></script>
+<script src="src/ep02/timeline.js"></script>
+<script src="src/fx.js"></script>
+<script src="src/lib.js"></script>
+<script src="src/ep02/kit.js"></script>
+<script src="src/ep02/hud.js"></script>
+<script src="src/ep02/scenes/hook.js"></script>
+<script src="src/ep02/scenes/p7-garra.js"></script>
+<script src="src/ep02/scenes/p6-ras.js"></script>
+<script src="src/ep02/scenes/p5-qattusa.js"></script>
+<script src="src/ep02/scenes/p4-xoghol.js"></script>
+<script src="src/ep02/scenes/p3-gara.js"></script>
+<script src="src/ep02/scenes/p2-giddieb.js"></script>
+<script src="src/ep02/scenes/p1-kliem.js"></script>
+<script src="src/ep02/scenes/outro.js"></script>
+<script src="src/ep02/scenes/cover.js"></script>
+<script src="src/ep02/cards.js"></script>
+<script>
+  window.READY = ENGINE.init({ debug: /debug/.test(location.search) }).then((info) => {
+    window.INFO = info;
+    const q = new URLSearchParams(location.search);
+    if (q.has('t')) ENGINE.renderFrame(Math.round(parseFloat(q.get('t')) * M.FPS));
+    return info;
+  });
+</script>
+</body>
+</html>

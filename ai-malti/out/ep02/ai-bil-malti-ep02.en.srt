@@ -1,0 +1,147 @@
+1
+00:00:00,000 --> 00:00:01,980
+Nanna knew how AI works.
+
+2
+00:00:02,000 --> 00:00:02,730
+(and she never saw a computer)
+
+3
+00:00:02,750 --> 00:00:03,980
+7 Maltese proverbs that explain AI
+
+4
+00:00:04,000 --> 00:00:04,980
+Proverb 7
+
+5
+00:00:05,000 --> 00:00:06,980
+“Drop by drop, the jar fills.”
+
+6
+00:00:07,000 --> 00:00:09,230
+And AI? That is how it learns: word by word,
+
+7
+00:00:09,250 --> 00:00:11,480
+trillions of times.
+
+8
+00:00:12,000 --> 00:00:12,980
+Proverb 6
+
+9
+00:00:13,000 --> 00:00:14,980
+“Search a head closely and you will know what is in it.”
+
+10
+00:00:15,000 --> 00:00:17,230
+And AI? Not even its builders know exactly what is inside.
+
+11
+00:00:17,250 --> 00:00:19,480
+So scientists are combing through its brain.
+
+12
+00:00:20,000 --> 00:00:20,980
+Proverb 5
+
+13
+00:00:21,000 --> 00:00:22,980
+“A hasty cat gives birth to blind kittens.”
+
+14
+00:00:23,000 --> 00:00:24,380
+And AI? How many R’s are in “Għargħur”?
+
+15
+00:00:24,400 --> 00:00:26,230
+A rushed answer? Often wrong.
+
+16
+00:00:26,250 --> 00:00:27,480
+Today’s best models stop and think.
+
+17
+00:00:28,000 --> 00:00:28,980
+Proverb 4
+
+18
+00:00:29,000 --> 00:00:30,980
+“Give the job to whoever knows how to do it.”
+
+19
+00:00:31,000 --> 00:00:34,230
+And AI? It does the same:
+
+20
+00:00:34,250 --> 00:00:35,480
+every job to the right tool.
+
+21
+00:00:36,000 --> 00:00:36,980
+Proverb 3
+
+22
+00:00:37,000 --> 00:00:38,980
+“Your neighbour teaches you how to keep house.”
+
+23
+00:00:39,000 --> 00:00:41,230
+And AI? Show it an example…
+
+24
+00:00:41,250 --> 00:00:43,480
+…and it does the same. (rabbit → rabbits)
+
+25
+00:00:44,000 --> 00:00:44,980
+Proverb 2
+
+26
+00:00:45,000 --> 00:00:46,980
+“A liar’s life is short.”
+
+27
+00:00:47,000 --> 00:00:49,080
+And AI? Sometimes it makes things up — with full confidence.
+
+28
+00:00:49,100 --> 00:00:50,480
+NOT TRUE. It is called a “hallucination”.
+
+29
+00:00:50,500 --> 00:00:51,480
+Always check.
+
+30
+00:00:52,000 --> 00:00:52,980
+Proverb 1
+
+31
+00:00:53,000 --> 00:00:54,980
+“With kind words you get everywhere.”
+
+32
+00:00:55,000 --> 00:00:57,480
+And AI? Today, words command machines.
+
+33
+00:00:57,500 --> 00:00:58,230
+And Maltese? Words too.
+
+34
+00:00:58,250 --> 00:00:59,980
+Talk to it in Maltese.
+
+35
+00:01:00,000 --> 00:01:00,980
+Nanna knew.
+
+36
+00:01:01,000 --> 00:01:03,480
+Which proverb did we forget? Tell us in the comments.
+
+37
+00:01:03,500 --> 00:01:03,980
+Nanna knew…

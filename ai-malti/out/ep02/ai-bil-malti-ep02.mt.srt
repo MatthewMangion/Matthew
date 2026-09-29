@@ -1,0 +1,147 @@
+1
+00:00:00,000 --> 00:00:01,980
+IN-NANNA KIENET TAF KIF TAĦDEM L-AI.
+
+2
+00:00:02,000 --> 00:00:02,730
+(u qatt ma rat kompjuter)
+
+3
+00:00:02,750 --> 00:00:03,980
+7 QWIEL MALTIN LI JISPJEGAW L-AI
+
+4
+00:00:04,000 --> 00:00:04,980
+QAWL 7
+
+5
+00:00:05,000 --> 00:00:06,980
+“Bil-qatra l-qatra timtela l-ġarra.”
+
+6
+00:00:07,000 --> 00:00:09,230
+U l-AI? Hekk titgħallem: kelma b'kelma,
+
+7
+00:00:09,250 --> 00:00:11,480
+triljuni ta' drabi.
+
+8
+00:00:12,000 --> 00:00:12,980
+QAWL 6
+
+9
+00:00:13,000 --> 00:00:14,980
+“Ir-ras meta tifliha tkun taf x’fiha.”
+
+10
+00:00:15,000 --> 00:00:17,230
+U l-AI? Lanqas min jibniha ma jaf eżatt x’hemm ġewwa.
+
+11
+00:00:17,250 --> 00:00:19,480
+Għalhekk ix-xjenzjati qed ‘jiflu’ moħħha.
+
+12
+00:00:20,000 --> 00:00:20,980
+QAWL 5
+
+13
+00:00:21,000 --> 00:00:22,980
+“Qattusa għaġġelija frieħ għomja tagħmel.”
+
+14
+00:00:23,000 --> 00:00:24,380
+U l-AI? Kemm-il ‘r’ hemm f’ “Għargħur”?
+
+15
+00:00:24,400 --> 00:00:26,230
+Tweġiba mgħaġġla? Spiss ħażina.
+
+16
+00:00:26,250 --> 00:00:27,480
+L-aqwa mudelli llum jieqfu u jaħsbu.
+
+17
+00:00:28,000 --> 00:00:28,980
+QAWL 4
+
+18
+00:00:29,000 --> 00:00:30,980
+“Ix-xogħol agħtih lil min jaf jagħmlu.”
+
+19
+00:00:31,000 --> 00:00:34,230
+U l-AI? Tagħmel l-istess:
+
+20
+00:00:34,250 --> 00:00:35,480
+kull xogħol lill-għodda t-tajba.
+
+21
+00:00:36,000 --> 00:00:36,980
+QAWL 3
+
+22
+00:00:37,000 --> 00:00:38,980
+“Il-ġara tgħallmek tgħammar.”
+
+23
+00:00:39,000 --> 00:00:41,230
+U l-AI? Uriha eżempju…
+
+24
+00:00:41,250 --> 00:00:43,480
+…u tagħmel bħalu. (fenek → fniek)
+
+25
+00:00:44,000 --> 00:00:44,980
+QAWL 2
+
+26
+00:00:45,000 --> 00:00:46,980
+“Il-giddieb għomru qasir.”
+
+27
+00:00:47,000 --> 00:00:49,080
+U l-AI? Xi drabi tivvinta — b'kunfidenza sħiħa.
+
+28
+00:00:49,100 --> 00:00:50,480
+MHUX VERU. Jgħidulha ‘alluċinazzjoni’.
+
+29
+00:00:50,500 --> 00:00:51,480
+Iċċekkja dejjem.
+
+30
+00:00:52,000 --> 00:00:52,980
+QAWL 1
+
+31
+00:00:53,000 --> 00:00:54,980
+“Bil-kliem u s-sliem tasal kullimkien.”
+
+32
+00:00:55,000 --> 00:00:57,480
+U l-AI? Illum, bil-kliem tikkmanda l-magni.
+
+33
+00:00:57,500 --> 00:00:58,230
+U l-Malti? Kliem ukoll.
+
+34
+00:00:58,250 --> 00:00:59,980
+KELLIMHA BIL-MALTI.
+
+35
+00:01:00,000 --> 00:01:00,980
+In-nanna kienet taf.
+
+36
+00:01:01,000 --> 00:01:03,480
+Liema qawl insejna? Ikteb fil-kummenti.
+
+37
+00:01:03,500 --> 00:01:03,980
+IN-NANNA KIENET TAF…

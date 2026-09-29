@@ -3,10 +3,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>
-/* Layout: a screening room on luzzu-hull blue. The phone-framed film sits in a sticky column;
-   the breakdown reads like a shot list beside it (stacks to one column on phones). */
+/* Layout: a screening room. The phone-framed film sits in a sticky column; the breakdown reads like a
+   shot list beside it (stacks to one column on phones). Each episode re-tints the room:
+   EP. 01 luzzu-hull blue, EP. 02 tile teal. */
 :root {
-  --hull: #1741C4;        /* page ground: deep luzzu blue */
+  --hull: #1741C4;        /* page ground */
   --hull-deep: #0F2E94;   /* panels, table stripes */
   --limestone: #F4EDE0;   /* text */
   --limestone-dim: #C9D3F2;
@@ -19,15 +20,20 @@
   --step--1: 0.8125rem; --step-0: 1rem; --step-1: 1.25rem; --step-2: 1.75rem; --step-3: 2.75rem; --step-4: clamp(3rem, 9vw, 6.5rem);
   color-scheme: dark;
 }
+body[data-ep="02"] { --hull: #175A5D; --hull-deep: #0F4346; --limestone-dim: #CFE3DF; }
 * { box-sizing: border-box; }
-body { background: var(--hull); color: var(--limestone); font-family: var(--font-display); font-size: var(--step-0); line-height: 1.55; }
+body { background: var(--hull); color: var(--limestone); font-family: var(--font-display); font-size: var(--step-0); line-height: 1.55; transition: background-color .4s ease; }
 .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 24px; padding-block: 28px 64px; }
 a { color: var(--yellow); }
 :focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; border-radius: 6px; }
 
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
 .slug { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.14em; text-transform: uppercase; }
 .flag { display: inline-flex; width: 26px; height: 26px; border: 1.5px solid color-mix(in srgb, var(--limestone) 60%, transparent); }
 .flag i { flex: 1; background: #fff; } .flag i + i { background: var(--red); }
+.tabs { display: flex; gap: 6px; padding: 5px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 35%, transparent); }
+.tabs button { background: transparent; color: var(--limestone); box-shadow: none; white-space: nowrap; }
+.tabs button[aria-selected="true"] { background: var(--yellow); color: var(--ink); }
 
 .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 48px; align-items: start; margin-top: 36px; }
 .hero h1 { font-weight: 900; font-stretch: 125%; font-size: var(--step-4); line-height: 0.88; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
@@ -87,24 +93,28 @@ footer { margin-top: 80px; font-family: var(--font-mono); font-size: var(--step-
   td { padding: 2px 0; border: 0; }
   td.fx { margin-top: 6px; }
 }
-@media (max-width: 480px) { .wrap { padding-inline: 16px; } }
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+@media (max-width: 480px) { .wrap { padding-inline: 16px; } .tabs button { padding: 8px 12px; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
 </style>
 
 <div class="wrap">
-  <div class="slug"><span class="flag" aria-hidden="true"><i></i><i></i></span> AI bil-Malti · EP. 01 · 1080×1920 · 64 s</div>
+  <div class="top">
+    <div class="slug"><span class="flag" aria-hidden="true"><i></i><i></i></span> <span id="slug">AI bil-Malti</span></div>
+    <div class="tabs" role="tablist" aria-label="Episodes">
+      <button type="button" role="tab" id="tab-ep02" data-ep="02" aria-selected="true">EP. 02 · Qwiel</button>
+      <button type="button" role="tab" id="tab-ep01" data-ep="01" aria-selected="false">EP. 01 · Kif Naħdem</button>
+    </div>
+  </div>
 
   <div class="hero">
     <div>
-      <h1>KIF NAĦDEM<span>showreel</span></h1>
-      <p class="lede">Kull pixel. Kull nota. Kull kelma. Magħmula minn AI.</p>
-      <p class="intro">A 64-second vertical explainer for Maltese audiences on how large language models work: tokens, embeddings, attention, next-word prediction, training and reasoning. It is written in Maltese and built entirely in code, including the typography, 3D, particles, sound design and music. Every idea is carried by on-screen text, so it works with the sound off, and it loops seamlessly.</p>
-      <ul class="facts" aria-label="Specs">
-        <li>9:16 · 30 fps</li><li>120 BPM · D minor</li><li>12 scenes · 11 transitions</li><li>−13 LUFS</li><li>0 stock assets</li>
-      </ul>
+      <h1 id="title"></h1>
+      <p class="lede" id="lede"></p>
+      <p class="intro" id="intro"></p>
+      <ul class="facts" id="facts" aria-label="Specs"></ul>
     </div>
     <div class="stage">
-      <div class="phone"><video id="film" src="media/ai-bil-malti-web.mp4" poster="media/cover.jpg" playsinline muted loop autoplay preload="metadata" aria-label="AI bil-Malti, episode 1: Kif Naħdem"></video></div>
+      <div class="phone"><video id="film" playsinline muted loop autoplay preload="metadata"></video></div>
       <div class="controls">
         <button id="sound" type="button">Ixgħel il-ħoss · Sound on</button>
         <button id="restart" type="button" class="ghost">Mill-bidu · Restart</button>
@@ -124,12 +134,7 @@ footer { margin-top: 80px; font-family: var(--font-mono); font-size: var(--step-
   <section aria-labelledby="h-craft">
     <h2 id="h-craft">Kif inbena</h2>
     <p class="sub">How it was built.</p>
-    <div class="craft">
-      <div><h3>Engine</h3><p>A deterministic Canvas 2D renderer where every frame is a pure function of time, so scenes render in parallel headless browsers. Motion blur is real: each frame averages 3–10 sub-frames in linear light. A WebGL2 finishing pass adds dual-filter bloom, chromatic aberration, glitch slicing, vignette and grain, then packs YUV 4:2:0 on the GPU for the encoder.</p></div>
-      <div><h3>Type</h3><p>Archivo's width axis runs 62–125%. Canvas can't animate width, so 64 fixed-width faces are registered and interpolated between. Instrument Serif italic carries the voice and JetBrains Mono the data, with every Maltese letter (ċ ġ ħ ż, għ, ie) set natively.</p></div>
-      <div><h3>Sound</h3><p>An original track synthesized in Python from oscillators and filters: kick, claps, supersaws, plucks, lead and more than 40 sound-design cues driven by the same timeline as the picture. It includes a tape-stop for the joke, crickets for the silence and a true-peak limiter.</p></div>
-      <div><h3>Maltese details</h3><p>The typographic map uses the real coastline of Malta, Gozo and Comino. The attention scene rests on a Maltese pun, since <em>bank</em> means both bank and bench. Colours come from the luzzu, and the eye of the luzzu is the attention head.</p></div>
-    </div>
+    <div class="craft" id="craft"></div>
   </section>
 
   <section aria-labelledby="h-kit">
@@ -138,84 +143,168 @@ footer { margin-top: 80px; font-family: var(--font-mono); font-size: var(--step-
     <div class="kit">
       <div class="card">
         <h3>Caption</h3>
-        <p id="cap">L-AI spjegat lilha nfisha… bil-Malti 🇲🇹🤯
-Kull pixel, kull nota u kull kelma f'dan il-filmat saru minn AI.
-Issa għidli: IRKOTTA jew PIŻELLI? 👇</p>
-        <p class="tags" id="tags">#Malta #Malti #AIbilMalti #AI #IntelliġenzaArtifiċjali #LLM #Pastizzi #Għawdex #MotionDesign #TechTok #LearnOnTikTok #fyp #maltatiktok</p>
+        <p id="cap"></p>
+        <p class="tags" id="tags"></p>
         <div class="controls"><button type="button" data-copy="cap">Copy caption</button><button type="button" data-copy="tags">Copy hashtags</button></div>
       </div>
       <div>
-        <ul class="tips">
-          <li><strong>Pin this comment:</strong> “Irkotta jew piżelli? Il-kummenti jiddeċiedu 🥟”. Answer the best replies with video replies.</li>
-          <li><strong>Frame 0 is the thumbnail.</strong> It opens on “DAN IL-FILMAT”, and a separate cover is included for the Reels grid.</li>
-          <li><strong>Safe zones:</strong> all key text sits between y 300–1480 px, clear of the TikTok and Reels buttons and captions.</li>
-          <li><strong>The loop:</strong> the last second types itself back into the first frame, so replays count.</li>
-          <li><strong>Series hook:</strong> the end card sets up EP. 02 and gives people a reason to follow.</li>
-        </ul>
+        <ul class="tips" id="tips"></ul>
       </div>
     </div>
   </section>
 
-  <footer><span>Direction, animation, type, code and music: Claude (AI)</span><span>Coastline: geoBoundaries (CC BY 4.0)</span><span>Fonts: Archivo, Instrument Serif, JetBrains Mono (OFL)</span></footer>
+  <footer id="foot"></footer>
 </div>
 
 <script>
-const SHOTS = [
-  [0, 'DAN IL-FILMAT / GĦAMILTU / JIEN. / L-AI.', 'This video, I made it myself. The AI.', 'Frame 0 doubles as the thumbnail; variable-width spring, colour-block cuts, glitch entrance'],
-  [2, 'KULL PIXEL. KULL NOTA. KULL KELMA. BIL-MALTI.', 'Every pixel. Every note. Every word. In Maltese.', 'Slot-machine swaps: mosaic resolve, oscilloscope, typewriter, split-flag inversion'],
-  [4, "Issa ħa nurik KIF NAĦDEM f'60 sekonda.", 'Now I’ll show you how I work, in 60 seconds.', 'Instrument ring; the “60” flies into a live HUD countdown; implosion to black'],
-  [8, "L-EWWEL: QRAJT. / TRILJUNI TA' KLIEM.", 'First: I read. Trillions of words.', 'Title shatters into 420 words that print a map of Malta made of Maltese words'],
-  [11.5, 'ħobż', '(bread)', '240× dive into one highlighted word, match-cut into a full yellow frame'],
-  [12, 'IMMA MA NARAX KLIEM. NARA TOKENS.', 'But I don’t see words. I see tokens.', 'Laser cuts split “Ħobż biż-żejt” into tokens; chips map to IDs'],
-  [16, 'MAPPA TAT-TIFSIRA', 'A map of meaning', '3D point cloud with orbiting camera and depth of field; Maltese word clusters'],
-  [20, 'RE − RAĠEL + MARA ≈ REĠINA', 'KING − MAN + WOMAN ≈ QUEEN', 'Vector lifted and slid across in 3D; axes multiply to 4,096 dimensions'],
-  [24, 'IMBAGĦAD: ATTENZJONI.', 'Then: attention.', 'The luzzu eye draws itself on and opens'],
-  [26, 'Poġġejt il-flus fil-bank. / Qgħadt fuq il-bank fil-ġnien.', 'Money in the bank. / Sat on the bench.', 'Weighted attention arcs, flowing pulses, heat bars: same word, two meanings'],
-  [30, 'IL-KUNTEST JIBDEL KOLLOX.', 'Context changes everything.', 'Spring type, a blink, then a 60× zoom into the pupil'],
-  [32, "GĦEXIEREN TA' DRABI. B'BILJUNI TA' PARAMETRI.", 'Dozens of times. Billions of parameters.', 'Flight up through 32 glass layers; wall of 1,040 dials; white-out'],
-  [36, 'INBASSAR IL-KELMA LI JMISS.', 'I predict the next word.', 'Drop #2 on limestone; stacked slam type'],
-  [38, 'L-aħjar pastizzi huma tal-… irkotta 50.1% / piżelli 49.7%', 'The best pastizzi are… ricotta vs peas', 'Live probability race and photo-finish; tape-stop, desaturated freeze, crickets'],
-  [42, "It-traffiku f'Malta huwa… kaos. 99.9%", 'Traffic in Malta is… chaos.', 'The bar overshoots its track; comic BIP! BIP! bursts'],
-  [44, "NAGĦŻEL WAĦDA. INŻIDHA. U NERĠA' NIBDA.", 'Pick one. Add it. Start again.', 'Autoregressive loop; a comet speeds up as the reply writes itself'],
-  [48, 'KIF TGĦALLIMT? Bassart. Żbaljajt. Irranġajt.', 'How did I learn? Guessed. Wrong. Adjusted.', 'Il-baħar huwa aħmar ✗ → blu ✓; montage, loss curve, odometer'],
-  [52, 'L-aqwa mudelli jaħsbu pass pass qabel iwieġbu.', 'The best models think step by step.', 'A reasoning tree explores, prunes and commits to one path'],
-  [54, "U jużaw l-għodod… anke biex jagħmlu filmati bħal dan.", 'They use tools, even to make videos like this.', 'Tool tiles; a phone shows this video recursively (Droste) and the camera zooms in forever'],
-  [56, 'MHUX MAĠIJA. MATEMATIKA.', 'Not magic. Maths.', 'Silence, then festa fireworks made of digits'],
-  [59, 'Irkotta jew piżelli? ikteb fil-kummenti', 'Ricotta or peas? Comment below', 'Comment-bait CTA, then end card with series lockup'],
-  [63, 'DAN IL-FILMAT', 'This video', 'The last second types back into frame 0: a seamless loop'],
-];
+const ENGINE_NOTE = 'A deterministic Canvas 2D renderer where every frame is a pure function of time, so scenes render in parallel headless browsers. Motion blur is real: each frame averages 3–10 sub-frames in linear light. A WebGL2 finishing pass adds dual-filter bloom, chromatic aberration, glitch slicing, vignette and grain, then packs YUV 4:2:0 on the GPU for the encoder.';
+const EP = {
+  '02': {
+    slug: 'AI bil-Malti · EP. 02 · 1080×1920 · 64 s',
+    title: 'QWIEL TAN-NANNA<span>showreel</span>',
+    lede: 'In-nanna kienet taf kif taħdem l-AI.',
+    intro: 'Seven real Maltese proverbs, counted down from 7 to 1, each explaining one idea about AI: training, what is inside a model, thinking before answering, tools, learning from examples, hallucinations and prompts. Every proverb was checked against published sources before it went in.',
+    facts: ['9:16 · 30 fps', 'Andalusian cadence · 120 BPM', '7 proverbs · 16 tile flips', '−13 LUFS', '0 stock assets'],
+    video: 'media/ai-bil-malti-ep02-web.mp4', poster: 'media/cover-ep02.jpg', label: 'AI bil-Malti, episode 2: 7 Qwiel tan-Nanna',
+    shots: [
+      [0, 'IN-NANNA KIENET TAF KIF TAĦDEM L-AI.', 'Nanna knew how AI works.', 'Frame 0 is the thumbnail: nanna’s glasses on a beaded chain, code reflected in the lenses, bizzilla lace behind'],
+      [2.75, '7 QWIEL MALTIN li jispjegaw l-AI', '7 Maltese proverbs that explain AI', 'A giant extruded 7 springs in; a 7-diamond tracker appears in the HUD'],
+      [4, 'QAWL 7', 'Proverb 7', 'Maltese cement tiles flip on a diagonal wave onto a number card; the numeral is filled with a second tile pattern'],
+      [5, 'Bil-qatra l-qatra timtela l-ġarra.', 'Drop by drop, the jar fills.', 'A terracotta ġarra fills on the beat; every drop is a word and the water is made of words'],
+      [7.25, "Hekk titgħallem l-AI: kelma b'kelma, triljuni ta' drabi.", 'That is how AI learns: word by word, trillions of times.', 'Counter races to 10,000,000,000,000+ → TRILJUNI'],
+      [13, "Ir-ras meta tifliha tkun taf x'fiha.", 'Search a head closely and you will know what is in it.', 'Profile head full of lace-like connections'],
+      [15.25, "Lanqas min jibniha ma jaf eżatt x'hemm ġewwa… qed ‘jiflu’ moħħha.", 'Not even its builders know exactly what is inside… scientists comb through its brain.', 'A magnifying glass enlarges the network and finds “Malta”, “il-baħar”, “kodiċi”'],
+      [21, 'Qattusa għaġġelija frieħ għomja tagħmel.', 'A hasty cat gives birth to blind kittens.', 'The cat stops, dashes off, leaves three blind kittens'],
+      [23.25, "Kemm-il ‘r’ hemm f’“Għargħur”?", 'How many R’s in “Għargħur”?', 'Hasty: 1 ✗ · thinking: GĦ·A·R·GĦ·U·R (għ is one letter) → 2 ✓'],
+      [29, 'Ix-xogħol agħtih lil min jaf jagħmlu.', 'Give the job to whoever knows how to do it.', 'The AI routes jobs to a calculator (444), the internet (24°C) and code (lesta!)'],
+      [37, 'Il-ġara tgħallmek tgħammar.', 'Your neighbour teaches you how to keep house.', 'Two townhouses with gallariji: the neighbour paints hers green, yours copies'],
+      [39.25, 'Uriha eżempju… u tagħmel bħalu.', 'Show it an example… and it does the same.', 'qattus → qtates, kelb → klieb, fenek → fniek (typed by the AI)'],
+      [45, 'Il-giddieb għomru qasir.', 'A liar’s life is short.', '“Il-Mosta għandha tliet qubbiet” with three domes; the lie’s life bar drains when checked'],
+      [49.1, "MHUX VERU. Jgħidulha ‘alluċinazzjoni’. Iċċekkja dejjem.", 'NOT TRUE. It is called a hallucination. Always check.', 'Stamp, two domes go up in a puff: “waħda biss!”'],
+      [53, 'Bil-kliem u s-sliem tasal kullimkien.', 'With kind words you get everywhere.', 'Kind words (Bonġu! Jekk jogħġbok… Grazzi!) pour into a prompt box, which fans out in light to a poster, music, code, video and translation'],
+      [58.25, 'KELLIMHA BIL-MALTI.', 'Talk to it in Maltese.', 'Maltese flag split behind the type'],
+      [60, 'In-nanna kienet taf. Liema qawl insejna?', 'Nanna knew. Which proverb did we forget?', 'Comment prompt; tiles flip back to frame 0 for a seamless loop'],
+    ],
+    craft: [
+      ['Madum', 'Maltese cement tiles are generated in code (rosette, star and quatrefoil patterns) and drive the whole episode: number cards, floors, the patterned numerals and a tile-flip transition that turns the frame into 66 tiles.'],
+      ['Illustration', 'Flat colour, heavy ink outline and an offset print shadow for every object: the ġarra, the profile head, the cat and kittens, townhouses with gallariji, Mosta-style domes and nanna’s glasses with a bizzilla doily.'],
+      ['Sound', 'Andalusian cadence (Dm–C–B♭–A), one cycle per proverb, resolving on A at the loop point. Karplus-Strong nylon guitar, a żaqq-like reed with a drone, tanbur maqsum, ceramic tile clacks and a countdown thump that climbs in pitch.'],
+      ['Checked Maltese', 'Every proverb was checked against qawl.mt and other published sources; idioms that could not be verified were left out. The Għargħur test respects the Maltese alphabet: għ is one letter.'],
+    ],
+    cap: 'In-nanna kienet taf kif taħdem l-AI 👵🇲🇹\n7 qwiel Maltin li jispjegaw l-intelliġenza artifiċjali. Liema qawl insejna? 👇',
+    tags: '#Malta #Malti #AIbilMalti #QwielMaltin #Nanna #AI #IntelliġenzaArtifiċjali #MotionDesign #LearnOnTikTok #maltatiktok #fyp',
+    tips: [
+      '<strong>Pin this comment:</strong> “Ikteb il-qawl favorit tan-nanna tiegħek 👇 L-aqwa wieħed jidħol f’EP. 03!” Viewers write the next episode.',
+      '<strong>Countdown retention:</strong> 7 → 1 with a tracker in the HUD, so viewers stay for number 1.',
+      '<strong>Local jokes that get shared:</strong> Għargħur as a strawberry-style test, fenek → fniek, the Mosta with three domes.',
+      '<strong>The loop:</strong> the tiles flip straight back to frame 0.',
+    ],
+    foot: ['Direction, animation, type, code and music: Claude (AI)', 'Proverbs: qawl.mt and published sources', 'Fonts: Archivo, Instrument Serif, JetBrains Mono (OFL)'],
+  },
+  '01': {
+    slug: 'AI bil-Malti · EP. 01 · 1080×1920 · 64 s',
+    title: 'KIF NAĦDEM<span>showreel</span>',
+    lede: 'Kull pixel. Kull nota. Kull kelma. Magħmula minn AI.',
+    intro: 'A 64-second vertical explainer for Maltese audiences on how large language models work: tokens, embeddings, attention, next-word prediction, training and reasoning. It is written in Maltese and built entirely in code, including the typography, 3D, particles, sound design and music. Every idea is carried by on-screen text, so it works with the sound off, and it loops seamlessly.',
+    facts: ['9:16 · 30 fps', '120 BPM · D minor', '12 scenes · 11 transitions', '−13 LUFS', '0 stock assets'],
+    video: 'media/ai-bil-malti-web.mp4', poster: 'media/cover.jpg', label: 'AI bil-Malti, episode 1: Kif Naħdem',
+    shots: [
+      [0, 'DAN IL-FILMAT / GĦAMILTU / JIEN. / L-AI.', 'This video, I made it myself. The AI.', 'Frame 0 doubles as the thumbnail; variable-width spring, colour-block cuts, glitch entrance'],
+      [2, 'KULL PIXEL. KULL NOTA. KULL KELMA. BIL-MALTI.', 'Every pixel. Every note. Every word. In Maltese.', 'Slot-machine swaps: mosaic resolve, oscilloscope, typewriter, split-flag inversion'],
+      [4, "Issa ħa nurik KIF NAĦDEM f'60 sekonda.", 'Now I’ll show you how I work, in 60 seconds.', 'Instrument ring; the “60” flies into a live HUD countdown; implosion to black'],
+      [8, "L-EWWEL: QRAJT. / TRILJUNI TA' KLIEM.", 'First: I read. Trillions of words.', 'Title shatters into 420 words that print a map of Malta made of Maltese words'],
+      [11.5, 'ħobż', '(bread)', '240× dive into one highlighted word, match-cut into a full yellow frame'],
+      [12, 'IMMA MA NARAX KLIEM. NARA TOKENS.', 'But I don’t see words. I see tokens.', 'Laser cuts split “Ħobż biż-żejt” into tokens; chips map to IDs'],
+      [16, 'MAPPA TAT-TIFSIRA', 'A map of meaning', '3D point cloud with orbiting camera and depth of field; Maltese word clusters'],
+      [20, 'RE − RAĠEL + MARA ≈ REĠINA', 'KING − MAN + WOMAN ≈ QUEEN', 'Vector lifted and slid across in 3D; axes multiply to 4,096 dimensions'],
+      [24, 'IMBAGĦAD: ATTENZJONI.', 'Then: attention.', 'The luzzu eye draws itself on and opens'],
+      [26, 'Poġġejt il-flus fil-bank. / Qgħadt fuq il-bank fil-ġnien.', 'Money in the bank. / Sat on the bench.', 'Weighted attention arcs, flowing pulses, heat bars: same word, two meanings'],
+      [30, 'IL-KUNTEST JIBDEL KOLLOX.', 'Context changes everything.', 'Spring type, a blink, then a 60× zoom into the pupil'],
+      [32, "GĦEXIEREN TA' DRABI. B'BILJUNI TA' PARAMETRI.", 'Dozens of times. Billions of parameters.', 'Flight up through 32 glass layers; wall of 1,040 dials; white-out'],
+      [36, 'INBASSAR IL-KELMA LI JMISS.', 'I predict the next word.', 'Drop #2 on limestone; stacked slam type'],
+      [38, 'L-aħjar pastizzi huma tal-… irkotta 50.1% / piżelli 49.7%', 'The best pastizzi are… ricotta vs peas', 'Live probability race and photo-finish; tape-stop, desaturated freeze, crickets'],
+      [42, "It-traffiku f'Malta huwa… kaos. 99.9%", 'Traffic in Malta is… chaos.', 'The bar overshoots its track; comic BIP! BIP! bursts'],
+      [44, "NAGĦŻEL WAĦDA. INŻIDHA. U NERĠA' NIBDA.", 'Pick one. Add it. Start again.', 'Autoregressive loop; a comet speeds up as the reply writes itself'],
+      [48, 'KIF TGĦALLIMT? Bassart. Żbaljajt. Irranġajt.', 'How did I learn? Guessed. Wrong. Adjusted.', 'Il-baħar huwa aħmar ✗ → blu ✓; montage, loss curve, odometer'],
+      [52, 'L-aqwa mudelli jaħsbu pass pass qabel iwieġbu.', 'The best models think step by step.', 'A reasoning tree explores, prunes and commits to one path'],
+      [54, "U jużaw l-għodod… anke biex jagħmlu filmati bħal dan.", 'They use tools, even to make videos like this.', 'Tool tiles; a phone shows this video recursively (Droste) and the camera zooms in forever'],
+      [56, 'MHUX MAĠIJA. MATEMATIKA.', 'Not magic. Maths.', 'Silence, then festa fireworks made of digits'],
+      [59, 'Irkotta jew piżelli? ikteb fil-kummenti', 'Ricotta or peas? Comment below', 'Comment-bait CTA, then end card with series lockup'],
+      [63, 'DAN IL-FILMAT', 'This video', 'The last second types back into frame 0: a seamless loop'],
+    ],
+    craft: [
+      ['Engine', ENGINE_NOTE],
+      ['Type', 'Archivo’s width axis runs 62–125%. Canvas can’t animate width, so 64 fixed-width faces are registered and interpolated between. Instrument Serif italic carries the voice and JetBrains Mono the data, with every Maltese letter (ċ ġ ħ ż, għ, ie) set natively.'],
+      ['Sound', 'An original track synthesized in Python from oscillators and filters: kick, claps, supersaws, plucks, lead and more than 40 sound-design cues driven by the same timeline as the picture. It includes a tape-stop for the joke, crickets for the silence and a true-peak limiter.'],
+      ['Maltese details', 'The typographic map uses the real coastline of Malta, Gozo and Comino. The attention scene rests on a Maltese pun, since <em>bank</em> means both bank and bench. Colours come from the luzzu, and the eye of the luzzu is the attention head.'],
+    ],
+    cap: "L-AI spjegat lilha nfisha… bil-Malti 🇲🇹🤯\nKull pixel, kull nota u kull kelma f'dan il-filmat saru minn AI.\nIssa għidli: IRKOTTA jew PIŻELLI? 👇",
+    tags: '#Malta #Malti #AIbilMalti #AI #IntelliġenzaArtifiċjali #LLM #Pastizzi #Għawdex #MotionDesign #TechTok #LearnOnTikTok #fyp #maltatiktok',
+    tips: [
+      '<strong>Pin this comment:</strong> “Irkotta jew piżelli? Il-kummenti jiddeċiedu 🥟”. Answer the best replies with video replies.',
+      '<strong>Frame 0 is the thumbnail.</strong> It opens on “DAN IL-FILMAT”, and a separate cover is included for the Reels grid.',
+      '<strong>Safe zones:</strong> all key text sits between y 300–1480 px, clear of the TikTok and Reels buttons and captions.',
+      '<strong>The loop:</strong> the last second types itself back into the first frame, so replays count.',
+      '<strong>Series hook:</strong> the end card sets up EP. 02 and gives people a reason to follow.',
+    ],
+    foot: ['Direction, animation, type, code and music: Claude (AI)', 'Coastline: geoBoundaries (CC BY 4.0)', 'Fonts: Archivo, Instrument Serif, JetBrains Mono (OFL)'],
+  },
+};
+
 const film = document.getElementById('film');
 const rows = document.getElementById('rows');
-const fmt = (t) => `0:${String(Math.floor(t)).padStart(2, '0')}${t % 1 ? '.' + String(Math.round((t % 1) * 10)) : ''}`;
-SHOTS.forEach(([t, mt, en, fx], i) => {
-  const tr = document.createElement('tr');
-  tr.dataset.t = t;
-  tr.innerHTML = `<td class="tc"><button type="button" aria-label="Jump to ${fmt(t)}">${fmt(t)}</button></td><td class="mt"></td><td class="en"></td><td class="fx"></td>`;
-  tr.querySelector('.mt').textContent = mt;
-  tr.querySelector('.en').textContent = en;
-  tr.querySelector('.fx').textContent = fx;
-  tr.querySelector('button').addEventListener('click', () => { film.currentTime = t; film.play().catch(() => {}); });
-  rows.appendChild(tr);
-});
-const trs = [...rows.children];
+const $ = (id) => document.getElementById(id);
+const fmt = (t) => `0:${String(Math.floor(t)).padStart(2, '0')}${t % 1 ? '.' + String(Math.round((t % 1) * 100)).padStart(2, '0').replace(/0$/, '') : ''}`;
+let shots = [];
+
+function show(key) {
+  const d = EP[key];
+  document.body.dataset.ep = key;
+  document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.ep === key)));
+  $('slug').textContent = d.slug;
+  $('title').innerHTML = d.title;
+  $('lede').textContent = d.lede;
+  $('intro').textContent = d.intro;
+  $('facts').replaceChildren(...d.facts.map((f) => Object.assign(document.createElement('li'), { textContent: f })));
+  film.src = d.video; film.poster = d.poster; film.setAttribute('aria-label', d.label);
+  film.play().catch(() => {});
+  shots = d.shots;
+  rows.replaceChildren(...d.shots.map(([t, mt, en, fx]) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="tc"><button type="button" aria-label="Jump to ${fmt(t)}">${fmt(t)}</button></td><td class="mt"></td><td class="en"></td><td class="fx"></td>`;
+    tr.querySelector('.mt').textContent = mt;
+    tr.querySelector('.en').textContent = en;
+    tr.querySelector('.fx').textContent = fx;
+    tr.querySelector('button').addEventListener('click', () => { film.currentTime = t; film.play().catch(() => {}); });
+    return tr;
+  }));
+  $('craft').replaceChildren(...d.craft.map(([h, p]) => { const div = document.createElement('div'); div.innerHTML = '<h3></h3><p></p>'; div.querySelector('h3').textContent = h; div.querySelector('p').innerHTML = p; return div; }));
+  $('cap').textContent = d.cap;
+  $('tags').textContent = d.tags;
+  $('tips').innerHTML = d.tips.map((t) => `<li>${t}</li>`).join('');
+  $('foot').replaceChildren(...d.foot.map((f) => Object.assign(document.createElement('span'), { textContent: f })));
+  if (location.hash !== '#ep' + key) history.replaceState(null, '', '#ep' + key);
+}
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => show(b.dataset.ep)));
 film.addEventListener('timeupdate', () => {
   const t = film.currentTime;
   let cur = 0;
-  SHOTS.forEach(([s], i) => { if (t >= s) cur = i; });
-  trs.forEach((tr, i) => tr.classList.toggle('now', i === cur));
+  shots.forEach(([s], i) => { if (t >= s) cur = i; });
+  [...rows.children].forEach((tr, i) => tr.classList.toggle('now', i === cur));
 });
-const sound = document.getElementById('sound');
+const sound = $('sound');
 sound.addEventListener('click', () => {
   film.muted = !film.muted;
   if (!film.muted) film.play().catch(() => {});
   sound.textContent = film.muted ? 'Ixgħel il-ħoss · Sound on' : 'Itfi l-ħoss · Mute';
 });
-document.getElementById('restart').addEventListener('click', () => { film.currentTime = 0; film.play().catch(() => {}); });
+$('restart').addEventListener('click', () => { film.currentTime = 0; film.play().catch(() => {}); });
 document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
-  const el = document.getElementById(b.dataset.copy);
+  const el = $(b.dataset.copy);
   const label = b.textContent;
   try { await navigator.clipboard.writeText(el.textContent.trim()); b.textContent = 'Copied'; }
   catch (e) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected: press Ctrl/⌘+C'; }
   setTimeout(() => (b.textContent = label), 1800);
 }));
+show(location.hash === '#ep01' ? '01' : '02');
 </script>

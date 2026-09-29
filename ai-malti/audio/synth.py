@@ -1041,35 +1041,7 @@ def tapestop(x, t0, dur_stop=0.42, silence_until=None):
     return out
 
 
-def main():
-    print('arranging…')
-    arrange()
-    place_cues()
-    n = N + PAD
-    sc = sidechain_env(n)
-    print('effects…')
-    # delay (dotted 8th ping-pong)
-    dl, dr = _pingpong(DLY.b[0], DLY.b[1], int(0.375 * SR), 0.38, 1.0)
-    dly = np.vstack([dl, dr]) - DLY.b  # wet only
-    dly = np.vstack([sos_filter(dly[0], 'bandpass', [300, 6000]), sos_filter(dly[1], 'bandpass', [300, 6000])])
-    # reverb
-    ir = make_ir()
-    VERB.b += dly * 0.25
-    wet = np.vstack([signal.fftconvolve(VERB.b[0], ir[0])[:n], signal.fftconvolve(VERB.b[1], ir[1])[:n]])
-    # buses
-    drums = DRUMS.b
-    bass = BASS.b * sc
-    music = MUSIC.b * (0.35 + 0.65 * sc)
-    leadb = LEAD.b * (0.6 + 0.4 * sc)
-    fxb = FX.b
-    # bus EQ
-    bass = np.vstack([sos_filter(bass[c], 'lowpass', 2500) for c in range(2)])
-    music = np.vstack([sos_filter(music[c], 'highpass', 150) for c in range(2)])
-    leadb = np.vstack([sos_filter(leadb[c], 'highpass', 250) for c in range(2)])
-    # widen the harmonic bed (mid/side), keep lead + low end centred
-    mid_, side_ = (music[0] + music[1]) / 2, (music[0] - music[1]) / 2
-    music = np.vstack([mid_ + side_ * 1.8, mid_ - side_ * 1.8])
-    mus_all = music * 1.7 + leadb * 1.5 + dly * 0.8 * (0.5 + 0.5 * sc)
+def edit_ep01(mus_all, drums, bass, wet):
     # tape stop on everything tonal + drums at 41.0 (the "can't decide" freeze)
     ts = [c for c in cues if c[1] == 'tapestop']
     for c in ts:
@@ -1100,11 +1072,53 @@ def main():
         f = int(0.03 * SR)
         arr[:, j:j + f] *= np.linspace(1, 0, f)
         arr[:, j + f:] = 0
-    mix = drums * 0.85 + bass * 1.0 + mus_all * 0.95 + fxb * 0.85 + wet * 0.9
+    return mus_all, drums, bass, wet
+
+
+def tail_ep01(mix):
     # loop tail: reverse swell into t=0 impact
     rv = fx_reverse(0.7)
     s = int((64.0 - 0.7) * SR)
     mix[:, s:s + len(rv)] += pan2(rv) * 0.6
+    return mix
+
+
+def main():
+    print('arranging…')
+    arrange()
+    place_cues()
+    mixdown(edit_ep01, tail_ep01, 'mix.wav', 'stems')
+
+
+def mixdown(edit, tail, out_name, stems_dir, secs=((0, 8), (8, 24), (24, 32), (36, 41), (48, 52), (57, 62)), lufs=-13.2, post=None):
+    n = N + PAD
+    sc = sidechain_env(n)
+    print('effects…')
+    # delay (dotted 8th ping-pong)
+    dl, dr = _pingpong(DLY.b[0], DLY.b[1], int(0.375 * SR), 0.38, 1.0)
+    dly = np.vstack([dl, dr]) - DLY.b  # wet only
+    dly = np.vstack([sos_filter(dly[0], 'bandpass', [300, 6000]), sos_filter(dly[1], 'bandpass', [300, 6000])])
+    # reverb
+    ir = make_ir()
+    VERB.b += dly * 0.25
+    wet = np.vstack([signal.fftconvolve(VERB.b[0], ir[0])[:n], signal.fftconvolve(VERB.b[1], ir[1])[:n]])
+    # buses
+    drums = DRUMS.b
+    bass = BASS.b * sc
+    music = MUSIC.b * (0.35 + 0.65 * sc)
+    leadb = LEAD.b * (0.6 + 0.4 * sc)
+    fxb = FX.b
+    # bus EQ
+    bass = np.vstack([sos_filter(bass[c], 'lowpass', 2500) for c in range(2)])
+    music = np.vstack([sos_filter(music[c], 'highpass', 150) for c in range(2)])
+    leadb = np.vstack([sos_filter(leadb[c], 'highpass', 250) for c in range(2)])
+    # widen the harmonic bed (mid/side), keep lead + low end centred
+    mid_, side_ = (music[0] + music[1]) / 2, (music[0] - music[1]) / 2
+    music = np.vstack([mid_ + side_ * 1.8, mid_ - side_ * 1.8])
+    mus_all = music * 1.7 + leadb * 1.5 + dly * 0.8 * (0.5 + 0.5 * sc)
+    mus_all, drums, bass, wet = edit(mus_all, drums, bass, wet)
+    mix = drums * 0.85 + bass * 1.0 + mus_all * 0.95 + fxb * 0.85 + wet * 0.9
+    mix = tail(mix)
     mix = mix[:, :N]
     # ── master ──
     print('mastering…')
@@ -1113,7 +1127,6 @@ def main():
         return 20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-12)
     for name, arr in [('drums', drums), ('bass', bass), ('music', mus_all), ('fx', fxb), ('verb', wet)]:
         a = arr[:, :N]
-        secs = [(0, 8), (8, 24), (24, 32), (36, 41), (48, 52), (57, 62)]
         print(f'  {name:6s}', ' '.join(f'{a0}-{a1}:{db(a[:, int(a0*SR):int(a1*SR)]):6.1f}' for a0, a1 in secs))
     # sub cleanup + glue
     mix = np.vstack([sos_filter(mix[c], 'highpass', 28) for c in range(2)])
@@ -1134,7 +1147,7 @@ def main():
     r = subprocess.run(['ffmpeg', '-hide_banner', '-i', tmp, '-af', 'ebur128', '-f', 'null', '-'], capture_output=True, text=True).stderr
     I = float(_re.findall(r'I:\s+(-?[\d.]+) LUFS', r)[-1])
     os.remove(tmp)
-    mix = mix / (np.max(np.abs(mix)) + 1e-9) * 0.5 * 10 ** ((-13.2 - I) / 20)
+    mix = mix / (np.max(np.abs(mix)) + 1e-9) * 0.5 * 10 ** ((lufs - I) / 20)
     from scipy import ndimage
     # true-peak aware: detect peaks on a 4x oversampled copy
     up = signal.resample_poly(mix, 4, 1, axis=1)
@@ -1146,15 +1159,16 @@ def main():
     gl = _release(g2, float(np.exp(-1.0 / (0.08 * SR))))
     mix = mix * gl
     print('  limiter max GR dB', float(20 * np.log10(gl.min() + 1e-9)))
-    out = os.path.join(HERE, 'mix.wav')
-    from scipy.io import wavfile
+    if post:
+        mix = post(mix)
+    out = os.path.join(HERE, out_name)
     wavfile.write(out, SR, np.clip(mix, -1, 1).T.astype(np.float32))
     # stems for inspection
-    os.makedirs(os.path.join(HERE, 'stems'), exist_ok=True)
+    os.makedirs(os.path.join(HERE, stems_dir), exist_ok=True)
     for name, arr in [('drums', drums), ('bass', bass), ('music', mus_all), ('fx', fxb), ('verb', wet)]:
         a = arr[:, :N]
         m = np.max(np.abs(a)) + 1e-9
-        wavfile.write(os.path.join(HERE, 'stems', name + '.wav'), SR, (a / m * 0.9).T.astype(np.float32))
+        wavfile.write(os.path.join(HERE, stems_dir, name + '.wav'), SR, (a / m * 0.9).T.astype(np.float32))
     print('wrote', out, 'peak', float(np.max(np.abs(mix))))
 
 

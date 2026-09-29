@@ -23,6 +23,20 @@
     return { floatOK: post.floatOK, scenes: SCN.map((s) => s.name) };
   }
 
+  // Paint one scene at an explicit local time (used by drawScene and by transitions that composite scenes)
+  function paintSceneAt(ctx, s, lt) {
+    ctx.save();
+    if (s.push !== false) {
+      const k = 1 + (s.push || 0.03) * (lt / (s.t1 - s.t0));
+      ctx.translate(W / 2, H / 2);
+      ctx.scale(k, k);
+      ctx.translate(-W / 2, -H / 2);
+    }
+    s.draw(ctx, lt, s.t0 + lt);
+    ctx.restore();
+  }
+  const sceneByName = (n) => SCN.find((s) => s.name === n);
+
   function drawScene(t) {
     sx.setTransform(1, 0, 0, 1, 0, 0);
     sx.globalAlpha = 1;
@@ -30,19 +44,10 @@
     sx.filter = 'none';
     sx.fillStyle = C.ink;
     sx.fillRect(0, 0, W, H);
-    for (const s of SCN) {
-      if (t >= s.t0 && t < s.t1) {
-        sx.save();
-        if (s.push !== false) {
-          const k = 1 + (s.push || 0.03) * ((t - s.t0) / (s.t1 - s.t0));
-          sx.translate(W / 2, H / 2);
-          sx.scale(k, k);
-          sx.translate(-W / 2, -H / 2);
-        }
-        s.draw(sx, t - s.t0, t);
-        sx.restore();
-      }
-    }
+    // an active scene flagged `exclusive` (e.g. a transition that paints other scenes itself) hides the rest
+    const active = SCN.filter((s) => t >= s.t0 && t < s.t1);
+    const ex = active.filter((s) => s.exclusive);
+    for (const s of ex.length ? ex : active) paintSceneAt(sx, s, t - s.t0);
     if (G.drawHUD) {
       sx.save();
       G.drawHUD(sx, t);
@@ -141,5 +146,5 @@
     post.present = v;
   }
 
-  G.ENGINE = { init, renderFrame, drawScene, fxAt, samplesAt, play, sceneCanvas, readPixels, readYUV, setPresent, SCN };
+  G.ENGINE = { init, renderFrame, drawScene, paintSceneAt, sceneByName, fxAt, samplesAt, play, sceneCanvas, readPixels, readYUV, setPresent, SCN };
 })(window);

@@ -1,7 +1,8 @@
 // render.mjs — parallel deterministic rendering with headless Chromium
 //
 //  Stills (review):   node tools/render.mjs --frames 0,0.5,1.2 --out <dir>          (PNG screenshots)
-//  Segments (master): node tools/render.mjs --from 0 --to 4 --name hook --workers 3   (raw RGBA → ffmpeg, lossless)
+//  Segments (master): node tools/render.mjs --from 0 --to 4 --name hook --workers 3   (YUV over WebSocket → ffmpeg, lossless)
+//  --page ep02.html selects the episode page (default index.html)
 //
 // Segment mode streams gl.readPixels() output from the page over localhost HTTP straight into one ffmpeg
 // per worker (each worker owns a contiguous frame range, so order is preserved) — no image encoding in the loop.
@@ -120,7 +121,7 @@ async function openPage(k) {
   const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
   page.on('console', (m) => { if (m.type() === 'error') console.log(`[w${k}]`, m.text()); });
   page.on('pageerror', (e) => console.log(`[w${k}] pageerror`, e.message));
-  await page.goto(`http://127.0.0.1:${port}/index.html${args.debug ? '?debug' : ''}`);
+  await page.goto(`http://127.0.0.1:${port}/${args.page || 'index.html'}${args.debug ? '?debug' : ''}`);
   const info = await page.evaluate(() => window.READY);
   if (k === 0) console.log('engine', JSON.stringify(info));
   return { browser, page };

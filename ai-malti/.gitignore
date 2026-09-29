@@ -5,3 +5,6 @@ audio/_pre.wav
 audio/mix.wav
 out/ai-bil-malti-upload.mp4
 __pycache__/
+audio/mix-ep02.wav
+audio/stems-ep02/
+out/ep02/*-upload.mp4
