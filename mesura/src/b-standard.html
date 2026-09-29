@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesura — AI Readiness Score for Malta (Concept B)</title>
+<meta name="description" content="Know where you stand. Mesura scores your organisation's AI readiness across six dimensions and benchmarks it against Malta and the EU. Free, about ten minutes.">
+<meta name="theme-color" content="#0b1a2e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%230b1a2e'/%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%23d4b06a' stroke-width='1'/%3E%3Cg fill='%23d4b06a' transform='translate(6 6) scale(.625)'%3E%3Cpath d='M17.1 16 28.36 9.5v13z'/%3E%3Cpath d='m16.55 16.95 11.26 6.5-11.26 6.5z'/%3E%3Cpath d='M15.45 16.95v13l-11.26-6.5z'/%3E%3Cpath d='M14.9 16 3.64 22.5v-13z'/%3E%3Cpath d='m15.45 15.05-11.26-6.5 11.26-6.5z'/%3E%3Cpath d='M16.55 15.05v-13l11.26 6.5z'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="fonts/fonts-b.css" data-inline>
+<link rel="stylesheet" href="shared/proto.css" data-inline>
+<style>
+:root {
+  /* Layout: a security-printed certificate. Framed, formal, engraved.
+     A navy lobby with gold intaglio; honey limestone paper for the evidence. */
+  --navy-950: #07111f;
+  --navy: #0b1a2e;
+  --navy-2: #102440;
+  --navy-line: #22385a;
+  --gold: #d4b06a;
+  --gold-2: #b58a3c;
+  --gold-3: #8a6421;
+  --paper: #f3ecdf;
+  --paper-2: #ebe1cd;
+  --paper-line: #d6c8ad;
+  --ink: #0b1a2e;
+  --ink-2: #4a5670;
+  --cream: #f3ecdf;
+  --cream-2: #b9c1cf;
+  --cream-3: #9aa4b6;
+  /* data: validated trio on paper (bronze / red / blue), and a pair on navy */
+  --you: #b07d1c;
+  --malta: #cc1f36;
+  --eu: #3358c4;
+  --malta-n: #e5485c;
+  --eu-n: #6b8cf0;
+
+  --f-serif: "Instrument Serif", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --f-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+
+  --wrap: 1320px;
+  --gutter: clamp(16px, 4.5vw, 64px);
+  --t-h1: clamp(3.4rem, 7.4vw, 7.5rem);
+  --t-h2: clamp(2.5rem, 5vw, 4.75rem);
+  --t-lead: clamp(1.125rem, 1.4vw, 1.3125rem);
+
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .36 0 0 0 0 .2 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --braid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='28'%3E%3Cg fill='none' stroke='%23d4b06a' stroke-opacity='.07' stroke-width='.8'%3E%3Cpath d='M0 14C20 4 40 4 60 14s40 10 60 0'/%3E%3Cpath d='M0 14c20 10 40 10 60 0S100 4 120 14'/%3E%3C/g%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 90px; }
+body { margin: 0; background: var(--navy); color: var(--cream); font: 400 1.0625rem/1.6 var(--f-sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+img, svg, canvas { display: block; max-width: 100%; }
+a { color: inherit; }
+p, h1, h2, h3, ul, ol, dl, dd, figure, blockquote { margin: 0; }
+ul, ol { padding: 0; }
+button { font: inherit; color: inherit; }
+::selection { background: var(--gold); color: var(--navy); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+.paper-zone :focus-visible { outline-color: var(--gold-3); }
+.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.skip { position: absolute; left: 16px; top: -100px; z-index: 100; padding: 12px 16px; background: var(--gold); color: var(--navy); font-weight: 600; text-decoration: none; }
+.skip:focus { top: 12px; }
+
+/* ---------- type ---------- */
+.sc { font-family: var(--f-sans); font-size: 0.71875rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; line-height: 1.4; }
+.serif { font-family: var(--f-serif); font-weight: 400; letter-spacing: -0.012em; line-height: 1; text-wrap: balance; }
+.h2 { font-size: var(--t-h2); }
+.serif em { font-style: italic; }
+.foil {
+  background: linear-gradient(100deg, #b58a3c 0%, #f0d796 38%, #c89b49 58%, #ead08d 80%, #b58a3c 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  padding-right: 0.06em;
+}
+@media (forced-colors: active) { .foil { color: CanvasText; background: none; } }
+.lead { font-size: var(--t-lead); line-height: 1.55; color: var(--cream-2); max-width: 44ch; text-wrap: pretty; }
+.eyebrow { display: flex; align-items: center; gap: 14px; color: var(--gold); }
+.eyebrow::before, .eyebrow.both::after { content: ""; width: 36px; height: 1px; background: currentColor; opacity: 0.7; }
+.center { text-align: center; }
+.center .eyebrow { justify-content: center; }
+.center .lead { margin-inline: auto; }
+.fn { font-family: var(--f-sans); font-size: 0.6em; vertical-align: super; line-height: 0; color: var(--gold); text-decoration: none; margin-left: 0.08em; font-style: normal; }
+.paper-zone .fn { color: var(--gold-3); }
+
+/* ---------- buttons ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.7em; min-height: 52px; padding: 0 1.6em; border-radius: 999px; font: 600 0.9375rem/1 var(--f-sans); letter-spacing: 0.02em; text-decoration: none; cursor: pointer; white-space: nowrap; transition: background-position 0.6s ease, box-shadow 0.2s, color 0.2s, background-color 0.2s; }
+.btn svg { width: 1em; height: 1em; transition: transform 0.25s; }
+.btn:hover svg { transform: translateX(3px); }
+.btn-gold { color: var(--navy); background: linear-gradient(100deg, #c49a4f 0%, #e9cc88 30%, #d4b06a 50%, #f2dca3 70%, #c49a4f 100%) 0 0 / 220% 100%; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 30px -12px rgba(212, 176, 106, 0.6); }
+.btn-gold:hover { background-position: 100% 0; }
+.btn-line { color: var(--cream); border: 1px solid rgba(212, 176, 106, 0.55); }
+.btn-line:hover { border-color: var(--gold); background: rgba(212, 176, 106, 0.08); }
+.btn-navy { color: var(--paper); background: var(--navy); }
+.btn-navy:hover { background: #16294a; }
+.link { display: inline-flex; align-items: center; gap: 0.5em; color: var(--cream); font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(212, 176, 106, 0.6); padding-bottom: 3px; }
+.link:hover { border-color: var(--gold); color: #fff; }
+.btn-lg { min-height: 58px; padding: 0 1.9em; font-size: 1rem; }
+
+/* ---------- header ---------- */
+.top { position: sticky; top: 0; z-index: 40; background: rgba(11, 26, 46, 0.86); -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); border-bottom: 1px solid var(--navy-line); }
+.top-bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 20px; min-height: 76px; }
+.top-nav { display: flex; gap: 4px; }
+.top-nav a { padding: 10px 12px; color: var(--cream-2); font-size: 0.875rem; font-weight: 500; text-decoration: none; border-radius: 999px; }
+.top-nav a:hover { color: var(--cream); background: rgba(255, 255, 255, 0.05); }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand svg { width: 34px; height: 34px; }
+.brand-word { font-family: var(--f-serif); font-size: 1.5rem; letter-spacing: 0.3em; line-height: 1; padding-left: 0.3em; }
+.top-right { display: flex; justify-content: flex-end; align-items: center; gap: 12px; }
+.top-right .btn { min-height: 42px; padding: 0 1.2em; font-size: 0.875rem; }
+.top-right .link { font-size: 0.875rem; }
+.menu-btn { display: none; min-height: 42px; padding: 0 16px; border: 1px solid var(--navy-line); border-radius: 999px; background: transparent; cursor: pointer; font-size: 0.875rem; font-weight: 600; }
+.mnav { border-top: 1px solid var(--navy-line); }
+.mnav ul { list-style: none; padding-block: 8px 20px; }
+.mnav a { display: block; padding: 14px 0; border-bottom: 1px solid var(--navy-line); font-family: var(--f-serif); font-size: 1.625rem; text-decoration: none; }
+@media (max-width: 1060px) {
+  .top-bar { grid-template-columns: auto 1fr; }
+  .top-nav, .top-right .link-sample { display: none; }
+  .brand { grid-column: 1; grid-row: 1; }
+  .top-right { grid-column: 2; }
+  .menu-btn { display: inline-flex; align-items: center; }
+}
+@media (max-width: 520px) { .top-right .btn { display: none; } }
+
+/* ---------- hero ---------- */
+.hero { position: relative; isolation: isolate; overflow: hidden; background: radial-gradient(1200px 700px at 78% 30%, rgba(212, 176, 106, 0.1), transparent 60%), var(--braid), var(--navy); }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); align-items: center; gap: clamp(32px, 5vw, 80px); padding-block: clamp(48px, 7vw, 104px) clamp(56px, 7vw, 104px); }
+.hero h1 { margin-top: 28px; font-size: var(--t-h1); line-height: 0.96; }
+.hero .lead { margin-top: 28px; }
+.hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: 36px; }
+.hallmarks { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 18px; margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--navy-line); }
+.hallmarks li { display: flex; align-items: center; gap: 10px; }
+@media (max-width: 1180px) and (min-width: 921px), (max-width: 560px) { .hallmarks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stamp { position: relative; flex: none; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--gold); box-shadow: inset 0 0 0 3px var(--navy), inset 0 0 0 3.6px rgba(212, 176, 106, 0.6); font-family: var(--f-serif); font-size: 1.25rem; color: var(--gold); line-height: 1; }
+.hallmarks p { font-size: 0.78rem; line-height: 1.3; color: var(--cream-2); }
+.hallmarks strong { display: block; color: var(--cream); font-weight: 600; }
+
+/* the certificate */
+.cert { position: relative; justify-self: center; width: min(100%, 500px); rotate: -2.2deg; transition: rotate 0.6s cubic-bezier(.2,.7,.2,1); }
+.cert:hover { rotate: 0deg; }
+.cert-paper { position: relative; padding: 34px 34px 28px; background: var(--grain), var(--paper); color: var(--ink); box-shadow: 0 2px 0 rgba(255, 255, 255, 0.4) inset, 0 50px 90px -30px rgba(0, 0, 0, 0.75), 0 18px 30px -18px rgba(0, 0, 0, 0.5); }
+.cert-paper::before { content: ""; position: absolute; inset: 12px; border: 1px solid var(--gold-2); box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 3.8px rgba(181, 138, 60, 0.55); pointer-events: none; }
+.cert-head { position: relative; text-align: center; }
+.cert-head .sc { color: var(--gold-3); }
+.cert-org { margin-top: 8px; font-family: var(--f-serif); font-size: 1.75rem; line-height: 1.1; }
+.cert-seal { position: relative; width: min(100%, 300px); aspect-ratio: 1; margin: 18px auto 0; }
+.cert-seal canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cert-score { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.cert-score b { font-family: var(--f-sans); font-weight: 600; font-size: 3.4rem; line-height: 0.9; letter-spacing: -0.02em; color: var(--ink); }
+.cert-score .sc { margin-top: 6px; font-size: 0.5625rem; color: var(--ink-2); }
+.cert-score em { margin-top: 4px; font-family: var(--f-serif); font-size: 1.125rem; color: var(--gold-3); }
+.ribbon { position: absolute; left: 50%; bottom: -14px; width: 76%; translate: -50% 0; filter: drop-shadow(0 6px 8px rgba(11, 26, 46, 0.25)); }
+.ribbon text { font-family: var(--f-sans); font-size: 10.5px; font-weight: 700; letter-spacing: 0.24em; fill: var(--navy); }
+.cert-facts { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 34px; border-top: 1px solid var(--paper-line); }
+.cert-facts div { padding: 12px 8px 0; text-align: center; }
+.cert-facts div + div { border-left: 1px solid var(--paper-line); }
+.cert-facts dt { color: var(--ink-2); }
+.cert-facts dd { margin-top: 4px; font-weight: 600; font-size: 1.125rem; }
+.cert-serial { position: relative; margin-top: 16px; text-align: center; color: var(--ink-2); font-size: 0.625rem; }
+@media (max-width: 920px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .cert { rotate: -1.2deg; margin-top: 12px; }
+}
+@media (max-width: 480px) {
+  .cert-paper { padding: 26px 20px 22px; }
+  .cert-paper::before { inset: 8px; }
+  .cert-facts .sc { font-size: 0.5625rem; letter-spacing: 0.12em; }
+}
+
+/* ---------- sections ---------- */
+.section { padding-block: clamp(80px, 10vw, 150px); }
+.sec-head { max-width: 860px; margin: 0 auto clamp(48px, 6vw, 80px); }
+.sec-head .serif { margin-top: 22px; }
+.sec-head .lead { margin-top: 22px; }
+.rule-orn { display: flex; align-items: center; gap: 14px; color: var(--gold); }
+.rule-orn::before, .rule-orn::after { content: ""; flex: 1; height: 1px; background: currentColor; opacity: 0.45; }
+.rule-orn svg { width: 22px; height: 22px; }
+
+/* ---------- the lobby directory ---------- */
+.directory { position: relative; max-width: 1100px; margin-inline: auto; padding: clamp(20px, 3vw, 40px) clamp(18px, 3.4vw, 48px) clamp(12px, 2vw, 24px); background: linear-gradient(180deg, rgba(212, 176, 106, 0.05), transparent 30%), var(--navy-2); border: 1px solid rgba(212, 176, 106, 0.5); box-shadow: inset 0 0 0 5px var(--navy-2), inset 0 0 0 6px rgba(212, 176, 106, 0.25), 0 40px 80px -40px rgba(0, 0, 0, 0.7); }
+.dir-plate { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 18px; margin-bottom: 4px; border-bottom: 1px solid rgba(212, 176, 106, 0.35); color: var(--gold); }
+.dir-row { border-bottom: 1px solid var(--navy-line); }
+.dir-row:last-child { border-bottom: 0; }
+.dir-row summary { display: grid; grid-template-columns: 3.25rem auto minmax(24px, 1fr) minmax(0, 23rem) 28px; align-items: baseline; gap: 16px; padding: 22px 4px; cursor: pointer; list-style: none; }
+.dir-row summary::-webkit-details-marker { display: none; }
+.dir-num { font-family: var(--f-serif); font-size: 1.5rem; color: var(--gold); line-height: 1; }
+.dir-name { font-family: var(--f-serif); font-size: clamp(1.625rem, 2.6vw, 2.375rem); line-height: 1.05; }
+.dir-leader { align-self: end; height: 0.6em; border-bottom: 2px dotted rgba(212, 176, 106, 0.4); margin-bottom: 0.45em; }
+.dir-q { color: var(--cream-2); font-size: 0.9875rem; line-height: 1.45; }
+.dir-plus { position: relative; width: 16px; height: 16px; align-self: center; justify-self: end; }
+.dir-plus::before, .dir-plus::after { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1.5px; background: var(--gold); transition: rotate 0.25s; }
+.dir-plus::after { rotate: 90deg; }
+.dir-row[open] .dir-plus::after { rotate: 0deg; }
+.dir-row summary:hover .dir-name { color: #fff; }
+.dir-row summary:hover .dir-leader { border-color: var(--gold); }
+.dir-body { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr) minmax(0, 23rem) 28px; gap: 16px; padding: 0 4px 26px; }
+.dir-body ul { grid-column: 2; list-style: none; display: grid; gap: 8px; color: var(--cream-2); }
+.dir-body li::before { content: "·"; color: var(--gold); margin-right: 10px; }
+.dir-body .dir-sample { grid-column: 3; color: var(--cream-2); font-size: 0.875rem; }
+.dir-sample b { display: block; margin-top: 6px; font-size: 1.75rem; font-weight: 600; color: var(--cream); line-height: 1; }
+.dir-sample span { color: var(--cream-3); }
+@media (max-width: 860px) {
+  .dir-plate span:last-child { display: none; }
+  .dir-row summary { grid-template-columns: 2.5rem minmax(0, 1fr) 20px; row-gap: 6px; }
+  .dir-leader { display: none; }
+  .dir-q { grid-column: 2; grid-row: 2; }
+  .dir-plus { grid-column: 3; grid-row: 1; }
+  .dir-body { grid-template-columns: 2.5rem minmax(0, 1fr); }
+  .dir-body .dir-sample { grid-column: 2; }
+}
+
+/* ---------- paper zone: the ledger ---------- */
+.paper-zone { background: var(--grain), var(--paper); color: var(--ink); }
+.paper-zone .eyebrow { color: var(--gold-3); }
+.paper-zone .lead { color: var(--ink-2); }
+.ledger { max-width: 1120px; margin-inline: auto; }
+.ledger-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 16px 24px; padding-bottom: 16px; border-bottom: 2px solid var(--ink); }
+.ledger-title { font-family: var(--f-serif); font-size: clamp(1.5rem, 2.4vw, 2rem); line-height: 1.1; }
+.ledger-title span { display: block; margin-top: 6px; font-family: var(--f-sans); color: var(--ink-2); }
+.legend { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 0.875rem; color: var(--ink-2); }
+.legend li { display: inline-flex; align-items: center; gap: 8px; }
+.key { display: inline-block; flex: none; }
+.key-you { width: 12px; height: 12px; border-radius: 50%; background: var(--you); }
+.key-mt { width: 4px; height: 14px; border-radius: 2px; background: var(--malta); }
+.key-eu { width: 10px; height: 10px; rotate: 45deg; background: var(--eu); }
+.lg-grid { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) repeat(3, 4.25rem); align-items: center; column-gap: 18px; }
+.lg-cols { padding-block: 12px 10px; border-bottom: 1px solid var(--paper-line); color: var(--ink-2); }
+.lg-cols .num { text-align: right; }
+.lg-scale { position: relative; height: 1.2em; font-variant-numeric: tabular-nums; }
+.lg-scale span { position: absolute; left: calc(var(--v) * 1%); translate: -50% 0; }
+.lg-scale span:first-child { translate: 0 0; }
+.lg-scale span:last-child { translate: -100% 0; }
+.lg-row { min-height: 66px; border-bottom: 1px solid var(--paper-line); outline-offset: -2px; }
+.lg-row:hover, .lg-row:focus-visible { background: rgba(176, 125, 28, 0.07); }
+.lg-name { display: flex; align-items: baseline; gap: 12px; font-family: var(--f-serif); font-size: 1.3125rem; line-height: 1.15; }
+.lg-name i { font-style: normal; color: var(--gold-3); font-size: 1rem; min-width: 1.6em; }
+.lg-track { position: relative; height: 30px; }
+.lg-track::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, var(--paper-line) 0 1px, transparent 1px 25%); }
+.lg-track::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #c8b894; box-shadow: 1px 0 0 var(--paper-line); }
+.m { position: absolute; top: 50%; left: calc(var(--v) * 1%); translate: -50% -50%; z-index: 2; box-shadow: 0 0 0 2px var(--paper); }
+.m-you { width: 15px; height: 15px; border-radius: 50%; background: var(--you); z-index: 3; }
+.m-mt { width: 4px; height: 24px; border-radius: 2px; background: var(--malta); }
+.m-eu { width: 11px; height: 11px; rotate: 45deg; background: var(--eu); }
+.lg-num { text-align: right; font-variant-numeric: tabular-nums; font-size: 1.0625rem; color: var(--ink-2); }
+.lg-num.you { color: var(--ink); font-weight: 600; }
+.ledger-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 48px; margin-top: 36px; }
+.ledger-notes p { font-family: var(--f-serif); font-size: clamp(1.25rem, 1.8vw, 1.5rem); line-height: 1.3; }
+.ledger-notes p span { display: block; margin-bottom: 8px; font-family: var(--f-sans); color: var(--gold-3); }
+.footnotes { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--paper-line); color: var(--ink-2); font-size: 0.8125rem; line-height: 1.5; }
+.footnotes li { list-style: none; }
+.footnotes sup { color: var(--gold-3); margin-right: 4px; }
+.tip { position: absolute; z-index: 30; min-width: 200px; padding: 12px 14px; background: var(--navy); color: var(--cream); border-radius: 4px; box-shadow: 0 16px 36px rgba(11, 26, 46, 0.35); pointer-events: none; opacity: 0; translate: 0 6px; transition: opacity 0.15s, translate 0.15s; }
+.tip.is-on { opacity: 1; translate: 0 0; }
+.tip p { font-family: var(--f-serif); font-size: 1.0625rem; margin-bottom: 8px; }
+.tip dl { display: grid; gap: 5px; }
+.tip dl div { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 8px; font-size: 0.8125rem; }
+.tip dd { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.tip .k { width: 14px; height: 3px; border-radius: 2px; }
+.ledger-wrap { position: relative; }
+@media (max-width: 860px) {
+  .lg-grid { grid-template-columns: minmax(0, 1fr) repeat(3, 3.25rem); row-gap: 8px; }
+  .lg-cols .lg-scale { display: none; }
+  .lg-row { padding-block: 14px; }
+  .lg-track { grid-column: 1 / -1; grid-row: 2; }
+  .ledger-notes { grid-template-columns: 1fr; }
+}
+
+/* ---------- why it matters (editorial) ---------- */
+.why-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: clamp(40px, 6vw, 96px); align-items: start; }
+.pull { font-family: var(--f-serif); font-size: clamp(2.25rem, 4.4vw, 4.25rem); line-height: 1.06; letter-spacing: -0.015em; text-wrap: balance; }
+.pull em { color: var(--gold); }
+.why-side { display: grid; gap: 36px; padding-top: 12px; }
+.fig { padding-top: 18px; border-top: 1px solid var(--navy-line); }
+.fig .fig-val { color: var(--cream); }
+.fig-val { font-weight: 600; font-size: clamp(3rem, 5vw, 4.5rem); line-height: 1; letter-spacing: -0.02em; }
+.fig-val small { font-size: 0.45em; color: var(--cream-2); margin-left: 4px; font-weight: 500; }
+.fig p { margin-top: 10px; color: var(--cream-2); max-width: 34ch; }
+.meters { display: grid; gap: 10px; margin-top: 18px; }
+.meter { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); align-items: center; gap: 12px; font-size: 0.875rem; color: var(--cream-2); }
+.meter-track { position: relative; height: 20px; }
+.meter-bar { display: block; height: 100%; width: calc(var(--v) / 50 * 100%); background: var(--c); border-radius: 0 4px 4px 0; }
+.meter-val { position: absolute; top: 50%; left: calc(var(--v) / 50 * 100%); translate: calc(-100% - 8px) -50%; font-weight: 700; font-size: 0.75rem; color: var(--navy); font-variant-numeric: tabular-nums; }
+.meter-axis { display: flex; justify-content: space-between; margin-left: calc(6.5rem + 12px); padding-top: 6px; border-top: 1px solid var(--navy-line); color: var(--cream-3); font-size: 0.6875rem; }
+.why-notes { margin-top: clamp(40px, 5vw, 64px); padding-top: 16px; border-top: 1px solid var(--navy-line); color: var(--cream-3); font-size: 0.8125rem; list-style: none; display: grid; gap: 4px; }
+.why-notes sup { color: var(--gold); margin-right: 4px; }
+.why-notes a { color: var(--cream-2); }
+@media (max-width: 900px) { .why-grid { grid-template-columns: 1fr; } }
+
+/* ---------- method ---------- */
+.method { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; counter-reset: m; max-width: 1180px; margin-inline: auto; }
+.method li { position: relative; padding-top: 58px; }
+.method li::before { counter-increment: m; content: counter(m); position: absolute; top: 0; left: 0; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--gold); background: var(--navy); font-family: var(--f-serif); font-style: italic; font-size: 1.25rem; color: var(--gold); z-index: 1; }
+.method li::after { content: ""; position: absolute; top: 20px; left: 40px; right: -24px; height: 1px; background: linear-gradient(90deg, rgba(212, 176, 106, 0.6), rgba(212, 176, 106, 0.15)); }
+.method li:last-child::after { display: none; }
+.method h3 { font-family: var(--f-serif); font-weight: 400; font-size: 2rem; line-height: 1.05; }
+.method p { margin-top: 10px; color: var(--cream-2); max-width: 26ch; }
+@media (max-width: 860px) {
+  .method { grid-template-columns: 1fr 1fr; row-gap: 40px; }
+  .method li:nth-child(2)::after { display: none; }
+}
+@media (max-width: 520px) {
+  .method { grid-template-columns: 1fr; }
+  .method li { padding: 0 0 0 60px; }
+  .method li::after { display: none; }
+}
+
+/* ---------- invitations ---------- */
+.invites { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); max-width: 1120px; margin-inline: auto; }
+.invite { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: clamp(40px, 5vw, 64px) clamp(24px, 4vw, 56px); text-align: center; background: var(--grain), var(--paper); color: var(--ink); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6); }
+.invite::before { content: ""; position: absolute; inset: 12px; border: 1px solid var(--gold-2); box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 3.8px rgba(181, 138, 60, 0.5); pointer-events: none; }
+.invite > * { position: relative; }
+.invite .sc { color: var(--gold-3); }
+.invite h3 { font-family: var(--f-serif); font-weight: 400; font-size: clamp(2rem, 3.4vw, 3rem); line-height: 1.02; }
+.invite h3 em { color: var(--gold-3); }
+.invite p { color: var(--ink-2); max-width: 36ch; }
+.invite .btn { margin-top: auto; }
+.invite p { margin-bottom: 16px; }
+.invite .btn-gold { color: var(--navy); }
+@media (max-width: 760px) { .invites { grid-template-columns: 1fr; } }
+
+/* ---------- FAQ ---------- */
+.faq { max-width: 1120px; margin-inline: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(32px, 5vw, 72px); }
+.faq details { border-top: 1px solid var(--navy-line); }
+.faq summary { display: flex; justify-content: space-between; gap: 20px; padding: 22px 0; cursor: pointer; list-style: none; font-family: var(--f-serif); font-size: clamp(1.375rem, 2vw, 1.625rem); line-height: 1.2; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary:hover { color: #fff; }
+.faq summary .dir-plus { margin-top: 0.45em; }
+.faq details[open] .dir-plus::after { rotate: 0deg; }
+.faq details > div { padding-bottom: 24px; color: var(--cream-2); max-width: 52ch; }
+.faq-col { border-bottom: 1px solid var(--navy-line); }
+@media (max-width: 860px) { .faq { grid-template-columns: 1fr; } .faq-col + .faq-col { border-top: 0; } .faq-col:first-child { border-bottom: 0; } }
+
+/* ---------- finale ---------- */
+.finale { position: relative; overflow: hidden; isolation: isolate; padding-top: clamp(96px, 12vw, 170px); background: radial-gradient(900px 500px at 50% 100%, rgba(212, 176, 106, 0.16), transparent 70%), var(--braid), var(--navy); text-align: center; }
+.finale h2 { font-size: clamp(3.25rem, 8vw, 7.5rem); }
+.finale .lead { margin: 24px auto 0; }
+.finale-cta { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px 24px; margin-top: 40px; }
+.finale-seal { position: relative; width: min(118vw, 980px); aspect-ratio: 1; margin: clamp(56px, 7vw, 88px) auto 0; margin-bottom: calc(min(118vw, 980px) * -0.52); }
+.finale-seal canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.finale-seal svg { position: absolute; left: 50%; top: 50%; width: 13%; translate: -50% -50%; }
+
+/* ---------- footer ---------- */
+.foot { position: relative; background: var(--navy-950); border-top: 1px solid rgba(212, 176, 106, 0.4); }
+.micro-band { overflow: hidden; white-space: nowrap; padding-block: 10px; border-bottom: 1px solid var(--navy-line); color: rgba(212, 176, 106, 0.8); font-size: 0.5625rem; letter-spacing: 0.34em; }
+.foot-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 36px; padding-block: 56px 40px; }
+.foot-grid p { color: var(--cream-2); max-width: 32ch; margin-top: 16px; }
+.foot-grid h2 { color: var(--gold); margin-bottom: 14px; }
+.foot-grid ul { list-style: none; display: grid; gap: 10px; }
+.foot-grid a { color: var(--cream-2); text-decoration: none; }
+.foot-grid a:hover { color: var(--cream); }
+.foot-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 20px 96px; border-top: 1px solid var(--navy-line); color: var(--cream-3); font-size: 0.8125rem; }
+@media (max-width: 860px) { .foot-grid { grid-template-columns: 1fr 1fr; } .foot-grid > div:first-child { grid-column: 1 / -1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+  .cert { rotate: 0deg; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="seal-mark" viewBox="0 0 34 34">
+      <circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" stroke-width="1"/>
+      <circle cx="17" cy="17" r="13.6" fill="none" stroke="currentColor" stroke-width=".5" opacity=".7"/>
+      <g transform="translate(7 7) scale(.625)" fill="currentColor">
+        <path d="M17.1 16 28.36 9.5v13z"/><path d="m16.55 16.95 11.26 6.5-11.26 6.5z"/><path d="M15.45 16.95v13l-11.26-6.5z"/>
+        <path d="M14.9 16 3.64 22.5v-13z"/><path d="m15.45 15.05-11.26-6.5 11.26-6.5z"/><path d="M16.55 15.05v-13l11.26 6.5z"/>
+      </g>
+    </symbol>
+    <symbol id="arrow" viewBox="0 0 20 20"><path d="M3 10h13M11 4.5 16.5 10 11 15.5" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="lozenge" viewBox="0 0 22 22"><path d="M11 2 20 11 11 20 2 11z" fill="none" stroke="currentColor"/><path d="M11 7 15 11 11 15 7 11z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap top-bar">
+    <nav class="top-nav" aria-label="Primary">
+      <a href="#dimensions">Dimensions</a>
+      <a href="#ledger">Benchmarks</a>
+      <a href="#method">Method</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="brand" href="#top" aria-label="Mesura, home">
+      <svg style="color:var(--gold)" aria-hidden="true"><use href="#seal-mark"/></svg>
+      <span class="brand-word">MESURA</span>
+    </a>
+    <div class="top-right">
+      <a class="link link-sample" href="#cert">Sample report</a>
+      <a class="btn btn-gold" href="#begin">Begin</a>
+      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="mnav">Menu</button>
+    </div>
+  </div>
+  <nav class="mnav" id="mnav" aria-label="Mobile" hidden>
+    <ul class="wrap">
+      <li><a href="#dimensions">Dimensions</a></li>
+      <li><a href="#ledger">Benchmarks</a></li>
+      <li><a href="#method">Method</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#begin">Begin the assessment</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow sc">The AI readiness benchmark for Malta</p>
+        <h1 class="serif" id="hero-title">Know where you <em class="foil">stand.</em></h1>
+        <p class="lead">Mesura scores your organisation's AI readiness across six dimensions and benchmarks it against Malta and the EU. Ten minutes, free, with a personalised report you can act on.</p>
+        <div class="hero-cta">
+          <a class="btn btn-gold btn-lg" href="#begin">Begin the assessment <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+          <a class="link" href="#ledger">How the benchmark reads</a>
+        </div>
+        <ul class="hallmarks" aria-label="At a glance">
+          <li><span class="stamp" aria-hidden="true">€0</span><p><strong>Free</strong>of charge</p></li>
+          <li><span class="stamp" aria-hidden="true">10′</span><p><strong>Ten minutes</strong>start to finish</p></li>
+          <li><span class="stamp" aria-hidden="true">VI</span><p><strong>Six dimensions</strong>scored 0–100</p></li>
+          <li><span class="stamp" aria-hidden="true">MT</span><p><strong>Malta &amp; EU</strong>benchmarks</p></li>
+        </ul>
+      </div>
+      <figure class="cert" id="cert" aria-label="Sample report cover: Sample Organisation Ltd scores 55 out of 100, Developing. Malta average 48, EU average 53.">
+        <div class="cert-paper">
+          <header class="cert-head">
+            <p class="sc">Mesura · AI Readiness Report</p>
+            <p class="cert-org">Sample Organisation Ltd</p>
+          </header>
+          <div class="cert-seal">
+            <canvas id="seal-hero" aria-hidden="true"></canvas>
+            <div class="cert-score" aria-hidden="true"><b>55</b><span class="sc">out of 100</span><em>Developing</em></div>
+            <svg class="ribbon" viewBox="0 0 300 62" aria-hidden="true">
+              <defs>
+                <linearGradient id="rib-gold" x1="0" x2="1"><stop offset="0" stop-color="#b58a3c"/><stop offset=".5" stop-color="#ecd18f"/><stop offset="1" stop-color="#b58a3c"/></linearGradient>
+                <path id="rib-path" d="M40 33 Q150 53 260 33"/>
+              </defs>
+              <path d="M36 22 6 26 16 38 6 52 36 48z" fill="#8a6421"/>
+              <path d="M264 22 294 26 284 38 294 52 264 48z" fill="#8a6421"/>
+              <path d="M30 18 Q150 40 270 18 L270 46 Q150 68 30 46z" fill="url(#rib-gold)"/>
+              <text dy="3.5"><textPath href="#rib-path" startOffset="50%" text-anchor="middle">SAMPLE · ILLUSTRATIVE</textPath></text>
+            </svg>
+          </div>
+          <dl class="cert-facts">
+            <div><dt class="sc">Malta avg</dt><dd>48</dd></div>
+            <div><dt class="sc">EU avg</dt><dd>53</dd></div>
+            <div><dt class="sc">Issued</dt><dd>29.09.26</dd></div>
+          </dl>
+          <p class="cert-serial sc">No. MSR-26-00472 · Sample document</p>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="dimensions" aria-labelledby="dims-title">
+    <div class="wrap">
+      <header class="sec-head center">
+        <p class="eyebrow both sc">Six dimensions</p>
+        <h2 class="serif h2" id="dims-title">Six chapters. <em>One standing.</em></h2>
+        <p class="lead">Your report has a chapter for each dimension of readiness. Open any one to see what it measures.</p>
+      </header>
+      <div class="directory" id="directory">
+        <p class="dir-plate sc" aria-hidden="true"><span>Directory</span><span>Chapter · Dimension · The question it answers</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section paper-zone" id="ledger" aria-labelledby="ledger-title">
+    <div class="wrap">
+      <header class="sec-head center">
+        <p class="eyebrow both sc">The benchmark</p>
+        <h2 class="serif h2" id="ledger-title">Your standing, <em>on the record.</em></h2>
+        <p class="lead">Every dimension sits on one scale beside the Malta average and the EU benchmark. The numbers are printed alongside, like a good annual report.</p>
+      </header>
+      <div class="ledger ledger-wrap" id="ledger-box">
+        <div class="ledger-head">
+          <p class="ledger-title">Sample Organisation Ltd<span class="sc">Scores by dimension, 0–100 · illustrative<sup class="fn">1</sup></span></p>
+          <ul class="legend" aria-label="Legend">
+            <li><i class="key key-you"></i>You</li>
+            <li><i class="key key-mt"></i>Malta average</li>
+            <li><i class="key key-eu"></i>EU average</li>
+          </ul>
+        </div>
+        <div class="lg-grid lg-cols sc" aria-hidden="true">
+          <span>Dimension</span>
+          <span class="lg-scale"><span style="--v:0">0</span><span style="--v:25">25</span><span style="--v:50">50</span><span style="--v:75">75</span><span style="--v:100">100</span></span>
+          <span class="num">You</span><span class="num">Malta</span><span class="num">EU</span>
+        </div>
+        <div id="ledger-rows" role="table" aria-label="Sample organisation scores with Malta and EU averages">
+          <div role="rowgroup" class="sr-only"><div role="row"><span role="columnheader">Dimension</span><span role="columnheader">Chart</span><span role="columnheader">You</span><span role="columnheader">Malta average</span><span role="columnheader">EU average</span></div></div>
+        </div>
+        <div class="tip" id="tip" role="presentation"></div>
+        <div class="ledger-notes">
+          <p><span class="sc">Strongest</span>Technology, thirteen points above the Malta average.</p>
+          <p><span class="sc">First priority</span>Governance &amp; risk, eight points below the EU.</p>
+        </div>
+        <ol class="footnotes">
+          <li><sup>1</sup>A sample organisation. The Malta and EU averages shown are placeholders for this prototype.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="why" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="why-grid">
+        <div>
+          <p class="eyebrow sc">Why it matters now</p>
+          <h2 class="sr-only" id="why-title">Why it matters now</h2>
+          <blockquote class="pull" style="margin-top:28px">Nearly half of Malta already uses generative AI.<a class="fn" href="#n1" aria-label="Footnote 1">1</a> <em>Three in four organisations have no framework to govern it.</em><a class="fn" href="#n2" aria-label="Footnote 2">2</a></blockquote>
+        </div>
+        <div class="why-side">
+          <div class="fig">
+            <p class="sc" style="color:var(--gold)">Generative AI use, 2025</p>
+            <p class="fig-val" style="margin-top:12px">46.5<small>%</small></p>
+            <p>of people in Malta aged 16–74, third-highest in the EU.</p>
+            <figure class="meters" aria-label="Malta 46.5 percent, EU average 32.7 percent">
+              <div class="meter" style="--v:46.5;--c:var(--malta-n)"><span>Malta</span><span class="meter-track"><span class="meter-bar"></span><span class="meter-val">46.5%</span></span></div>
+              <div class="meter" style="--v:32.7;--c:var(--eu-n)"><span>EU average</span><span class="meter-track"><span class="meter-bar"></span><span class="meter-val">32.7%</span></span></div>
+              <p class="meter-axis" aria-hidden="true"><span>0</span><span>25%</span><span>50%</span></p>
+            </figure>
+          </div>
+          <div class="fig">
+            <p class="sc" style="color:var(--gold)">AI governance</p>
+            <p class="fig-val" style="margin-top:12px">75<small>%</small></p>
+            <p>of Maltese organisations have no AI governance framework, and 56% have no one assigned to assess AI use cases.</p>
+          </div>
+        </div>
+      </div>
+      <ol class="why-notes">
+        <li id="n1"><sup>1</sup><a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20251216-3">Eurostat</a>, December 2025. People aged 16–74 who used generative AI tools in 2025: Malta 46.5%, EU 32.7%.</li>
+        <li id="n2"><sup>2</sup><a href="https://www.pwc.com/mt/en/publications/technology/ai-business-survey-2024.html">PwC Malta AI Business Survey</a>, 2024.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="method" aria-labelledby="method-title" style="padding-top:0">
+    <div class="wrap">
+      <p class="rule-orn" aria-hidden="true"><svg><use href="#lozenge"/></svg></p>
+      <header class="sec-head center" style="margin-top:clamp(64px,8vw,120px)">
+        <p class="eyebrow both sc">Method</p>
+        <h2 class="serif h2" id="method-title">Measured, <em>not guessed.</em></h2>
+      </header>
+      <ol class="method">
+        <li><h3>Answer</h3><p>About ten minutes of plain-language questions. Nothing to prepare.</p></li>
+        <li><h3>Score</h3><p>Each of the six dimensions scored from 0 to 100, then combined.</p></li>
+        <li><h3>Compare</h3><p>Every score set against the Malta average and the EU benchmark.</p></li>
+        <li><h3>Act</h3><p>A personalised report with clear, prioritised next steps.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" id="begin" aria-labelledby="begin-title" style="padding-top:0">
+    <div class="wrap">
+      <h2 class="sr-only" id="begin-title">Begin the assessment</h2>
+      <div class="invites">
+        <article class="invite">
+          <p class="sc">For individuals</p>
+          <h3>Your own <em>readiness</em></h3>
+          <p>See how ready you are to work with AI, and where to build skills first.</p>
+          <a class="btn btn-navy" href="#begin">Take it for yourself <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+        </article>
+        <article class="invite">
+          <p class="sc">For organisations</p>
+          <h3>Your organisation's <em>standing</em></h3>
+          <p>Score your organisation on six dimensions, benchmarked against Malta and the EU, with a plan your leadership can own.</p>
+          <a class="btn btn-gold" href="#begin">Assess your organisation <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-title" style="padding-top:0">
+    <div class="wrap">
+      <header class="sec-head center">
+        <p class="eyebrow both sc">Questions</p>
+        <h2 class="serif h2" id="faq-title">Before you <em>begin.</em></h2>
+      </header>
+      <div class="faq">
+        <div class="faq-col">
+          <details><summary>How long does it take?<i class="dir-plus" aria-hidden="true"></i></summary><div><p>About ten minutes. The questions are in plain language and need no preparation.</p></div></details>
+          <details><summary>Is it really free?<i class="dir-plus" aria-hidden="true"></i></summary><div><p>Yes. The assessment and your personalised report are free.</p></div></details>
+          <details><summary>What are the six dimensions?<i class="dir-plus" aria-hidden="true"></i></summary><div><p>Strategy and leadership, data, technology, people and skills, governance and risk, and adoption and culture.</p></div></details>
+          <details><summary>Who is it for?<i class="dir-plus" aria-hidden="true"></i></summary><div><p>Anyone in a Maltese organisation, from a sole trader to a large company or public body. Take it for yourself or on behalf of your organisation.</p></div></details>
+        </div>
+        <div class="faq-col">
+          <details><summary>How is the benchmark built?<i class="dir-plus" aria-hidden="true"></i></summary><div><p>Your scores share one 0–100 scale with the Malta average and an EU benchmark. Your report explains how each one is calculated.</p></div></details>
+          <details><summary>What happens to my answers?<i class="dir-plus" aria-hidden="true"></i></summary><div><p>They produce your report and, anonymised, keep the Malta benchmark current. The privacy policy sets out how they are stored and used.</p></div></details>
+          <details><summary>Is this a certification?<i class="dir-plus" aria-hidden="true"></i></summary><div><p>No. Mesura is a benchmark and a plan. The seal on your report shows your score; it is not a certificate of compliance.</p></div></details>
+          <details><summary>Who runs Mesura?<i class="dir-plus" aria-hidden="true"></i></summary><div><p>Mesura is operated by SeyTravel Ltd. Write to support@mesura.ai with any question.</p></div></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="finale" aria-labelledby="finale-title">
+    <div class="wrap">
+      <p class="eyebrow both sc" style="justify-content:center">Free · About ten minutes</p>
+      <h2 class="serif" id="finale-title" style="margin-top:24px">Take your <em class="foil">measure.</em></h2>
+      <p class="lead">Six dimensions, two benchmarks and one report, ready in the time it takes to finish a coffee.</p>
+      <div class="finale-cta">
+        <a class="btn btn-gold btn-lg" href="#begin">Begin the assessment <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+      </div>
+    </div>
+    <div class="finale-seal" aria-hidden="true">
+      <canvas id="seal-finale"></canvas>
+      <svg style="color:var(--gold)"><use href="#seal-mark"/></svg>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <p class="micro-band sc" aria-hidden="true" id="micro-band"></p>
+  <div class="wrap foot-grid">
+    <div>
+      <a class="brand" href="#top" aria-label="Mesura, back to top"><svg style="color:var(--gold)" aria-hidden="true"><use href="#seal-mark"/></svg><span class="brand-word">MESURA</span></a>
+      <p>The AI readiness benchmark for organisations in Malta.</p>
+    </div>
+    <nav aria-labelledby="f1"><h2 class="sc" id="f1">Mesura</h2><ul><li><a href="#dimensions">Six dimensions</a></li><li><a href="#ledger">Benchmarks</a></li><li><a href="#method">Method</a></li><li><a href="#faq">FAQ</a></li></ul></nav>
+    <nav aria-labelledby="f2"><h2 class="sc" id="f2">Legal</h2><ul><li><a href="#">Privacy policy</a></li><li><a href="#">Terms of use</a></li><li><a href="#">Cookies</a></li></ul></nav>
+    <div><h2 class="sc">Contact</h2><ul><li><a href="mailto:support@mesura.ai">support@mesura.ai</a></li><li style="color:var(--cream-2)">Operated by SeyTravel Ltd</li></ul></div>
+  </div>
+  <div class="wrap foot-legal"><span>© 2026 Mesura · SeyTravel Ltd</span><span>Set in Malta, measured against Europe.</span></div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const DIMS = [
+    { num: 'I', name: 'Strategy & leadership', q: 'Is AI tied to business goals, with someone accountable at the top?', look: ['A clear vision and goals for AI', 'Executive ownership', 'Budget and a realistic roadmap'] },
+    { num: 'II', name: 'Data', q: 'Is your data findable, reliable and safe to use?', look: ['Quality and access', 'Ownership and documentation', 'Privacy and GDPR practice'] },
+    { num: 'III', name: 'Technology', q: 'Can your systems support AI tools securely?', look: ['Cloud and core systems', 'Tooling and integrations', 'Security controls'] },
+    { num: 'IV', name: 'People & skills', q: 'Do your people know how to use AI well?', look: ['AI literacy across teams', 'Specialist skills', 'Training and support'] },
+    { num: 'V', name: 'Governance & risk', q: 'Are the rules, risks and responsibilities clear?', look: ['AI policy and oversight', 'Risk and supplier checks', 'EU AI Act awareness'] },
+    { num: 'VI', name: 'Adoption & culture', q: 'Is AI part of everyday work?', look: ['Use cases in real work', 'Appetite to experiment', 'Measuring the value'] },
+  ];
+  const YOU = [62, 48, 71, 52, 38, 59];
+  const MT = [51, 47, 58, 49, 34, 50];
+  const EU = [56, 54, 61, 51, 46, 50];
+  const mk = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+  /* ---------- menu ---------- */
+  const menuBtn = $('.menu-btn'), mnav = $('#mnav');
+  menuBtn.addEventListener('click', () => {
+    const open = menuBtn.getAttribute('aria-expanded') !== 'true';
+    menuBtn.setAttribute('aria-expanded', String(open));
+    mnav.hidden = !open;
+  });
+  mnav.addEventListener('click', (e) => { if (e.target.closest('a')) { menuBtn.setAttribute('aria-expanded', 'false'); mnav.hidden = true; } });
+
+  /* ---------- lobby directory ---------- */
+  const dir = $('#directory');
+  DIMS.forEach((d, i) => {
+    const det = mk('details', 'dir-row');
+    if (i === 0) det.open = true;
+    const sum = mk('summary');
+    sum.append(mk('span', 'dir-num', d.num), mk('span', 'dir-name', d.name), mk('span', 'dir-leader'), mk('span', 'dir-q', d.q), mk('i', 'dir-plus'));
+    sum.querySelector('.dir-leader').setAttribute('aria-hidden', 'true');
+    sum.querySelector('.dir-plus').setAttribute('aria-hidden', 'true');
+    const body = mk('div', 'dir-body');
+    const ul = mk('ul');
+    d.look.forEach((l) => ul.appendChild(mk('li', null, l)));
+    const sample = mk('p', 'dir-sample');
+    sample.append(mk('span', 'sc', 'Sample score'), mk('b', null, String(YOU[i])), mk('span', null, `Malta ${MT[i]} · EU ${EU[i]}`));
+    body.append(mk('span'), ul, sample);
+    det.append(sum, body);
+    dir.appendChild(det);
+  });
+
+  /* ---------- the ledger ---------- */
+  const rowsBox = $('#ledger-rows');
+  const tip = $('#tip');
+  const box = $('#ledger-box');
+  DIMS.forEach((d, i) => {
+    const row = mk('div', 'lg-grid lg-row');
+    row.setAttribute('role', 'row');
+    row.tabIndex = 0;
+    const name = mk('span', 'lg-name');
+    name.setAttribute('role', 'rowheader');
+    name.append(mk('i', null, d.num), d.name);
+    const track = mk('span', 'lg-track');
+    track.setAttribute('role', 'cell');
+    track.setAttribute('aria-label', `You ${YOU[i]}, Malta ${MT[i]}, EU ${EU[i]}`);
+    [['m-mt', MT[i]], ['m-eu', EU[i]], ['m-you', YOU[i]]].forEach(([c, v]) => {
+      const m = mk('i', `m ${c}`);
+      m.style.setProperty('--v', v);
+      track.appendChild(m);
+    });
+    const cells = [[YOU[i], 'you'], [MT[i], ''], [EU[i], '']].map(([v, c]) => {
+      const n = mk('span', `lg-num ${c}`, String(v));
+      n.setAttribute('role', 'cell');
+      return n;
+    });
+    row.append(name, track, ...cells);
+    rowsBox.appendChild(row);
+    const show = () => {
+      tip.replaceChildren();
+      const dl = mk('dl');
+      [['You', YOU[i], 'var(--you)'], ['Malta average', MT[i], 'var(--malta)'], ['EU average', EU[i], 'var(--eu)']].forEach(([l, v, c]) => {
+        const w = mk('div'); const k = mk('i', 'k'); k.style.background = c;
+        w.append(k, mk('dt', null, l), mk('dd', null, String(v)));
+        dl.appendChild(w);
+      });
+      tip.append(mk('p', null, d.name), dl);
+      const br = box.getBoundingClientRect(), tr = track.getBoundingClientRect();
+      const x = tr.left - br.left + (tr.width * YOU[i]) / 100;
+      tip.style.left = `${Math.min(Math.max(x - 100, 0), br.width - 220)}px`;
+      tip.style.top = `${row.getBoundingClientRect().bottom - br.top + 6}px`;
+      tip.classList.add('is-on');
+    };
+    const hide = () => tip.classList.remove('is-on');
+    row.addEventListener('pointerenter', show);
+    row.addEventListener('pointerleave', hide);
+    row.addEventListener('focus', show);
+    row.addEventListener('blur', hide);
+  });
+
+  /* ---------- micro-printed footer band ---------- */
+  $('#micro-band').textContent = 'Mesura · AI readiness · Six dimensions · Malta · European Union · '.repeat(12);
+
+  /* ---------- guilloché seal ----------
+     Phase-shifted sinusoidal rings woven into bands, the way banknote rosettes are
+     drawn. Starts as a faint complete seal, engraves at full strength, then turns. */
+  function Seal(canvas, opts) {
+    const ctx = canvas.getContext('2d');
+    const TAU = Math.PI * 2;
+    const ink = opts.ink;
+    const range = (n) => Array.from({ length: n }, (_, j) => j);
+    const LAYERS = [
+      { spin: 1, rings: [0.965, 0.985], curves: range(10).map((j) => (t) => 0.91 + 0.025 * Math.sin(40 * t + (j * Math.PI) / 5)), pts: 900 },
+      { spin: -0.55, micro: 0.845 },
+      { spin: -0.8, rings: [0.8, 0.635], curves: range(12).map((j) => (t) => 0.72 + 0.063 * Math.sin(12 * t + (j * Math.PI) / 12)), pts: 640 },
+      { spin: 0.5, rings: [0.425, 0.44], curves: range(9).map((j) => (t) => 0.525 + 0.068 * Math.sin(9 * t + (j * Math.PI) / 18)), pts: 480 },
+    ];
+    let size = 0, dpr = 1, R = 0, baked = [], raf = 0, running = false, visible = false, engraved = reduce;
+    let t0 = performance.now(), e0 = 0;
+
+    function trace(g, layer, p, alpha) {
+      g.globalAlpha = alpha;
+      g.strokeStyle = ink;
+      g.lineWidth = opts.line;
+      (layer.rings || []).forEach((r) => { g.beginPath(); g.arc(0, 0, r * R, -Math.PI / 2, -Math.PI / 2 + TAU * p); g.stroke(); });
+      (layer.curves || []).forEach((f) => {
+        const n = Math.max(2, Math.floor(layer.pts * p));
+        g.beginPath();
+        for (let k = 0; k <= n; k++) {
+          const t = (k / layer.pts) * TAU - Math.PI / 2;
+          const r = f(t) * R;
+          const x = Math.cos(t) * r, y = Math.sin(t) * r;
+          if (k) g.lineTo(x, y); else g.moveTo(x, y);
+        }
+        g.stroke();
+      });
+      if (layer.micro) {
+        const r = layer.micro * R;
+        const fs = Math.max(6, R * 0.04);
+        g.fillStyle = ink;
+        g.font = `600 ${fs}px "Instrument Sans", sans-serif`;
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        const text = opts.micro;
+        let a = -Math.PI / 2, i = 0;
+        const end = -Math.PI / 2 + TAU * p;
+        while (a < end - 0.01) {
+          const ch = text[i % text.length];
+          const w = g.measureText(ch).width + fs * 0.32;
+          const da = w / r;
+          if (a + da > -Math.PI / 2 + TAU) break;
+          g.save(); g.rotate(a + da / 2); g.translate(r, 0); g.rotate(Math.PI / 2); g.fillText(ch, 0, 0); g.restore();
+          a += da; i++;
+        }
+      }
+      g.globalAlpha = 1;
+    }
+
+    function bake() {
+      baked = LAYERS.map((layer) => {
+        const c = document.createElement('canvas');
+        c.width = c.height = Math.round(size * dpr);
+        const g = c.getContext('2d');
+        g.setTransform(dpr, 0, 0, dpr, size / 2 * dpr, size / 2 * dpr);
+        trace(g, layer, 1, 1);
+        return c;
+      });
+    }
+
+    function frame(now) {
+      const px = Math.round(size * dpr);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, px, px);
+      const turn = reduce ? 0 : ((now - t0) / 1000) * (TAU / 360); // one degree per second at spin 1
+      const p = engraved ? 1 : Math.min(1, (now - e0) / 2800);
+      LAYERS.forEach((layer, i) => {
+        ctx.setTransform(1, 0, 0, 1, px / 2, px / 2);
+        ctx.rotate(turn * layer.spin * 0.35);
+        ctx.globalAlpha = engraved || p >= 1 ? 1 : 0.22;
+        ctx.drawImage(baked[i], -px / 2, -px / 2);
+        ctx.globalAlpha = 1;
+        if (!engraved && p < 1) {
+          const lp = Math.min(1, Math.max(0, (p - i * 0.1) / 0.7));
+          const e = lp < 0.5 ? 2 * lp * lp : 1 - Math.pow(-2 * lp + 2, 2) / 2;
+          ctx.setTransform(dpr, 0, 0, dpr, px / 2, px / 2);
+          ctx.rotate(turn * layer.spin * 0.35);
+          trace(ctx, layer, e, 1);
+        }
+      });
+      if (p >= 1) engraved = true;
+    }
+
+    const loop = (now) => { frame(now); raf = running ? requestAnimationFrame(loop) : 0; };
+    const start = () => {
+      if (running || !baked.length) return;
+      if (!e0) e0 = performance.now();
+      if (reduce) { frame(performance.now()); return; }
+      running = true; raf = requestAnimationFrame(loop);
+    };
+    const stop = () => { running = false; cancelAnimationFrame(raf); };
+    const layout = () => {
+      const r = canvas.getBoundingClientRect();
+      if (!r.width) return;
+      size = r.width; dpr = Math.min(devicePixelRatio || 1, 2); R = size / 2 * 0.985;
+      canvas.width = canvas.height = Math.round(size * dpr);
+      bake();
+      frame(performance.now());
+      if (visible) start();
+    };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(layout);
+    let rt;
+    new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(() => { stop(); layout(); }, 120); }).observe(canvas);
+    new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible) start(); else stop(); }).observe(canvas);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else if (visible) start(); });
+  }
+
+  const micro = 'MESURA · AI READINESS SCORE · SIX DIMENSIONS · MALTA · EUROPEAN UNION · ';
+  Seal($('#seal-hero'), { ink: '#a3772c', line: 0.6, micro });
+  Seal($('#seal-finale'), { ink: 'rgba(212,176,106,0.85)', line: 0.8, micro });
+})();
+</script>
+
+<script type="application/json" id="proto-config">
+{
+  "concept": "B",
+  "name": "Standard",
+  "intro": "Direction B positions Mesura as the trusted benchmark: navy and gold, a serif voice, and the report treated as a document worth keeping. Pins mark the decisions worth discussing.",
+  "notes": [
+    { "target": "#hero-title", "title": "One word carries the promise", "body": "'Know where you stand.' The benchmark in a sentence, with 'stand' set in gold-foil italic. Instrument Serif gives institutional weight without stiffness; Instrument Sans handles everything functional.", "refs": ["trumprx.gov"] },
+    { "target": "#cert", "title": "A crest, earned rather than borrowed", "body": "TrumpRx crowns its page with a gilded eagle and scroll. Mesura's equivalent is the report itself: a seal engraved live from guilloché curves, the security linework of banknotes. The ribbon says 'Sample' so it can never be mistaken for a real result.", "refs": ["trumprx.gov"] },
+    { "target": ".hallmarks", "title": "Hallmarks", "body": "Maltese silver has carried assay hallmarks for centuries. Four stamps state the offer in the language of quality marks: free, ten minutes, six dimensions, Malta and EU benchmarks." },
+    { "target": "#directory", "title": "The lobby directory", "body": "Joe Gebbia likens .gov sites to lobbies that deserve 'good signage'. The six dimensions become a brass directory board: chapter, dimension, the question it answers. Each row opens to show what is measured.", "refs": ["america.gov"] },
+    { "target": "#ledger-box", "title": "The benchmark as a ledger", "body": "Set like an annual-report table: a dot plot plus the printed numbers in tabular figures, so nothing depends on colour or hovering. Bronze dot for you, red bar for Malta, blue diamond for the EU, a palette validated for colour-blind readers." },
+    { "target": ".pull", "title": "Footnoted, like a report", "body": "The case for acting is set as an editorial pull quote. Every statistic carries a numbered footnote to its source (Eurostat 2025, PwC Malta 2024), the way a serious publication would." },
+    { "target": ".invites", "title": "Two invitations", "body": "The individual and organisation paths are engraved invitation cards on limestone paper, which keeps the choice warm and personal rather than a pricing-table layout." },
+    { "target": ".finale-seal", "title": "The seal as sign-off", "body": "A large seal rises from the bottom of the page and turns slowly, echoing the eagle that closes TrumpRx. It's the same generative seal as the hero, so there are no image files.", "refs": ["trumprx.gov"] },
+    { "target": ".foot", "title": "Palette with a place", "body": "Navy, gold and honey limestone: TrumpRx's premium civic palette, re-rooted in the Globigerina limestone of Valletta. The micro-printed band in the footer is another banknote detail." }
+  ]
+}
+</script>
+<script src="shared/proto.js" data-inline></script>
+</body>
+</html>

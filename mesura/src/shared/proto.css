@@ -1,0 +1,259 @@
+/* Prototype chrome: concept switcher + design-notes overlay.
+   Deliberately neutral (system font, near-black glass, amber pins) so it reads
+   as tooling on top of any of the three concepts, never as part of them. */
+
+.proto-bar,
+.proto-restore,
+.proto-drawer,
+.proto-layer {
+  --p-bg: #111215;
+  --p-bg-2: #1b1d22;
+  --p-fg: #f4f4f5;
+  --p-fg-2: #b4b6bd;
+  --p-line: rgba(255, 255, 255, 0.1);
+  --p-pin: #ffc933;
+  --p-pin-ink: #16130a;
+  font: 500 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: 0;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.proto-bar {
+  position: fixed;
+  z-index: 2147483000;
+  left: max(12px, env(safe-area-inset-left, 0px));
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--p-bg);
+  color: var(--p-fg);
+  box-shadow: 0 0 0 1px var(--p-line), 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.proto-bar :is(a, button),
+.proto-restore,
+.proto-drawer button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.proto-label {
+  margin: 0;
+  padding: 0 8px 0 10px;
+  white-space: nowrap;
+  color: var(--p-fg-2);
+}
+.proto-label strong { color: var(--p-fg); font-weight: 600; }
+.proto-switch { display: flex; gap: 2px; padding: 2px; border-radius: 999px; background: var(--p-bg-2); }
+.proto-switch a {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--p-fg-2);
+}
+.proto-switch a:hover { color: var(--p-fg); background: rgba(255, 255, 255, 0.08); }
+.proto-switch a[aria-current="page"] { background: var(--p-fg); color: var(--p-bg); }
+.proto-notes-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 8px 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  white-space: nowrap;
+}
+.proto-notes-btn b {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--p-pin);
+  color: var(--p-pin-ink);
+  font-size: 11px;
+  font-weight: 700;
+}
+.proto-notes-btn:hover,
+.proto-notes-btn[aria-pressed="true"] { background: rgba(255, 255, 255, 0.1); }
+.proto-hub,
+.proto-hide {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--p-fg-2);
+}
+.proto-hub:hover,
+.proto-hide:hover { color: var(--p-fg); background: rgba(255, 255, 255, 0.08); }
+.proto-bar svg,
+.proto-drawer svg { width: 16px; height: 16px; display: block; }
+
+.proto-restore {
+  position: fixed;
+  z-index: 2147483000;
+  left: max(12px, env(safe-area-inset-left, 0px));
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--p-bg);
+  color: var(--p-fg);
+  font-weight: 700;
+  box-shadow: 0 0 0 1px var(--p-line), 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+:is(.proto-bar, .proto-restore, .proto-drawer) :focus-visible,
+.proto-restore:focus-visible,
+.proto-pin:focus-visible {
+  outline: 2px solid var(--p-pin);
+  outline-offset: 2px;
+}
+
+/* Pins live on a document-sized layer so annotated elements are never mutated. */
+.proto-layer {
+  position: absolute;
+  z-index: 2147482000;
+  inset: 0 auto auto 0;
+  width: 100%;
+  pointer-events: none;
+}
+.proto-pin,
+.proto-box { position: absolute; top: 0; left: 0; }
+.proto-pin {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 2px solid var(--p-pin-ink);
+  border-radius: 999px;
+  background: var(--p-pin);
+  color: var(--p-pin-ink);
+  font: 700 12px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  pointer-events: auto;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: scale 160ms ease;
+}
+.proto-pin:hover,
+.proto-pin.is-active { scale: 1.18; }
+.proto-box {
+  border: 2px dashed var(--p-pin);
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.proto-box.is-active { opacity: 1; }
+html:not(.proto-notes-on) .proto-layer { display: none; }
+
+.proto-drawer {
+  position: fixed;
+  z-index: 2147483001;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(400px, 100vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--p-bg);
+  color: var(--p-fg);
+  box-shadow: -1px 0 0 var(--p-line), -20px 0 60px rgba(0, 0, 0, 0.35);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.proto-drawer[hidden] { display: none; }
+.proto-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid var(--p-line);
+}
+.proto-drawer h2 { margin: 2px 0 0; font-size: 20px; font-weight: 650; letter-spacing: -0.01em; }
+.proto-eyebrow { margin: 0; color: var(--p-fg-2); font-size: 12px; }
+.proto-close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--p-bg-2);
+}
+.proto-body { overflow-y: auto; padding: 16px 20px calc(96px + env(safe-area-inset-bottom, 0px)); }
+.proto-intro { margin: 0 0 16px; color: var(--p-fg-2); }
+.proto-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.proto-list li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--p-bg-2);
+  cursor: pointer;
+  transition: box-shadow 160ms ease;
+}
+.proto-list li.is-active { box-shadow: 0 0 0 2px var(--p-pin); }
+.proto-list .proto-num {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--p-pin);
+  color: var(--p-pin-ink);
+  font-weight: 700;
+  font-size: 12px;
+}
+.proto-list h3 { margin: 2px 0 4px; font-size: 14px; font-weight: 650; }
+.proto-list p { margin: 0; color: var(--p-fg-2); }
+.proto-refs { margin-top: 8px !important; font-size: 12px; color: var(--p-pin) !important; }
+.proto-foot { margin: 16px 0 0; font-size: 12px; color: var(--p-fg-2); }
+.proto-foot kbd {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--p-bg-2);
+  box-shadow: 0 0 0 1px var(--p-line);
+  font: inherit;
+}
+
+@media (max-width: 640px) {
+  .proto-label { display: none; }
+  .proto-notes-btn span { display: none; }
+  .proto-notes-btn { padding: 0 6px; }
+  .proto-drawer {
+    top: auto;
+    width: 100vw;
+    height: min(62vh, 560px);
+    border-radius: 16px 16px 0 0;
+    padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proto-pin,
+  .proto-box,
+  .proto-list li { transition: none; }
+}
+
+@media print {
+  .proto-bar,
+  .proto-restore,
+  .proto-drawer,
+  .proto-layer { display: none !important; }
+}

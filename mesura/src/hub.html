@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mesura Homepage Directions</title>
+<meta name="description" content="Three working homepage prototypes for Mesura, the AI Readiness Score for Malta, drawn from the design language of the new US federal sites.">
+<meta name="theme-color" content="#0d0e10">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d0e10'/%3E%3Cg transform='translate(3 3) scale(.8125)'%3E%3Cpath fill='%23e5162f' d='M16.55 15.05v-13l11.26 6.5z'/%3E%3Cpath fill='%23d4b06a' d='M17.1 16 28.36 9.5v13z'/%3E%3Cpath fill='%231747d6' d='m16.55 16.95 11.26 6.5-11.26 6.5z'/%3E%3Cg fill='%23f2f1ee'%3E%3Cpath d='M15.45 16.95v13l-11.26-6.5z'/%3E%3Cpath d='M14.9 16 3.64 22.5v-13z'/%3E%3Cpath d='m15.45 15.05-11.26-6.5 11.26-6.5z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="fonts/fonts-hub.css" data-inline>
+<style>
+:root {
+  /* Layout: a screening room. Quiet dark chrome and a long reading column,
+     so the three directions are the only colour on the page. */
+  --bg: #0d0e10;
+  --panel: #15171a;
+  --panel-2: #1c1f23;
+  --line: #2a2d33;
+  --ink: #f2f1ee;
+  --ink-2: #b4b7bd;
+  --ink-3: #8f949b;
+  --a: #e5162f;
+  --b: #d4b06a;
+  --c: #4d7bff;
+  --c2: #ffc933;
+  --f-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --f-ui: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --wrap: 1240px;
+  --gutter: clamp(16px, 4vw, 48px);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.6 var(--f-ui); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+p, h1, h2, h3, ul, ol, dl, dd, figure { margin: 0; }
+ul, ol { padding: 0; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.wrap { width: 100%; max-width: var(--wrap); margin-inline: auto; padding-inline: var(--gutter); }
+.mono { font-family: var(--f-mono); font-size: 0.75rem; letter-spacing: 0.04em; color: var(--ink-3); }
+.serif { font-family: var(--f-serif); font-weight: 400; letter-spacing: -0.01em; line-height: 1; text-wrap: balance; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* header */
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.top-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.top-brand svg { width: 22px; height: 22px; }
+.jump { display: flex; gap: 6px; list-style: none; }
+.jump a { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 0.875rem; text-decoration: none; color: var(--ink-2); }
+.jump a:hover { color: var(--ink); border-color: var(--ink-3); }
+.jump i { width: 8px; height: 8px; border-radius: 50%; }
+.jump a { white-space: nowrap; }
+@media (max-width: 560px) { .jn { display: none; } }
+
+/* intro */
+.intro { padding-block: clamp(56px, 9vw, 120px) clamp(40px, 6vw, 72px); }
+.intro-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); align-items: center; gap: clamp(24px, 4vw, 56px); margin-top: 20px; }
+.intro h1 { font-size: clamp(3.25rem, 8vw, 8rem); max-width: 11ch; }
+.fan { position: relative; aspect-ratio: 1.3; }
+.fan img { position: absolute; width: 72%; height: auto; aspect-ratio: 16 / 10; border-radius: 10px; border: 1px solid var(--line); box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.95); transition: transform 0.6s cubic-bezier(.2,.7,.2,1); }
+.fan img:nth-child(1) { left: 0; top: 20%; transform: rotate(-7deg); }
+.fan img:nth-child(2) { left: 14%; top: 4%; transform: rotate(-1.5deg); }
+.fan img:nth-child(3) { left: 28%; top: 26%; transform: rotate(5deg); }
+.fan:hover img:nth-child(1) { transform: rotate(-10deg) translate(-5%, 3%); }
+.fan:hover img:nth-child(3) { transform: rotate(8deg) translate(5%, 3%); }
+@media (max-width: 860px) { .intro-top { grid-template-columns: 1fr; } .fan { max-width: 560px; width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .fan img { transition: none; } }
+.intro h1 em { font-style: italic; color: var(--ink-2); }
+.intro-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(28px, 5vw, 72px); margin-top: clamp(32px, 4vw, 56px); padding-top: 28px; border-top: 1px solid var(--line); }
+.intro-grid p { color: var(--ink-2); max-width: 58ch; }
+.intro-grid p + p { margin-top: 14px; }
+.intro-grid strong { color: var(--ink); font-weight: 600; }
+.facts { display: grid; gap: 0; }
+.facts div { display: grid; grid-template-columns: 8.5rem 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 0.9375rem; }
+.facts dt { color: var(--ink-3); }
+.note { margin-top: 20px; padding: 14px 16px; border: 1px dashed var(--line); border-radius: 10px; color: var(--ink-2); font-size: 0.875rem; }
+@media (max-width: 860px) { .intro-grid { grid-template-columns: 1fr; } }
+
+/* directions */
+.dir { position: relative; padding-block: clamp(48px, 7vw, 96px); border-top: 1px solid var(--line); }
+.dir-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+.dir.flip .dir-grid { grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); }
+.dir.flip .shots { order: 2; }
+.shots { position: relative; padding-bottom: 12%; }
+.shot-d { border-radius: 12px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.9); }
+.shot-d img { width: 100%; height: auto; aspect-ratio: 16 / 10; }
+.shot-m { position: absolute; right: -2%; bottom: 0; width: 24%; border-radius: 18px; overflow: hidden; border: 5px solid #000; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px var(--line); }
+.dir.flip .shot-m { right: auto; left: -2%; }
+.shot-m img { width: 100%; height: auto; aspect-ratio: 390 / 844; }
+.dir-letter { display: flex; align-items: baseline; gap: 16px; }
+.dir-letter b { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-size: clamp(4.5rem, 8vw, 7rem); line-height: 0.8; color: var(--acc); }
+.dir-letter h2 { font-size: clamp(2.5rem, 4.5vw, 3.75rem); }
+.thesis { margin-top: 18px; font-size: 1.1875rem; line-height: 1.5; color: var(--ink); text-wrap: pretty; }
+.specs { display: grid; margin-top: 22px; border-top: 1px solid var(--line); }
+.specs div { display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 0.9375rem; }
+.specs dt { color: var(--ink-3); }
+.specs dd { color: var(--ink-2); }
+.swatches { display: flex; gap: 6px; align-items: center; }
+.swatches i { width: 20px; height: 20px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18); }
+.refs { display: flex; flex-wrap: wrap; gap: 6px; }
+.refs span { padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px; font-family: var(--f-mono); font-size: 0.75rem; color: var(--ink-2); }
+.proscons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.proscons div { padding: 14px; border-radius: 10px; background: var(--panel); font-size: 0.875rem; color: var(--ink-2); }
+.proscons h3 { margin-bottom: 6px; font-size: 0.8125rem; font-weight: 600; color: var(--ink); }
+.dir-cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line); font-weight: 600; font-size: 0.9375rem; text-decoration: none; }
+.btn svg { width: 16px; height: 16px; transition: transform 0.2s; }
+.btn:hover svg { transform: translateX(3px); }
+.btn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn-primary:hover { background: #fff; }
+.btn:not(.btn-primary):hover { border-color: var(--ink-3); }
+.path { margin-top: 10px; }
+@media (max-width: 960px) {
+  .dir-grid, .dir.flip .dir-grid { grid-template-columns: 1fr; }
+  .dir.flip .shots { order: 0; }
+}
+@media (max-width: 520px) { .proscons { grid-template-columns: 1fr; } }
+
+/* sections */
+.sec { padding-block: clamp(56px, 8vw, 104px); border-top: 1px solid var(--line); }
+.sec h2 { font-size: clamp(2.5rem, 5vw, 4rem); max-width: 18ch; }
+.sec h2 em { font-style: italic; color: var(--ink-2); }
+.sec-lead { margin-top: 16px; max-width: 60ch; color: var(--ink-2); }
+
+.dna { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 40px; list-style: none; }
+.dna li { display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); }
+.dna h3 { font-family: var(--f-mono); font-size: 0.875rem; font-weight: 500; color: var(--ink); }
+.dna p { color: var(--ink-2); font-size: 0.875rem; line-height: 1.5; }
+.dna .used { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); display: flex; gap: 6px; align-items: center; font-size: 0.8125rem; color: var(--ink-3); }
+.dna .used b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-weight: 600; font-size: 0.75rem; color: var(--bg); }
+@media (max-width: 1100px) { .dna { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .dna { grid-template-columns: 1fr; } }
+
+.bar-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 72px); margin-top: 40px; align-items: start; }
+.left-behind { list-style: none; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.left-behind li { display: grid; grid-template-columns: 1.5rem 1fr; gap: 10px; padding: 14px 0; border-bottom: 1px solid var(--line); color: var(--ink-2); font-size: 0.9375rem; }
+.left-behind li::before { content: "×"; color: var(--ink-3); font-family: var(--f-mono); }
+.left-behind strong { color: var(--ink); font-weight: 600; }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tile { padding: 20px; border-radius: 14px; background: var(--panel); border: 1px solid var(--line); }
+.tile p:first-child { font-size: 0.875rem; color: var(--ink-2); }
+.tile .v { margin-top: 8px; font-weight: 600; font-size: clamp(2rem, 3.4vw, 2.75rem); line-height: 1; letter-spacing: -0.02em; }
+.tile .v small { font-size: 0.45em; font-weight: 500; color: var(--ink-3); margin-left: 4px; }
+.tile .s { margin-top: 8px; font-size: 0.8125rem; color: var(--ink-3); }
+.weights { display: grid; gap: 6px; margin-top: 12px; }
+.weights div { display: grid; grid-template-columns: 1.5rem 1fr 3.5rem; align-items: center; gap: 8px; font-size: 0.8125rem; color: var(--ink-2); }
+.weights span.track { height: 6px; border-radius: 3px; background: var(--panel-2); overflow: hidden; }
+.weights span.track i { display: block; height: 100%; border-radius: 3px; background: var(--ink-3); }
+.weights b { text-align: right; font-family: var(--f-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+@media (max-width: 860px) { .bar-grid { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .tiles { grid-template-columns: 1fr; } }
+
+.found { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 40px; }
+.card { padding: 22px; border-radius: 16px; background: var(--panel); border: 1px solid var(--line); }
+.card h3 { font-size: 1rem; font-weight: 600; }
+.card > p { margin-top: 6px; color: var(--ink-2); font-size: 0.9375rem; }
+.dims-list { list-style: none; counter-reset: d; display: grid; gap: 6px; margin-top: 14px; }
+.dims-list li { counter-increment: d; display: grid; grid-template-columns: 2rem 1fr; font-size: 0.9375rem; color: var(--ink-2); }
+.dims-list li::before { content: "D" counter(d); font-family: var(--f-mono); font-size: 0.75rem; color: var(--ink-3); padding-top: 3px; }
+.marks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+.marks figure { display: grid; justify-items: center; gap: 6px; padding: 12px 6px; border-radius: 12px; background: var(--panel-2); }
+.marks svg { width: 72px; height: 72px; }
+.marks figcaption { font-size: 0.75rem; color: var(--ink-3); text-align: center; line-height: 1.35; }
+.trios { display: grid; gap: 8px; margin-top: 16px; }
+.trio { display: grid; grid-template-columns: 1.5rem 1fr; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; }
+.trio b { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-size: 1.25rem; }
+.trio .row { position: relative; height: 22px; }
+.trio .row::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: currentColor; opacity: 0.35; }
+.trio i { position: absolute; top: 50%; translate: -50% -50%; }
+.trio .y { width: 12px; height: 12px; border-radius: 50%; left: 70%; }
+.trio .m { width: 4px; height: 18px; border-radius: 2px; left: 44%; }
+.trio .e { width: 9px; height: 9px; rotate: 45deg; left: 56%; }
+.trio-key { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; font-size: 0.8125rem; color: var(--ink-3); }
+@media (max-width: 960px) { .found { grid-template-columns: 1fr; } }
+
+.qs { list-style: none; counter-reset: q; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 clamp(24px, 4vw, 56px); margin-top: 40px; }
+.qs li { counter-increment: q; display: grid; grid-template-columns: 2.5rem 1fr; gap: 8px; padding: 16px 0; border-top: 1px solid var(--line); }
+.qs li::before { content: counter(q, decimal-leading-zero); font-family: var(--f-mono); font-size: 0.8125rem; color: var(--ink-3); padding-top: 3px; }
+.qs strong { display: block; color: var(--ink); font-weight: 600; }
+.qs span { color: var(--ink-2); font-size: 0.9375rem; }
+@media (max-width: 760px) { .qs { grid-template-columns: 1fr; } }
+
+.sources { list-style: none; display: grid; gap: 6px; margin-top: 24px; font-size: 0.875rem; color: var(--ink-2); }
+.sources a { color: var(--ink-2); }
+.foot { padding-block: 32px 48px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 0.875rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="arrow" viewBox="0 0 20 20"><path d="M3.5 10h12.5M11 4.5 16.5 10 11 15.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="hexad" viewBox="0 0 32 32">
+      <path fill="var(--a)" d="M16.55 15.05v-13l11.26 6.5z"/><path fill="var(--b)" d="M17.1 16 28.36 9.5v13z"/><path fill="var(--c)" d="m16.55 16.95 11.26 6.5-11.26 6.5z"/>
+      <g fill="var(--ink)"><path d="M15.45 16.95v13l-11.26-6.5z"/><path d="M14.9 16 3.64 22.5v-13z"/><path d="m15.45 15.05-11.26-6.5 11.26-6.5z"/></g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <p class="top-brand"><svg aria-hidden="true"><use href="#hexad"/></svg>Mesura · homepage redesign</p>
+    <nav aria-label="Directions">
+      <ul class="jump">
+        <li><a href="#a"><i style="background:var(--a)"></i>A<span class="jn"> · Mission</span></a></li>
+        <li><a href="#b"><i style="background:var(--b)"></i>B<span class="jn"> · Standard</span></a></li>
+        <li><a href="#c"><i style="background:var(--c)"></i>C<span class="jn"> · Front Door</span></a></li>
+      </ul>
+    </nav>
+  </header>
+</div>
+
+<main>
+  <section class="intro wrap" aria-labelledby="title">
+    <p class="mono">Prototype set v1 · 29 September 2026 · for discussion</p>
+    <div class="intro-top">
+      <h1 class="serif" id="title">Three ways into <em>Mesura.</em></h1>
+      <div class="fan" id="fan" aria-hidden="true"></div>
+    </div>
+    <div class="intro-grid">
+      <div>
+        <p><strong>Mesura is Malta's AI Readiness Score:</strong> a free, ten-minute survey that scores an organisation across six dimensions, benchmarks it against the Malta average and the EU, and returns a personalised report with next steps.</p>
+        <p>The homepage has one job: get a Maltese leader to start those ten minutes. Each direction below does that job in a different voice, borrowing from the design language of the new US federal sites (Tech Force, NASA Force, Genesis, TrumpRx and America.gov) and rebuilding it for Malta.</p>
+        <p>All three are working prototypes, not mock-ups. Each opens as a single HTML file. Press <strong>Design notes</strong> in the bottom-left bar of any prototype to see the reasoning pinned to the page.</p>
+      </div>
+      <div>
+        <dl class="facts">
+          <div><dt>Audience</dt><dd>Leaders and teams in Maltese organisations</dd></div>
+          <div><dt>Primary action</dt><dd>Start the free assessment</dd></div>
+          <div><dt>Proof points</dt><dd>Free · ~10 minutes · six dimensions · Malta &amp; EU benchmarks · report</dd></div>
+          <div><dt>Operator</dt><dd>SeyTravel Ltd · support@mesura.ai</dd></div>
+        </dl>
+        <p class="note">Research note: this environment couldn't load mesura.ai or the reference sites directly, so the analysis draws on their public descriptions and press coverage. Dimension names, benchmark figures and privacy wording are placeholders to confirm.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dir wrap" id="a" style="--acc:var(--a)" aria-labelledby="a-title">
+    <div class="dir-grid">
+      <div class="shots">
+        <a class="shot-d" href="a-mission.html" style="display:block" aria-label="Open Concept A, Mission"><img src="shots/a-mission-desktop.webp" data-inline alt="Concept A desktop hero: 'Malta, measured.' in giant condensed capitals beside a dot-matrix map of Malta with a radar sweep" width="1200" height="750"></a>
+        <div class="shot-m"><img src="shots/a-mission-mobile.webp" data-inline alt="Concept A on a phone" width="390" height="844"></div>
+      </div>
+      <div>
+        <div class="dir-letter"><b aria-hidden="true">A</b><h2 class="serif" id="a-title">Mission</h2></div>
+        <p class="thesis">AI readiness as a national mission. Night canvas, poster-scale condensed caps, and Malta itself drawn as a live instrument display.</p>
+        <dl class="specs">
+          <div><dt>Voice</dt><dd>Urgent, declarative. "Malta, measured." "Ten minutes to your score."</dd></div>
+          <div><dt>Type</dt><dd>Archivo, condensed to 62% width · JetBrains Mono for readouts</dd></div>
+          <div><dt>Palette</dt><dd class="swatches"><i style="background:#06080d"></i><i style="background:#f1efe9"></i><i style="background:#e5162f"></i><i style="background:#1aa37e"></i><i style="background:#3987e5"></i></dd></div>
+          <div><dt>Signature</dt><dd>Dot-matrix Malta scanned from Valletta; a T-minus clock that counts down as you scroll; a pinned radar instrument</dd></div>
+          <div><dt>Borrows</dt><dd class="refs"><span>techforce.gov</span><span>nasaforce.gov</span><span>genesis.energy.gov</span></dd></div>
+        </dl>
+        <div class="proscons">
+          <div><h3>Best if</h3>Mesura wants to feel like a movement, and to be talked about.</div>
+          <div><h3>Watch out</h3>The loudest option. Poster type needs short, disciplined copy to work.</div>
+        </div>
+        <div class="dir-cta">
+          <a class="btn btn-primary" href="a-mission.html">Open prototype <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+          <a class="btn" href="a-mission.html#notes">With design notes</a>
+        </div>
+        <p class="path mono">mesura/a-mission.html · {{kb:a-mission}} KB</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dir flip wrap" id="b" style="--acc:var(--b)" aria-labelledby="b-title">
+    <div class="dir-grid">
+      <div class="shots">
+        <a class="shot-d" href="b-standard.html" style="display:block" aria-label="Open Concept B, Standard"><img src="shots/b-standard-desktop.webp" data-inline alt="Concept B desktop hero: 'Know where you stand.' in serif on navy beside a report cover with an engraved gold seal" width="1200" height="750"></a>
+        <div class="shot-m"><img src="shots/b-standard-mobile.webp" data-inline alt="Concept B on a phone" width="390" height="844"></div>
+      </div>
+      <div>
+        <div class="dir-letter"><b aria-hidden="true">B</b><h2 class="serif" id="b-title">Standard</h2></div>
+        <p class="thesis">Mesura as the trusted benchmark. Navy and gold, a serif voice, and the report treated as a document worth keeping.</p>
+        <dl class="specs">
+          <div><dt>Voice</dt><dd>Measured, assured. "Know where you stand." "Take your measure."</dd></div>
+          <div><dt>Type</dt><dd>Instrument Serif for display · Instrument Sans for everything functional</dd></div>
+          <div><dt>Palette</dt><dd class="swatches"><i style="background:#0b1a2e"></i><i style="background:#d4b06a"></i><i style="background:#f3ecdf"></i><i style="background:#cc1f36"></i><i style="background:#3358c4"></i></dd></div>
+          <div><dt>Signature</dt><dd>A guilloché seal engraved live on canvas, like banknote security printing; hallmarks; a brass lobby directory for the six dimensions</dd></div>
+          <div><dt>Borrows</dt><dd class="refs"><span>trumprx.gov</span><span>america.gov</span></dd></div>
+        </dl>
+        <div class="proscons">
+          <div><h3>Best if</h3>The buyer is a board or C-suite, and credibility matters more than buzz.</div>
+          <div><h3>Watch out</h3>The seal must never read as a certification. The ribbon says "Sample" and the FAQ says so.</div>
+        </div>
+        <div class="dir-cta">
+          <a class="btn btn-primary" href="b-standard.html">Open prototype <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+          <a class="btn" href="b-standard.html#notes">With design notes</a>
+        </div>
+        <p class="path mono">mesura/b-standard.html · {{kb:b-standard}} KB</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="dir wrap" id="c" style="--acc:var(--c)" aria-labelledby="c-title">
+    <div class="dir-grid">
+      <div class="shots">
+        <a class="shot-d" href="c-front-door.html" style="display:block" aria-label="Open Concept C, Front Door"><img src="shots/c-front-door-desktop.webp" data-inline alt="Concept C desktop hero: 'How ready is your organisation for AI?' above a conversational quick-read card with four answer chips" width="1200" height="750"></a>
+        <div class="shot-m"><img src="shots/c-front-door-mobile.webp" data-inline alt="Concept C on a phone" width="390" height="844"></div>
+      </div>
+      <div>
+        <div class="dir-letter"><b aria-hidden="true">C</b><h2 class="serif" id="c-title">Front Door</h2></div>
+        <p class="thesis">The homepage is the first question. Three answers in the hero produce a live first read; everything after is bright, plain and well signed.</p>
+        <dl class="specs">
+          <div><dt>Voice</dt><dd>Friendly, plain language. "How ready is your organisation for AI?"</dd></div>
+          <div><dt>Type</dt><dd>Bricolage Grotesque for display · Geist for UI · Geist Mono for data</dd></div>
+          <div><dt>Palette</dt><dd class="swatches"><i style="background:#ffffff"></i><i style="background:#0e1726"></i><i style="background:#1747d6"></i><i style="background:#ffc933"></i><i style="background:#d7263d"></i></dd></div>
+          <div><dt>Signature</dt><dd>A three-question quick read with a partial radar; a working sample report with tabs; an EN/MT language switch</dd></div>
+          <div><dt>Borrows</dt><dd class="refs"><span>america.gov</span><span>genesis.energy.gov</span></dd></div>
+        </dl>
+        <div class="proscons">
+          <div><h3>Best if</h3>Conversion is the goal: the quickest route from landing to starting.</div>
+          <div><h3>Watch out</h3>The quick read must stay honest about being rough. Its copy says so, and the full score only comes from the survey.</div>
+        </div>
+        <div class="dir-cta">
+          <a class="btn btn-primary" href="c-front-door.html">Open prototype <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+          <a class="btn" href="c-front-door.html#notes">With design notes</a>
+        </div>
+        <p class="path mono">mesura/c-front-door.html · {{kb:c-front-door}} KB</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec wrap" aria-labelledby="dna-title">
+    <h2 class="serif" id="dna-title">What each reference <em>lent.</em></h2>
+    <p class="sec-lead">The National Design Studio's sites share a language: short declarative headlines, one idea per screen, premium civic palettes and a single front door. These are the specific moves borrowed, and where they landed.</p>
+    <ul class="dna">
+      <li><h3>techforce.gov</h3><p>Recruiting-poster confidence. An "elite corps" framing, the programme facts up front, one clear call to apply.</p><p class="used">Used in <b style="background:var(--a)">A</b></p></li>
+      <li><h3>nasaforce.gov</h3><p>Work framed as missions and projects. No forms on the page, so the site only has to get you to click.</p><p class="used">Used in <b style="background:var(--a)">A</b></p></li>
+      <li><h3>genesis.energy.gov</h3><p>Instrument-grade precision, icons for each domain, a continuously scrolling carousel of collaborators, and a stated accessibility approach.</p><p class="used">Used in <b style="background:var(--a)">A</b><b style="background:var(--c)">C</b></p></li>
+      <li><h3>trumprx.gov</h3><p>Navy, cream and gold with a serif wordmark, a gilded crest with a scroll, and the product shown up front.</p><p class="used">Used in <b style="background:var(--b)">B</b><b style="background:var(--a)">A</b></p></li>
+      <li><h3>america.gov</h3><p>The conversational front door: ask in plain language, get answers linked to sources. Gebbia's idea of the site as a lobby with good signage.</p><p class="used">Used in <b style="background:var(--c)">C</b><b style="background:var(--b)">B</b></p></li>
+    </ul>
+  </section>
+
+  <section class="sec wrap" aria-labelledby="bar-title">
+    <h2 class="serif" id="bar-title">Keep the ambition. <em>Raise the bar.</em></h2>
+    <p class="sec-lead">Press coverage of the federal sites praised their polish and flagged what sat underneath it. These prototypes take the look and set a measurable standard for the rest.</p>
+    <div class="bar-grid">
+      <ul class="left-behind" aria-label="What was left behind">
+        <li><span><strong>Heavy pages.</strong> Reported at close to three megabytes of code for one of the sites.</span></li>
+        <li><span><strong>Accessibility failures.</strong> Several of the sites reportedly failed accessibility audits.</span></li>
+        <li><span><strong>Generated imagery with visible errors.</strong> These pages use no photos at all; every visual is type, SVG or canvas.</span></li>
+        <li><span><strong>Hidden third-party tracking.</strong> Reported on several of the sites. These pages make no third-party requests.</span></li>
+        <li><span><strong>No translation.</strong> Concept C ships with an English and Maltese switch from day one.</span></li>
+      </ul>
+      <div class="tiles">
+        <div class="tile">
+          <p>Page weight, fonts included</p>
+          <p class="v">{{kb:b-standard}}–{{kb:a-mission}}<small>KB</small></p>
+          <div class="weights" role="img" aria-label="A {{kb:a-mission}} KB, B {{kb:b-standard}} KB, C {{kb:c-front-door}} KB">
+            <div><span>A</span><span class="track"><i style="width:calc({{kb:a-mission}} / 300 * 100%)"></i></span><b>{{kb:a-mission}}</b></div>
+            <div><span>B</span><span class="track"><i style="width:calc({{kb:b-standard}} / 300 * 100%)"></i></span><b>{{kb:b-standard}}</b></div>
+            <div><span>C</span><span class="track"><i style="width:calc({{kb:c-front-door}} / 300 * 100%)"></i></span><b>{{kb:c-front-door}}</b></div>
+          </div>
+        </div>
+        <div class="tile"><p>Third-party requests</p><p class="v">0</p><p class="s">Each page is one self-contained file. Fonts are subset and embedded.</p></div>
+        <div class="tile"><p>axe-core violations</p><p class="v">0</p><p class="s">WCAG 2.2 AA and best-practice rules, at desktop and phone widths and with reduced motion.</p></div>
+        <div class="tile"><p>Image files</p><p class="v">0</p><p class="s">The map, seal and charts are drawn live. Motion stops for people who ask for less.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec wrap" aria-labelledby="found-title">
+    <h2 class="serif" id="found-title">Shared <em>foundations.</em></h2>
+    <p class="sec-lead">The directions differ in voice, but they rest on one content model, one set of dimensions, one mark and one colour logic for benchmarks.</p>
+    <div class="found">
+      <div class="card">
+        <h3>Six dimensions (proposed)</h3>
+        <p>Placeholder names to confirm against the real survey.</p>
+        <ol class="dims-list">
+          <li>Strategy &amp; leadership</li><li>Data</li><li>Technology</li><li>People &amp; skills</li><li>Governance &amp; risk</li><li>Adoption &amp; culture</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>The hexad</h3>
+        <p>Six wedges, one per dimension, with one lit in each direction's accent. Scale each wedge by its score and every report gets its own mark.</p>
+        <div class="marks" id="marks"></div>
+      </div>
+      <div class="card">
+        <h3>You, Malta, the EU</h3>
+        <p>Every benchmark chart uses three marks that differ in both shape and colour, so colour is never the only cue. Each set was validated for colour-blind readers against its own background.</p>
+        <div class="trios">
+          <div class="trio" style="background:#0b1018;color:#f1efe9"><b>A</b><span class="row"><i class="m" style="background:#e5162f"></i><i class="e" style="background:#3987e5"></i><i class="y" style="background:#1aa37e"></i></span></div>
+          <div class="trio" style="background:#f3ecdf;color:#0b1a2e"><b>B</b><span class="row"><i class="m" style="background:#cc1f36"></i><i class="e" style="background:#3358c4"></i><i class="y" style="background:#b07d1c"></i></span></div>
+          <div class="trio" style="background:#ffffff;color:#0e1726"><b>C</b><span class="row"><i class="m" style="background:#d7263d"></i><i class="e" style="background:#c98a00"></i><i class="y" style="background:#1747d6"></i></span></div>
+        </div>
+        <p class="trio-key"><span>● You</span><span>▮ Malta average</span><span>◆ EU average</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec wrap" aria-labelledby="q-title">
+    <h2 class="serif" id="q-title">For our <em>discussion.</em></h2>
+    <p class="sec-lead">The quickest way forward is to react to these. Mixing parts is normal: A's hero with C's quick read, or B's report treatment inside C.</p>
+    <ol class="qs">
+      <li><span><strong>Which direction feels most like Mesura?</strong>Or which parts of each should we combine?</span></li>
+      <li><span><strong>What are the six dimensions really called?</strong>The prototypes use proposed names.</span></li>
+      <li><span><strong>How are the benchmarks built?</strong>Can we show real Malta and EU figures, with sample sizes?</span></li>
+      <li><span><strong>Are there separate paths for individuals and organisations today?</strong>Two directions assume there are.</span></li>
+      <li><span><strong>Which brand assets stay?</strong>Logo, colours and type. The hexad is a proposal.</span></li>
+      <li><span><strong>What can we promise about data?</strong>Storage, anonymisation, and whether there's any sales follow-up.</span></li>
+      <li><span><strong>Is a bilingual site wanted?</strong>Concept C's Maltese copy is a draft for native review.</span></li>
+      <li><span><strong>Should the report seal become a shareable badge?</strong>Only if Mesura wants to stand behind it as a credential.</span></li>
+    </ol>
+    <h3 class="mono" style="margin-top:48px">Data used on the pages</h3>
+    <ul class="sources">
+      <li><a href="https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20251216-3">Eurostat, December 2025</a>: 46.5% of people in Malta aged 16–74 used generative AI tools in 2025, third in the EU; EU average 32.7%.</li>
+      <li><a href="https://www.pwc.com/mt/en/publications/technology/ai-business-survey-2024.html">PwC Malta AI Business Survey 2024</a>: 75% of organisations have no AI governance framework; 56% have no one assigned to assess AI use cases.</li>
+      <li>Malta and Gozo coastlines: Natural Earth 1:10m (public domain). Fonts: Archivo, JetBrains Mono, Instrument Serif and Sans, Bricolage Grotesque, Geist (SIL Open Font License).</li>
+      <li>All scores, sample reports and Malta/EU averages shown in the prototypes are illustrative.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <span>Mesura homepage directions · prototypes for discussion</span>
+  <span>Mesura is operated by SeyTravel Ltd</span>
+</footer>
+
+<script>
+(() => {
+  // Fan of the three heroes, reusing the card images so the file carries each only once.
+  const fan = document.getElementById('fan');
+  ['a', 'c', 'b'].forEach((id) => {
+    const src = document.querySelector(`#${id} .shot-d img`).currentSrc || document.querySelector(`#${id} .shot-d img`).src;
+    const img = new Image();
+    img.src = src; img.alt = ''; img.width = 1200; img.height = 750;
+    fan.appendChild(img);
+  });
+})();
+(() => {
+  // Generative marks: each wedge scaled by one dimension's score, strongest wedge lit.
+  const NS = 'http://www.w3.org/2000/svg';
+  const profiles = [
+    { label: 'Sample organisation · 55', s: [62, 48, 71, 52, 38, 59], lit: 'var(--a)' },
+    { label: 'A leader · 84', s: [88, 80, 90, 78, 82, 86], lit: 'var(--b)' },
+    { label: 'Just starting · 31', s: [34, 28, 40, 30, 22, 32], lit: 'var(--c)' },
+  ];
+  const host = document.getElementById('marks');
+  profiles.forEach((p) => {
+    const fig = document.createElement('figure');
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '-16 -16 32 32');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', `Mark for ${p.label}: wedge sizes ${p.s.join(', ')}`);
+    const top = p.s.indexOf(Math.max(...p.s));
+    p.s.forEach((v, i) => {
+      const a0 = (-90 + i * 60) * Math.PI / 180, a1 = (-30 + i * 60) * Math.PI / 180, mid = (a0 + a1) / 2;
+      const r = 13.5 * v / 100, d = 1.1;
+      const ox = Math.cos(mid) * d, oy = Math.sin(mid) * d;
+      const pts = [[0, 0], [Math.cos(a0) * r, Math.sin(a0) * r], [Math.cos(a1) * r, Math.sin(a1) * r]].map(([x, y]) => `${(x + ox).toFixed(2)},${(y + oy).toFixed(2)}`).join(' ');
+      const poly = document.createElementNS(NS, 'polygon');
+      poly.setAttribute('points', pts);
+      poly.setAttribute('fill', i === top ? p.lit : 'var(--ink)');
+      svg.appendChild(poly);
+    });
+    const cap = document.createElement('figcaption');
+    cap.textContent = p.label;
+    fig.append(svg, cap);
+    host.appendChild(fig);
+  });
+})();
+</script>
+</body>
+</html>
