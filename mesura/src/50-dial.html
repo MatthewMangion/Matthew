@@ -1,0 +1,452 @@
+<style>
+/* ===== 05 DIAL: the instrument you can hold. Warm plastic, graphite legends, one ochre key, a knob made of the mark. ===== */
+.dl {
+  --dl-bg: #E7E3DA; --dl-shell: #F1EDE5; --dl-shell-2: #E2DDD2; --dl-edge: #CFC8BA; --dl-graphite: #2B2F2C; --dl-legend: #5F625C; --dl-soft: #8A8B84;
+  --dl-ochre: #E1A23C; --dl-ochre-2: #C98E2E; --dl-pine: #1D4A43; --dl-pine-2: #163B35;
+  --dl-lcd: #CBD2BD; --dl-lcd-2: #BCC4AE; --dl-seg: #1E2622; --dl-amber-lcd: #F0C46E;
+  --dl-led-g: #36C27B; --dl-led-a: #F4A93A; --dl-led-r: #E0604D; --dl-led-off: #BDB8AC;
+  background: radial-gradient(120% 90% at 30% 10%, #EFEBE3 0%, var(--dl-bg) 60%, #DFDAD0 100%); color: var(--dl-graphite);
+  padding-block: clamp(64px, 9vw, 128px);
+}
+.dl .ch-tag { color: var(--dl-graphite); }
+.dl-legend-t { font: 600 11px/1.2 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--dl-legend); }
+.dl-open { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+.dl-copy { display: grid; gap: 22px; min-width: 0; }
+.dl-title { margin: 0; font: 600 clamp(44px, 5.8vw, 84px)/.98 var(--font-body); letter-spacing: -.045em; text-wrap: balance; }
+.dl-title span { color: var(--dl-ochre-2); }
+.dl-lede { margin: 0; font-size: 17px; line-height: 1.65; color: #4B4F49; max-width: 50ch; }
+.dl-actions { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+
+/* keys */
+.dl-key { min-height: 48px; padding: 0 22px; border-radius: 12px; border: 0; cursor: pointer; font: 600 15px/1 var(--font-body); letter-spacing: -.005em; color: var(--dl-graphite); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(#F8F5EF, #E5E0D5);
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.06), 0 3px 0 #C8C1B3, 0 8px 14px -6px rgba(43,47,44,.4); transition: transform .07s, box-shadow .07s; }
+.dl-key:active, .dl-key.is-down { transform: translateY(3px); box-shadow: inset 0 1px 0 #fff, inset 0 -1px 0 rgba(0,0,0,.06), 0 0 0 #C8C1B3, 0 2px 4px -2px rgba(43,47,44,.4); }
+.dl-key--primary { background: linear-gradient(#2A5D54, var(--dl-pine)); color: #F2EEE6; box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 3px 0 #0F2E28, 0 8px 14px -6px rgba(15,46,40,.6); }
+.dl-key--primary:active { box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 0 0 #0F2E28, 0 2px 4px -2px rgba(15,46,40,.6); }
+.dl-key--accent { background: linear-gradient(#F0BA5E, var(--dl-ochre)); color: #2B2F2C; box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 3px 0 #B1791F, 0 8px 14px -6px rgba(177,121,31,.6); }
+.dl-key--accent:active { box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 0 0 #B1791F, 0 2px 4px -2px rgba(177,121,31,.6); }
+.dl-key--ghost { background: none; box-shadow: none; padding-inline: 4px; text-decoration: underline; text-underline-offset: 6px; text-decoration-color: var(--dl-ochre); text-decoration-thickness: 2px; }
+.dl-key--ghost:active { transform: none; box-shadow: none; }
+.dl-key:disabled { opacity: .5; cursor: not-allowed; }
+
+/* the device */
+.dl-dev { container-type: inline-size; width: 100%; max-width: 680px; justify-self: center; }
+.dl-body { position: relative; aspect-ratio: 1.42; border-radius: 6cqw; background: linear-gradient(160deg, #FAF7F1 0%, var(--dl-shell) 40%, var(--dl-shell-2) 100%);
+  box-shadow: inset 0 .4cqw 0 rgba(255,255,255,.9), inset 0 -.8cqw 1.6cqw rgba(120,110,90,.18), 0 1.2cqw 0 #D3CCBE, 0 5cqw 7cqw -3cqw rgba(43,47,44,.45); padding: 4.2cqw 5cqw 5cqw; display: grid; grid-template-rows: auto 1fr; gap: 2cqw; }
+.dl-top { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; }
+.dl-plate { display: flex; align-items: center; gap: 1.6cqw; padding: .9cqw 1.6cqw; border-radius: 1cqw; background: linear-gradient(#E6E1D7, #F3EFE8); box-shadow: inset 0 .2cqw .4cqw rgba(0,0,0,.14), 0 .15cqw 0 #fff; }
+.dl-plate svg { width: 16cqw; --mk: var(--dl-ochre); --wd: var(--dl-graphite); }
+.dl-plate span { font: 600 1.35cqw/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--dl-legend); }
+.dl-status { display: flex; align-items: center; gap: 1.2cqw; font: 600 1.3cqw/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--dl-legend); }
+.dl-led { width: 1.9cqw; height: 1.9cqw; border-radius: 50%; background: var(--dl-led-off); box-shadow: inset 0 .2cqw .3cqw rgba(0,0,0,.25), 0 .1cqw 0 #fff; transition: background-color .25s, box-shadow .25s; }
+.dl-led[data-s="up"] { background: var(--dl-led-g); box-shadow: 0 0 1.2cqw var(--dl-led-g), inset 0 -.2cqw .3cqw rgba(0,0,0,.2); }
+.dl-led[data-s="near"] { background: var(--dl-led-a); box-shadow: 0 0 1.2cqw var(--dl-led-a), inset 0 -.2cqw .3cqw rgba(0,0,0,.2); }
+.dl-led[data-s="down"] { background: var(--dl-led-r); box-shadow: 0 0 1.2cqw var(--dl-led-r), inset 0 -.2cqw .3cqw rgba(0,0,0,.2); }
+.dl-main { display: grid; grid-template-columns: 54% 1fr; gap: 3cqw; align-items: center; min-height: 0; }
+.dl-knobwrap { position: relative; aspect-ratio: 520 / 410; }
+.dl-ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.dl-ring text { font: 600 12.5px/1 var(--font-body); letter-spacing: .1em; fill: var(--dl-legend); cursor: pointer; transition: fill .2s; }
+.dl-ring text.on { fill: var(--dl-graphite); }
+.dl-knob { position: absolute; left: 50%; top: 50%; width: 57.7%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; cursor: grab; touch-action: none; outline: none; }
+.dl-knob:active { cursor: grabbing; }
+.dl-knob:focus-visible { box-shadow: 0 0 0 3px rgba(225,162,60,.6); }
+.dl-knob svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.dl-knob .rot { transform-origin: 0 0; transition: transform .45s cubic-bezier(.3,1.6,.5,1); }
+.dl-knob.is-drag .rot { transition: none; }
+.dl-right { display: grid; gap: 2.4cqw; align-content: center; min-width: 0; }
+.dl-lcd { border-radius: 1.8cqw; padding: 1.8cqw 2cqw 1.6cqw; background: linear-gradient(170deg, var(--dl-lcd) 0%, var(--dl-lcd-2) 100%);
+  box-shadow: inset 0 .5cqw 1cqw rgba(30,38,34,.35), inset 0 0 0 .25cqw #9DA58F, 0 .2cqw 0 #fff; position: relative; overflow: hidden; transition: filter .4s; }
+.dl-lcd::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,255,255,.35) 0%, transparent 38%); pointer-events: none; }
+.dl-lcd.is-off .dl-lcd-in { opacity: 0; }
+.dl-lcd-in { transition: opacity .35s; }
+.dl-lcd-top { display: flex; justify-content: space-between; align-items: center; font: 700 1.55cqw/1 var(--font-body); letter-spacing: .1em; color: var(--dl-seg); }
+.dl-icons { display: flex; gap: .8cqw; }
+.dl-icons i { font-style: normal; padding: .3cqw .6cqw; border: .15cqw solid currentColor; border-radius: .4cqw; opacity: .08; transition: opacity .2s; }
+.dl-icons i.on { opacity: .9; }
+.dl-digits { display: block; width: 100%; height: auto; margin: 1.2cqw 0 .8cqw; }
+.dl-bar { display: block; width: 100%; height: auto; }
+.dl-keys { display: flex; gap: 1.6cqw; }
+.dl-k { flex: 1; min-height: 0; height: 6.4cqw; border-radius: 1.6cqw; border: 0; cursor: pointer; font: 700 1.5cqw/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--dl-graphite);
+  background: linear-gradient(#F9F6F0, #E3DED3); box-shadow: inset 0 .15cqw 0 #fff, 0 .5cqw 0 #C8C1B3, 0 1.2cqw 1.6cqw -.8cqw rgba(43,47,44,.5); transition: transform .06s, box-shadow .06s; }
+.dl-k:active, .dl-k.is-down { transform: translateY(.45cqw); box-shadow: inset 0 .15cqw 0 #fff, 0 .05cqw 0 #C8C1B3, 0 .3cqw .6cqw -.3cqw rgba(43,47,44,.5); }
+.dl-k--eq { background: linear-gradient(#F0BA5E, var(--dl-ochre)); box-shadow: inset 0 .15cqw 0 rgba(255,255,255,.5), 0 .5cqw 0 #B1791F, 0 1.2cqw 1.6cqw -.8cqw rgba(177,121,31,.6); font-size: 2.6cqw; }
+.dl-k--eq:active, .dl-k--eq.is-down { box-shadow: inset 0 .15cqw 0 rgba(255,255,255,.5), 0 .05cqw 0 #B1791F; }
+.dl-k[aria-pressed="true"] { color: #1D4A43; }
+.dl-k[aria-pressed="true"]::after { content: ""; display: inline-block; width: .9cqw; height: .9cqw; margin-left: .8cqw; border-radius: 50%; background: var(--dl-led-g); box-shadow: 0 0 .8cqw var(--dl-led-g); vertical-align: middle; }
+.dl-grille { height: 9cqw; border-radius: 1.4cqw; overflow: hidden; }
+.dl-grille svg { width: 100%; height: 100%; display: block; }
+.dl-side { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; font-size: 13px; color: var(--dl-legend); }
+.dl-side p { margin: 0; }
+
+/* board */
+.dl-board { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 22px; margin-top: clamp(64px, 9vw, 112px); }
+.dl-panel { background: var(--dl-shell); border-radius: 22px; padding: clamp(20px, 2.6vw, 32px); min-width: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 2px 0 #D3CCBE, 0 18px 30px -24px rgba(43,47,44,.5); }
+.dl-panel h3 { margin: 0 0 4px; font: 600 11px/1.3 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--dl-soft); }
+.dl-panel .dl-sub { margin: 0 0 22px; font: 600 21px/1.25 var(--font-body); letter-spacing: -.02em; color: var(--dl-graphite); text-wrap: balance; }
+.dl-mat { grid-column: span 5; } .dl-type { grid-column: span 7; } .dl-mods { grid-column: 1 / -1; } .dl-comp { grid-column: 1 / -1; }
+.dl-chips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.dl-chip { display: grid; gap: 8px; font-size: 13px; line-height: 1.35; color: var(--dl-legend); }
+.dl-chip i { display: block; height: 58px; border-radius: 14px; }
+.dl-chip b { color: var(--dl-graphite); font-weight: 600; }
+.dl-chip code { font: 500 10.5px/1 var(--font-mono); }
+.dl-typegrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: center; }
+.dl-bigdigits { background: linear-gradient(170deg, var(--dl-lcd), var(--dl-lcd-2)); border-radius: 16px; padding: 18px; box-shadow: inset 0 4px 10px rgba(30,38,34,.3), inset 0 0 0 2px #9DA58F; }
+.dl-bigdigits svg { width: 100%; height: auto; display: block; }
+.dl-typerows { display: grid; gap: 14px; }
+.dl-typerows div { display: grid; gap: 3px; border-top: 1px solid rgba(43,47,44,.12); padding-top: 12px; }
+.dl-typerows div:first-child { border-top: 0; padding-top: 0; }
+.dl-typerows small { font: 500 11px/1.3 var(--font-mono); color: var(--dl-soft); }
+.dl-typerows span { font-size: 15px; line-height: 1.45; color: var(--dl-legend); }
+.dl-mods-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.dl-mod { display: grid; gap: 12px; }
+.dl-mod .win { border-radius: 16px; padding: 14px 16px; background: linear-gradient(170deg, var(--dl-lcd), var(--dl-lcd-2)); box-shadow: inset 0 4px 10px rgba(30,38,34,.3), inset 0 0 0 2px #9DA58F; position: relative; overflow: hidden; }
+.dl-mod .win::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,255,255,.35) 0%, transparent 40%); pointer-events: none; }
+.dl-mod .win.dim svg { opacity: .42; }
+.dl-mod .win.amber { background: linear-gradient(170deg, #F6D38A, var(--dl-amber-lcd)); box-shadow: inset 0 4px 10px rgba(120,80,10,.3), inset 0 0 0 2px #C9973E, 0 0 26px -4px rgba(240,196,110,.9); }
+.dl-mod svg { width: 100%; height: auto; display: block; }
+.dl-mod p { margin: 0; font-size: 14px; line-height: 1.4; color: var(--dl-legend); }
+.dl-mod p b { display: block; color: var(--dl-graphite); font-weight: 600; font-size: 15px; }
+.dl-comp-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: start; }
+.dl-comp-grid h4 { margin: 0 0 14px; font: 600 11px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--dl-soft); }
+.dl-keys-demo { display: flex; flex-wrap: wrap; gap: 16px 14px; margin-bottom: 26px; }
+.dl-leds { display: grid; gap: 10px; }
+.dl-ledrow { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; background: linear-gradient(#E6E1D7, #EFEBE3); box-shadow: inset 0 2px 4px rgba(0,0,0,.1); font: 600 12px/1 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--dl-legend); }
+.dl-ledrow i { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.dl-rocker { display: flex; align-items: center; gap: 14px; font-size: 15px; color: var(--dl-graphite); cursor: pointer; user-select: none; margin-bottom: 22px; }
+.dl-rocker input { position: absolute; opacity: 0; pointer-events: none; }
+.dl-rocker .sw { width: 34px; height: 58px; border-radius: 9px; background: #D8D2C6; box-shadow: inset 0 2px 5px rgba(0,0,0,.25); position: relative; flex: none; }
+.dl-rocker .sw::before { content: ""; position: absolute; left: 4px; right: 4px; top: 4px; height: 28px; border-radius: 6px; background: linear-gradient(#F9F6F0, #E1DCD1); box-shadow: 0 3px 0 #BDB5A6, 0 5px 8px -3px rgba(0,0,0,.35); transition: top .18s cubic-bezier(.3,1.4,.5,1); }
+.dl-rocker input:checked + .sw::before { top: 26px; background: linear-gradient(#2A5D54, var(--dl-pine)); box-shadow: 0 -3px 0 #0F2E28 inset, 0 3px 6px -3px rgba(0,0,0,.35); }
+.dl-rocker input:focus-visible + .sw { outline: 2px solid var(--dl-ochre); outline-offset: 3px; }
+.dl-fader { display: grid; gap: 10px; }
+.dl-fader label { font: 600 14px/1.3 var(--font-body); }
+.dl-fader input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 30px; background: transparent; cursor: pointer; }
+.dl-fader input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: #CFC8BA; box-shadow: inset 0 2px 3px rgba(0,0,0,.25); }
+.dl-fader input[type=range]::-moz-range-track { height: 8px; border-radius: 4px; background: #CFC8BA; box-shadow: inset 0 2px 3px rgba(0,0,0,.25); }
+.dl-fader input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 36px; margin-top: -14px; border-radius: 6px; border: 0;
+  background: repeating-linear-gradient(90deg, #2B2F2C 0 1px, #3B403C 1px 3px), #2B2F2C; box-shadow: 0 3px 0 #111, 0 6px 10px -3px rgba(0,0,0,.45); }
+.dl-fader input[type=range]::-moz-range-thumb { width: 26px; height: 36px; border-radius: 6px; border: 0; background: repeating-linear-gradient(90deg, #2B2F2C 0 1px, #3B403C 1px 3px); box-shadow: 0 3px 0 #111; }
+.dl-fader input[type=range]:focus-visible { outline: 2px solid var(--dl-ochre); outline-offset: 4px; border-radius: 8px; }
+.dl-scale { display: flex; justify-content: space-between; font: 600 11px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--dl-soft); }
+.dl-scale span.on { color: var(--dl-graphite); }
+.dl-field { display: grid; gap: 6px; margin-top: 24px; }
+.dl-field label { font: 600 14px/1.3 var(--font-body); }
+.dl-field input { font: 400 16px/1.4 var(--font-body); color: var(--dl-graphite); padding: 13px 14px; border: 0; border-radius: 12px; background: #E4DFD4; box-shadow: inset 0 2px 5px rgba(0,0,0,.16), 0 1px 0 #fff; outline: none; }
+.dl-field input:focus { box-shadow: inset 0 2px 5px rgba(0,0,0,.16), 0 0 0 2px var(--dl-ochre); }
+.dl-field small { font-size: 13px; color: var(--dl-soft); }
+
+@media (max-width: 1000px) {
+  .dl-open { grid-template-columns: minmax(0, 1fr); }
+  .dl-mat, .dl-type { grid-column: 1 / -1; }
+  .dl-comp-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+@media (max-width: 680px) {
+  .dl-mods-row, .dl-typegrid, .dl-comp-grid { grid-template-columns: minmax(0, 1fr); }
+  .dl-chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dl-main { grid-template-columns: minmax(0, 1fr); }
+  .dl-body { aspect-ratio: auto; }
+  .dl-knobwrap { width: 88%; justify-self: center; }
+  .dl-plate svg { width: 26cqw; } .dl-plate span, .dl-status { font-size: 2.4cqw; }
+  .dl-lcd-top { font-size: 3cqw; } .dl-k { height: 11cqw; font-size: 2.8cqw; border-radius: 3cqw; } .dl-k--eq { font-size: 5cqw; }
+  .dl-grille { height: 16cqw; } .dl-led { width: 3.2cqw; height: 3.2cqw; }
+}
+</style>
+
+<section class="ch dl" id="dial" data-ch="dial" aria-labelledby="dl-title">
+  <div class="wrap">
+    <div class="dl-open">
+      <div class="dl-copy">
+        <p class="ch-tag"><i>05</i> Dial &middot; 1960s &middot; the mark as a knob</p>
+        <h2 class="dl-title" id="dl-title">Trust the instrument <span>you can hold.</span></h2>
+        <p class="dl-lede">The measuring tools people trust are the ones they can hold: a spirit level, a stopwatch, a thermostat that clicks into place. Dial imagines Mesura as an object in the tradition of mid-century industrial design. Honest materials, one coloured key, one knob. The opening in the mark finally does what it always looked like it should. It points.</p>
+        <div class="dl-actions">
+          <a class="dl-key dl-key--primary" href="#dial">Get your Diagnostic</a>
+          <a class="dl-key dl-key--ghost" href="#dlDev">Turn the knob</a>
+        </div>
+      </div>
+      <div class="dl-dev" id="dlDev">
+        <div class="dl-body">
+          <div class="dl-top">
+            <span class="dl-plate"><svg viewBox="0 0 1993 311" aria-hidden="true"><use href="#mz-lockup"/></svg><span>One &middot; readiness meter</span></span>
+            <span class="dl-status"><span id="dlStatusText">Above benchmark</span><i class="dl-led" id="dlLed" data-s="up" aria-hidden="true"></i></span>
+          </div>
+          <div class="dl-main">
+            <div class="dl-knobwrap">
+              <svg class="dl-ring" id="dlRing" viewBox="-260 -205 520 410" aria-hidden="true"></svg>
+              <div class="dl-knob" id="dlKnob" role="slider" tabindex="0" aria-label="Dimension selector" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1" aria-valuetext="Adoption, 81.0">
+                <svg viewBox="-150 -150 300 300" aria-hidden="true"></svg>
+              </div>
+            </div>
+            <div class="dl-right">
+              <div class="dl-lcd" id="dlLcd">
+                <div class="dl-lcd-in">
+                  <div class="dl-lcd-top"><span id="dlMode">ADOPTION</span><span class="dl-icons"><i data-i="bm">BM</i><i data-i="all">ALL</i></span></div>
+                  <svg class="dl-digits" id="dlDigits" viewBox="0 0 172 80" aria-hidden="true"></svg>
+                  <svg class="dl-bar" id="dlBar" viewBox="0 0 200 22" aria-hidden="true"></svg>
+                </div>
+              </div>
+              <div class="dl-keys">
+                <button class="dl-k" type="button" data-k="power" aria-pressed="true">On</button>
+                <button class="dl-k" type="button" data-k="cmp" aria-pressed="false">Cmp</button>
+                <button class="dl-k dl-k--eq" type="button" data-k="eq" aria-label="Overall readiness">=</button>
+              </div>
+              <div class="dl-grille" id="dlGrille" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+        <div class="dl-side">
+          <p>Drag the knob, click a legend, or use the arrow keys. Illustrative data for Harbour &amp; Co.</p>
+          <label class="dl-rocker" style="margin:0;gap:10px;font-size:13px"><input type="checkbox" id="dlSound"><span class="sw" style="width:22px;height:36px;border-radius:6px"></span>Click</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="dl-board">
+      <section class="dl-panel dl-mat" aria-label="Dial materials">
+        <h3>Materials</h3>
+        <p class="dl-sub">Named for what they are made of. Colour only where a finger should go.</p>
+        <div class="dl-chips">
+          <div class="dl-chip"><i style="background:linear-gradient(160deg,#FAF7F1,#E2DDD2);box-shadow:inset 0 1px 0 #fff,0 2px 0 #D3CCBE"></i><span><b>Polystyrene</b><br><code>#F1EDE5</code></span></div>
+          <div class="dl-chip"><i style="background:#2B2F2C"></i><span><b>Graphite</b> &middot; legends<br><code>#2B2F2C</code></span></div>
+          <div class="dl-chip"><i style="background:linear-gradient(#F0BA5E,#E1A23C);box-shadow:0 3px 0 #B1791F"></i><span><b>Ochre key</b> &middot; one per object<br><code>#E1A23C</code></span></div>
+          <div class="dl-chip"><i style="background:linear-gradient(#2A5D54,#1D4A43);box-shadow:0 3px 0 #0F2E28"></i><span><b>Anodised pine</b><br><code>#1D4A43</code></span></div>
+          <div class="dl-chip"><i style="background:linear-gradient(170deg,#CBD2BD,#BCC4AE);box-shadow:inset 0 3px 8px rgba(30,38,34,.3)"></i><span><b>LCD glass</b><br><code>#CBD2BD</code></span></div>
+          <div class="dl-chip"><i style="background:radial-gradient(circle at 30% 50%,#36C27B 0 9px,transparent 10px),radial-gradient(circle at 55% 50%,#F4A93A 0 9px,transparent 10px),radial-gradient(circle at 80% 50%,#BDB8AC 0 9px,transparent 10px),#E6E1D7"></i><span><b>LEDs</b> &middot; state only<br><code>green, amber, off</code></span></div>
+        </div>
+      </section>
+
+      <section class="dl-panel dl-type" aria-label="Dial type">
+        <h3>Legends and readouts</h3>
+        <p class="dl-sub">Printed legends in Inter. Readouts in segment numerals drawn for Mesura, each segment cut at 45&deg;, the angle of the opening.</p>
+        <div class="dl-typegrid">
+          <div class="dl-bigdigits"><svg id="dlBigDigits" viewBox="0 0 172 80" aria-label="72.4 in segment numerals" role="img"></svg></div>
+          <div class="dl-typerows">
+            <div><small>Legend &middot; Inter 600, caps, +12%</small><span style="font:600 13px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:#2B2F2C">Readiness &middot; Benchmark</span></div>
+            <div><small>Title &middot; Inter 600, &minus;4.5%</small><span style="font:600 26px/1.05 var(--font-body);letter-spacing:-.045em;color:#2B2F2C">One knob, eight readings</span></div>
+            <div><small>Body &middot; Inter 400, 16/26</small><span>Turn to a dimension and read it. Press the ochre key for the overall score.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dl-panel dl-mods" aria-label="Dial stat modules">
+        <h3>Stat modules</h3>
+        <p class="dl-sub">The ranked trio as three displays: standard, dimmed and backlit.</p>
+        <div class="dl-mods-row">
+          <div class="dl-mod"><div class="win"><svg data-seg="29.6" viewBox="0 0 172 80" role="img" aria-label="29.6 per cent"></svg></div><p><b>of Maltese workers use generative AI at work</b>First in the European Union</p></div>
+          <div class="dl-mod"><div class="win dim"><svg data-seg="15.1" viewBox="0 0 172 80" role="img" aria-label="15.1 per cent"></svg></div><p><b>is the EU average</b>Malta sits at nearly double the norm</p></div>
+          <div class="dl-mod"><div class="win amber"><svg data-seg="21.6" viewBox="0 0 172 80" role="img" aria-label="21.6 per cent"></svg></div><p><b>of organisations formally measure it</b>The rest is shadow AI, invisible to leadership</p></div>
+        </div>
+      </section>
+
+      <section class="dl-panel dl-comp" aria-label="Dial components">
+        <h3>Controls</h3>
+        <p class="dl-sub">Every control travels when pressed, and every state has a light.</p>
+        <div class="dl-comp-grid">
+          <div>
+            <h4>Keys</h4>
+            <div class="dl-keys-demo">
+              <button class="dl-key dl-key--primary" type="button">Get your Diagnostic</button>
+              <button class="dl-key" type="button">How it works</button>
+              <button class="dl-key dl-key--accent" type="button">Download report</button>
+              <button class="dl-key dl-key--ghost" type="button">Learn more</button>
+            </div>
+            <h4>Indicators</h4>
+            <div class="dl-leds">
+              <span class="dl-ledrow"><i style="background:#36C27B;box-shadow:0 0 10px #36C27B"></i>Above benchmark</span>
+              <span class="dl-ledrow"><i style="background:#F4A93A;box-shadow:0 0 10px #F4A93A"></i>Emerging</span>
+              <span class="dl-ledrow"><i style="background:#BDB8AC;box-shadow:inset 0 1px 2px rgba(0,0,0,.3)"></i>Not measured</span>
+            </div>
+          </div>
+          <div>
+            <h4>Switch</h4>
+            <label class="dl-rocker"><input type="checkbox" id="dl-send" checked><span class="sw"></span>Email me the report</label>
+            <h4>Fader</h4>
+            <div class="dl-fader">
+              <label for="dl-size">Organisation size</label>
+              <input type="range" id="dl-size" min="0" max="3" step="1" value="1">
+              <div class="dl-scale" id="dlScale"><span>1&ndash;9</span><span class="on">10&ndash;49</span><span>50&ndash;249</span><span>250+</span></div>
+            </div>
+          </div>
+          <div>
+            <h4>Field</h4>
+            <div class="dl-field" style="margin-top:0">
+              <label for="dl-org">Organisation name</label>
+              <input id="dl-org" type="text" value="Harbour &amp; Co." autocomplete="off">
+              <small>As it should appear on your report.</small>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const { markPath, f, svg, SAMPLE, reduced } = MZ;
+  const NSs = 'http://www.w3.org/2000/svg';
+  /* ---- Segment numerals: hexagonal segments with 45 degree ends ---- */
+  const SEG = { '0': 'abcdef', '1': 'bc', '2': 'abged', '3': 'abgcd', '4': 'fgbc', '5': 'afgcd', '6': 'afgedc', '7': 'abc', '8': 'abcdefg', '9': 'abcdfg', '-': 'g', ' ': '' };
+  function segPaths(ox, oy) {
+    const W = 40, H = 72, t = 8, g = 1.6, hz = (y, x1, x2) => `M${x1} ${y}L${x1 + t / 2} ${y - t / 2}H${x2 - t / 2}L${x2} ${y}L${x2 - t / 2} ${y + t / 2}H${x1 + t / 2}Z`,
+      vt = (x, y1, y2) => `M${x} ${y1}L${x + t / 2} ${y1 + t / 2}V${y2 - t / 2}L${x} ${y2}L${x - t / 2} ${y2 - t / 2}V${y1 + t / 2}Z`;
+    const T = s => `translate(${ox} ${oy})`;
+    return {
+      a: hz(t / 2, t / 2 + g, W - t / 2 - g), g: hz(H / 2, t / 2 + g, W - t / 2 - g), d: hz(H - t / 2, t / 2 + g, W - t / 2 - g),
+      f: vt(t / 2, t / 2 + g, H / 2 - g), b: vt(W - t / 2, t / 2 + g, H / 2 - g), e: vt(t / 2, H / 2 + g, H - t / 2 - g), c: vt(W - t / 2, H / 2 + g, H - t / 2 - g)
+    };
+  }
+  const DIG = segPaths(0, 0);
+  /* Draws "dd.d" (or "---") into an svg with viewBox 0 0 172 80. */
+  function drawSeg(svgEl, str, color = '#1E2622', ghost = .08, pct = true) {
+    const [ip, dp] = str.split('.'), chars = [(ip.length > 1 ? ip[ip.length - 2] : ' '), ip[ip.length - 1], dp ? dp[0] : ' '];
+    let out = '<g transform="skewX(-6) translate(8 4)">';
+    chars.forEach((ch, i) => {
+      const x = i === 2 ? 104 : i * 48, lit = SEG[ch] || '';
+      out += `<g transform="translate(${x} 0)">` + Object.entries(DIG).map(([k, d]) => `<path d="${d}" fill="${color}" opacity="${lit.includes(k) ? 1 : ghost}"/>`).join('') + '</g>';
+    });
+    out += `<rect x="92" y="64" width="8" height="8" fill="${color}" opacity="${dp !== undefined ? 1 : ghost}"/>`;
+    if (pct) out += `<text x="152" y="30" font-family="Inter, sans-serif" font-weight="700" font-size="17" fill="${color}">%</text>`;
+    out += '</g>';
+    svgEl.innerHTML = out;
+  }
+  MZ.seg = drawSeg;
+  document.querySelectorAll('.dl [data-seg]').forEach(s => drawSeg(s, s.dataset.seg, '#1E2622', .07, true));
+  const big = document.getElementById('dlBigDigits'); big && drawSeg(big, '72.4', '#1E2622', .07, false);
+
+  /* ---- Device ---- */
+  const ring = document.getElementById('dlRing'), knob = document.getElementById('dlKnob'), kSvg = knob && knob.querySelector('svg');
+  if (!ring || !kSvg) return;
+  const DIMS = SAMPLE.dims;
+  // printed dial ring: ticks and eight legends
+  let ticks = '', labels = '';
+  for (let i = 0; i < 40; i++) {
+    const a = (-90 + i * 9) * Math.PI / 180, major = i % 5 === 0, r0 = major ? 150 : 154;
+    ticks += `<line x1="${f(Math.cos(a) * r0)}" y1="${f(Math.sin(a) * r0)}" x2="${f(Math.cos(a) * 162)}" y2="${f(Math.sin(a) * 162)}" stroke="#2B2F2C" stroke-width="${major ? 2.4 : 1.2}" stroke-linecap="round" opacity="${major ? .85 : .45}"/>`;
+  }
+  DIMS.forEach((d, k) => {
+    const a = (-90 + 45 * k) * Math.PI / 180, r = 176, x = Math.cos(a) * r, y = Math.sin(a) * r + 4.5;
+    const anchor = Math.abs(Math.cos(a)) < .2 ? 'middle' : Math.cos(a) > 0 ? 'start' : 'end';
+    const dy = Math.sin(a) > .9 ? 12 : Math.sin(a) < -.9 ? -4 : 0;
+    labels += `<text data-k="${k}" x="${f(x)}" y="${f(y + dy)}" text-anchor="${anchor}">${d.k.toUpperCase()}</text>`;
+  });
+  ring.innerHTML = `<defs><radialGradient id="dlHub" cx=".5" cy=".42" r=".6"><stop offset="0" stop-color="#3C413D"/><stop offset="1" stop-color="#171A18"/></radialGradient>
+      <radialGradient id="dlWell" cx=".5" cy=".5" r=".5"><stop offset=".78" stop-color="#E4DFD4"/><stop offset="1" stop-color="#CFC8BA"/></radialGradient></defs>
+    <circle r="140" fill="url(#dlWell)"/><circle r="116" fill="url(#dlHub)"/>${ticks}${labels}`;
+  // the knob: the mark, in ochre, lit from the upper left
+  kSvg.innerHTML = `<defs>
+      <linearGradient id="dlKnobG" x1=".15" y1=".05" x2=".85" y2=".95"><stop offset="0" stop-color="#F7C66E"/><stop offset=".5" stop-color="#E1A23C"/><stop offset="1" stop-color="#B7802A"/></linearGradient>
+      <radialGradient id="dlKnobS" cx=".35" cy=".3" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></radialGradient>
+      <filter id="dlKnobSh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="3" dy="9" stdDeviation="7" flood-color="#2B2F2C" flood-opacity=".42"/></filter>
+    </defs>
+    <g class="rot" id="dlRot">
+      <path d="${markPath({ R: 150 })}" fill="url(#dlKnobG)" filter="url(#dlKnobSh)"/>
+      <path d="${markPath({ R: 150 })}" fill="url(#dlKnobS)"/>
+      <path d="${markPath({ R: 150 })}" fill="none" stroke="#FFF1CF" stroke-opacity=".55" stroke-width="1.6" transform="translate(-1 -1.4)"/>
+      <path d="${markPath({ R: 150 })}" fill="none" stroke="#7A5418" stroke-opacity=".35" stroke-width="1.2" transform="translate(1 1.4)"/>
+    </g>`;
+  const rot = kSvg.querySelector('#dlRot'), texts = ring.querySelectorAll('text'), led = document.getElementById('dlLed'), statusText = document.getElementById('dlStatusText');
+  const lcd = document.getElementById('dlLcd'), mode = document.getElementById('dlMode'), digits = document.getElementById('dlDigits'), bar = document.getElementById('dlBar');
+  const icons = { bm: lcd.querySelector('[data-i="bm"]'), all: lcd.querySelector('[data-i="all"]') };
+  let steps = 0, sel = 0, angle = -45, shown = DIMS[0].v, cmp = false, all = false, on = true, anim = 0;
+
+  // speaker grille whose holes draw the mark
+  const gr = document.getElementById('dlGrille');
+  if (gr) {
+    const W = 300, H = 90, c = document.createElement('canvas').getContext('2d'), path = new Path2D(markPath({ R: 40 }));
+    let dots = '';
+    for (let y = 6; y < H; y += 7) for (let x = 6; x < W; x += 7) {
+      const inside = c.isPointInPath(path, x - W / 2, y - H / 2);
+      dots += `<circle cx="${x}" cy="${y}" r="${inside ? 2.4 : 1.35}" fill="#2B2F2C" opacity="${inside ? .8 : .42}"/>`;
+    }
+    gr.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice"><rect width="${W}" height="${H}" fill="#E4DFD4"/>${dots}</svg>`;
+  }
+
+  function drawBar(v, b) {
+    let s = '';
+    for (let i = 0; i < 20; i++) s += `<rect x="${i * 10}" y="0" width="8" height="12" fill="#1E2622" opacity="${i < Math.round(v / 5) ? 1 : .08}"/>`;
+    if (b != null) s += `<path d="M${f(b * 2 - 1)} 14l-4 7h8Z" fill="#1E2622"/>`;
+    bar.innerHTML = s;
+  }
+  function setLed(v, b) {
+    const s = v - b >= 5 ? 'up' : v - b > -5 ? 'near' : 'down';
+    led.dataset.s = on ? s : 'off';
+    statusText.textContent = !on ? 'Standby' : s === 'up' ? 'Above benchmark' : s === 'near' ? 'Near benchmark' : 'Below benchmark';
+  }
+  function render(target) {
+    const d = DIMS[sel], v = all ? SAMPLE.overall : cmp ? d.b : d.v, b = all ? SAMPLE.bench : d.b;
+    mode.textContent = all ? 'READINESS' : d.k.toUpperCase();
+    icons.bm.classList.toggle('on', cmp && !all); icons.all.classList.toggle('on', all);
+    cancelAnimationFrame(anim);
+    const from = shown, t0 = performance.now(), dur = reduced ? 0 : 320;
+    const step = t => {
+      const p = dur ? Math.min(1, (t - t0) / dur) : 1, val = from + (v - from) * (1 - Math.pow(1 - p, 3));
+      drawSeg(digits, val.toFixed(1), '#1E2622', .08, false); drawBar(val, cmp ? null : b);
+      if (p < 1) anim = requestAnimationFrame(step); else shown = v;
+    };
+    anim = requestAnimationFrame(step);
+    setLed(all ? SAMPLE.overall : d.v, b);
+    texts.forEach(t => t.classList.toggle('on', +t.dataset.k === sel && !all));
+    knob.setAttribute('aria-valuenow', sel + 1); knob.setAttribute('aria-valuetext', `${d.k}, ${d.v.toFixed(1)}`);
+  }
+  // sound: a short tick, only after the viewer turns it on
+  let ac = null;
+  const snd = document.getElementById('dlSound');
+  function tick() {
+    if (!snd || !snd.checked) return;
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'square'; o.frequency.value = 1900; g.gain.setValueAtTime(.05, ac.currentTime); g.gain.exponentialRampToValueAtTime(.0001, ac.currentTime + .03);
+      o.connect(g).connect(ac.destination); o.start(); o.stop(ac.currentTime + .035);
+    } catch (e) {}
+  }
+  function go(n, silent) {
+    steps = n; angle = -45 + steps * 45;
+    const ns = ((steps % 8) + 8) % 8;
+    rot.style.transform = `rotate(${angle}deg)`;
+    if (ns !== sel || all) { sel = ns; all = false; if (!silent) tick(); }
+    render();
+  }
+  go(0, true);
+  // drag
+  let drag = null;
+  const centre = () => { const r = knob.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  knob.addEventListener('pointerdown', e => {
+    const [cx, cy] = centre(); drag = { a0: Math.atan2(e.clientY - cy, e.clientX - cx), s0: steps, last: steps, acc: 0, prev: Math.atan2(e.clientY - cy, e.clientX - cx) };
+    knob.setPointerCapture(e.pointerId); knob.classList.add('is-drag'); e.preventDefault();
+  });
+  knob.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const [cx, cy] = centre(), a = Math.atan2(e.clientY - cy, e.clientX - cx);
+    let da = a - drag.prev; if (da > Math.PI) da -= 2 * Math.PI; if (da < -Math.PI) da += 2 * Math.PI;
+    drag.acc += da; drag.prev = a;
+    const deg = drag.acc * 180 / Math.PI;
+    rot.style.transform = `rotate(${f(-45 + drag.s0 * 45 + deg)}deg)`;
+    const n = drag.s0 + Math.round(deg / 45);
+    if (n !== drag.last) { drag.last = n; steps = n; sel = ((n % 8) + 8) % 8; all = false; tick(); render(); }
+  });
+  const end = () => { if (!drag) return; knob.classList.remove('is-drag'); go(drag.last); drag = null; };
+  knob.addEventListener('pointerup', end); knob.addEventListener('pointercancel', end);
+  knob.addEventListener('keydown', e => {
+    const m = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 };
+    if (e.key in m) { go(steps + m[e.key]); e.preventDefault(); }
+  });
+  ring.addEventListener('click', e => {
+    const t = e.target.closest('text'); if (!t) return;
+    const k = +t.dataset.k; let d = k - sel; if (d > 4) d -= 8; if (d < -4) d += 8; go(steps + d);
+  });
+  // keys
+  document.querySelectorAll('.dl-k').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.k; tick();
+    if (k === 'power') { on = !on; b.setAttribute('aria-pressed', on); lcd.classList.toggle('is-off', !on); render(); }
+    if (k === 'cmp') { cmp = !cmp; all = false; b.setAttribute('aria-pressed', cmp); render(); }
+    if (k === 'eq') { all = true; cmp = false; document.querySelector('.dl-k[data-k="cmp"]').setAttribute('aria-pressed', 'false'); render(); }
+  }));
+  // fader legend
+  const size = document.getElementById('dl-size'), scale = document.getElementById('dlScale');
+  size && size.addEventListener('input', () => scale.querySelectorAll('span').forEach((s, i) => s.classList.toggle('on', i === +size.value)));
+})();
+</script>

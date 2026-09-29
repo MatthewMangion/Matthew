@@ -1,0 +1,529 @@
+<style>
+/* ===== 06 DATUM: dataism. White ground, pine data ink, faint baseline, ochre insight; the serif only when a number becomes an insight. ===== */
+.dt {
+  --dt-bg: #FBFAF7; --dt-ink: #0F1F1B; --dt-ink-2: #3F4A45; --dt-muted: #6E7A73; --dt-faint: #A5A199; --dt-grid: #E7E2D7; --dt-grid-2: #F1EDE4;
+  --dt-pine: #1D4A43; --dt-pine-soft: #DCE5DF; --dt-ochre: #D19C3F; --dt-ochre-soft: #F3E6C9; --dt-card: #FFFFFF;
+  --dt-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  background: var(--dt-bg); color: var(--dt-ink); padding-block: 0 clamp(64px, 9vw, 120px);
+}
+.dt .ch-tag { color: var(--dt-ink); }
+.dt-num { font-variant-numeric: tabular-nums; }
+.dt-ticker { border-bottom: 1px solid var(--dt-grid); background: #fff; overflow: hidden; }
+.dt-ticker-in { display: flex; gap: 0; font: 500 12px/1 var(--dt-mono); color: var(--dt-ink-2); white-space: nowrap; overflow-x: auto; scrollbar-width: none; }
+.dt-ticker-in::-webkit-scrollbar { display: none; }
+.dt-ticker span { padding: 14px 18px; border-right: 1px solid var(--dt-grid); }
+.dt-ticker span:first-child { padding-left: 0; }
+.dt-ticker b { color: var(--dt-ink); font-weight: 600; margin-left: 8px; }
+.dt-ticker em { font-style: normal; color: var(--dt-ochre); }
+.dt-cols { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; font: 500 10px/1 var(--dt-mono); color: var(--dt-faint); padding-block: 14px 0; }
+.dt-cols span { border-left: 1px solid var(--dt-grid); padding: 0 0 0 6px; height: 22px; }
+.dt-open { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: center; padding-block: clamp(28px, 4vw, 48px) clamp(40px, 6vw, 72px); }
+.dt-copy { grid-column: 1 / span 6; display: grid; gap: 22px; min-width: 0; }
+.dt-hero { grid-column: 7 / span 6; min-width: 0; }
+.dt-title { margin: 0; font: 600 clamp(48px, 6.4vw, 96px)/.95 var(--font-body); letter-spacing: -.05em; text-wrap: balance; }
+.dt-title .pt { color: var(--dt-ochre); }
+.dt-lede { margin: 0; font-size: 17px; line-height: 1.65; color: var(--dt-ink-2); max-width: 56ch; }
+.dt-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.dt-kv { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--dt-ink); margin: 6px 0 0; }
+.dt-kv div { padding: 12px 12px 0 0; border-right: 1px solid var(--dt-grid); }
+.dt-kv div:last-child { border-right: 0; }
+.dt-kv dt { font: 500 10.5px/1.3 var(--dt-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--dt-muted); }
+.dt-kv dd { margin: 4px 0 0; font: 600 15px/1.3 var(--font-body); }
+
+.dt-radar-wrap { position: relative; }
+.dt-radar { width: 100%; height: auto; display: block; overflow: visible; }
+.dt-radar text { font-family: var(--dt-mono); }
+.dt-orgs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.dt-orgs button { border: 1px solid var(--dt-grid); background: #fff; color: var(--dt-ink-2); border-radius: 999px; padding: 8px 14px; font: 500 13px/1 var(--font-body); cursor: pointer; transition: all .2s; }
+.dt-orgs button:hover { border-color: var(--dt-faint); }
+.dt-orgs button[aria-pressed="true"] { background: var(--dt-ink); color: #fff; border-color: var(--dt-ink); }
+.dt-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 12px 0 0; font: 500 12px/1.3 var(--dt-mono); color: var(--dt-ink-2); }
+.dt-legend i { display: inline-block; width: 18px; height: 10px; margin-right: 6px; vertical-align: -1px; border-radius: 2px; }
+.dt-caption { font: 500 11px/1.5 var(--dt-mono); color: var(--dt-muted); margin: 10px 0 0; }
+.dt-tip { position: absolute; pointer-events: none; z-index: 5; background: var(--dt-ink); color: #fff; padding: 8px 10px; border-radius: 6px; font: 500 12px/1.4 var(--dt-mono); white-space: nowrap; opacity: 0; transform: translate(-50%, calc(-100% - 12px)); transition: opacity .12s; box-shadow: 0 8px 20px -8px rgba(0,0,0,.5); }
+.dt-tip.on { opacity: 1; }
+.dt-tip b { font-weight: 600; color: #F3E6C9; }
+
+.dt-sec { border-top: 1px solid var(--dt-ink); padding-top: 18px; margin-top: clamp(40px, 6vw, 72px); }
+.dt-sec-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; align-items: end; margin-bottom: 24px; }
+.dt-sec-head .k { grid-column: 1 / span 3; font: 500 11px/1.4 var(--dt-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--dt-muted); margin: 0; }
+.dt-sec-head h3 { grid-column: 4 / span 6; margin: 0; font: 600 clamp(24px, 2.6vw, 34px)/1.1 var(--font-body); letter-spacing: -.03em; text-wrap: balance; }
+.dt-sec-head p.d { grid-column: 10 / span 3; margin: 0; font-size: 14px; line-height: 1.5; color: var(--dt-ink-2); }
+
+.dt-wall { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; border-left: 1px solid var(--dt-grid); border-top: 1px solid var(--dt-grid); }
+.dt-cell { border-right: 1px solid var(--dt-grid); border-bottom: 1px solid var(--dt-grid); padding: 14px 14px 12px; display: grid; gap: 6px; background: #fff; }
+.dt-cell svg { width: 100%; height: auto; display: block; }
+.dt-cell p { margin: 0; display: flex; justify-content: space-between; gap: 8px; font: 500 12px/1.3 var(--font-body); color: var(--dt-ink-2); }
+.dt-cell p b { font: 600 13px/1 var(--dt-mono); color: var(--dt-ink); font-variant-numeric: tabular-nums; }
+.dt-cell small { font: 500 10.5px/1.3 var(--dt-mono); color: var(--dt-muted); }
+.dt-cell.top p b::after { content: " \2191"; color: var(--dt-pine); }
+
+.dt-field-wrap { position: relative; background: #fff; border: 1px solid var(--dt-grid); }
+.dt-field-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--dt-grid); }
+.dt-seg { display: inline-flex; border: 1px solid var(--dt-grid); border-radius: 999px; padding: 3px; }
+.dt-seg button { border: 0; background: transparent; padding: 7px 14px; border-radius: 999px; font: 500 13px/1 var(--font-body); color: var(--dt-ink-2); cursor: pointer; }
+.dt-seg button[aria-pressed="true"] { background: var(--dt-ink); color: #fff; }
+.dt-canvas { display: block; width: 100%; height: 360px; cursor: crosshair; }
+
+.dt-measure { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+.dt-matrix-wrap { grid-column: span 7; overflow-x: auto; }
+.dt-matrix { border-collapse: collapse; width: 100%; min-width: 560px; }
+.dt-matrix th { font: 500 11px/1.3 var(--dt-mono); text-transform: uppercase; letter-spacing: .03em; color: var(--dt-muted); text-align: left; padding: 0 6px 8px 0; font-weight: 500; }
+.dt-matrix th[scope=row] { padding: 0 10px 0 0; white-space: nowrap; color: var(--dt-ink-2); }
+.dt-matrix td { padding: 3px; }
+.dt-mx { height: 64px; border-radius: 6px; display: grid; grid-template-rows: 1fr auto; padding: 8px 9px; box-shadow: inset 0 0 0 1px rgba(15,31,27,.08); position: relative; }
+.dt-mx b { font: 600 19px/1 var(--font-body); }
+.dt-mx span { font: 600 11px/1 var(--dt-mono); font-variant-numeric: tabular-nums; }
+.dt-mx em { position: absolute; top: 7px; right: 8px; font: 700 9px/1 var(--dt-mono); font-style: normal; padding: 3px 5px; border-radius: 3px; background: rgba(255,255,255,.85); color: #0F1F1B; letter-spacing: .04em; }
+.dt-mx em.fail { background: #A94436; color: #fff; }
+.dt-plot { grid-column: span 5; }
+.dt-plot svg { width: 100%; height: auto; display: block; overflow: visible; }
+.dt-plot svg text { font-family: var(--dt-mono); }
+.dt-finding { margin: 14px 0 0; padding: 14px 16px; background: var(--dt-ochre-soft); border-radius: 8px; font-size: 14px; line-height: 1.55; color: #3B2E12; }
+.dt-finding b { font-variant-numeric: tabular-nums; }
+
+.dt-comp { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+.dt-comp-a { grid-column: span 5; display: grid; gap: 22px; align-content: start; }
+.dt-comp-b { grid-column: span 7; }
+.dt-h4 { margin: 0 0 10px; font: 500 11px/1 var(--dt-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--dt-muted); }
+.dt-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.dt-btn { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent; font: 500 15px/1 var(--font-body); cursor: pointer; text-decoration: none; transition: background-color .2s, border-color .2s; }
+.dt-btn small { font: 500 11px/1 var(--dt-mono); opacity: .7; padding-left: 10px; border-left: 1px solid currentColor; }
+.dt-btn--primary { background: var(--dt-pine); color: #F6F2E9; }
+.dt-btn--primary:hover { background: #163B35; }
+.dt-btn--secondary { background: #fff; color: var(--dt-ink); border-color: var(--dt-grid); }
+.dt-btn--secondary:hover { border-color: var(--dt-faint); }
+.dt-btn--accent { background: var(--dt-ochre); color: #2E2208; }
+.dt-btn--ghost { background: none; color: var(--dt-pine); padding-inline: 4px; }
+.dt-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.dt-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; font: 600 13px/1 var(--font-body); }
+.dt-badge code { font: 600 11px/1 var(--dt-mono); padding-left: 8px; border-left: 1px solid currentColor; }
+.dt-badge--up { background: var(--dt-pine-soft); color: var(--dt-pine); }
+.dt-badge--em { background: var(--dt-ochre-soft); color: #6A4A10; }
+.dt-badge--no { background: #EFEBE2; color: #5E6A63; }
+.dt-field { display: grid; gap: 6px; }
+.dt-field label { display: flex; justify-content: space-between; font: 600 14px/1.3 var(--font-body); }
+.dt-field label span { font: 500 11px/1.3 var(--dt-mono); color: var(--dt-muted); font-weight: 500; }
+.dt-field input { font: 400 16px/1.4 var(--font-body); padding: 12px 14px; border: 1px solid var(--dt-grid); border-radius: 12px; background: #fff; color: var(--dt-ink); outline: none; }
+.dt-field input:focus { border-color: var(--dt-pine); box-shadow: 0 0 0 3px var(--dt-pine-soft); }
+.dt-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--dt-grid); background: #fff; margin-bottom: 22px; }
+.dt-stat { padding: 16px; border-right: 1px solid var(--dt-grid); display: grid; gap: 8px; align-content: start; }
+.dt-stat:last-child { border-right: 0; }
+.dt-stat .n { margin: 0; font: 600 40px/1 var(--font-body); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.dt-stat .n.ins { font: 500 44px/1 var(--font-display); letter-spacing: -.01em; color: var(--dt-ochre); }
+.dt-stat .n.base { color: var(--dt-faint); }
+.dt-stat .n.head { color: var(--dt-pine); }
+.dt-stat .w { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; width: 100%; max-width: 132px; }
+.dt-stat .w i { aspect-ratio: 1; border-radius: 1.5px; background: var(--dt-grid-2); }
+.dt-stat p { margin: 0; font-size: 13px; line-height: 1.4; color: var(--dt-ink-2); }
+.dt-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.dt-table th { text-align: left; font: 500 11px/1.3 var(--dt-mono); text-transform: uppercase; letter-spacing: .03em; color: var(--dt-muted); padding: 0 8px 8px 0; border-bottom: 1px solid var(--dt-ink); }
+.dt-table th button { all: unset; cursor: pointer; }
+.dt-table th button:focus-visible { outline: 2px solid var(--dt-ochre); }
+.dt-table th button::after { content: " \2195"; opacity: .45; }
+.dt-table td { padding: 9px 8px 9px 0; border-bottom: 1px solid var(--dt-grid); font-variant-numeric: tabular-nums; vertical-align: middle; }
+.dt-table td.bar { width: 42%; }
+.dt-table .track { position: relative; height: 10px; background: var(--dt-grid-2); border-radius: 2px; }
+.dt-table .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--dt-pine); border-radius: 0 4px 4px 0; }
+.dt-table .bm { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--dt-ink); }
+.dt-table tr.low .fill { background: var(--dt-ochre); }
+.dt-table .delta { font: 500 12px/1 var(--dt-mono); color: var(--dt-pine); }
+.dt-table tr.low .delta { color: #8A5F18; }
+@media (max-width: 1000px) {
+  .dt-copy, .dt-hero { grid-column: 1 / -1; }
+  .dt-wall { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dt-sec-head .k, .dt-sec-head h3, .dt-sec-head p.d { grid-column: 1 / -1; }
+  .dt-matrix-wrap, .dt-plot, .dt-comp-a, .dt-comp-b { grid-column: 1 / -1; }
+  .dt-cols span:nth-child(n+7) { display: none; }
+  .dt-cols { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .dt-wall { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dt-stats { grid-template-columns: minmax(0, 1fr); }
+  .dt-stat { border-right: 0; border-bottom: 1px solid var(--dt-grid); }
+  .dt-kv { grid-template-columns: minmax(0, 1fr); }
+  .dt-kv div { border-right: 0; border-bottom: 1px solid var(--dt-grid); padding-bottom: 10px; }
+  .dt-canvas { height: 320px; }
+}
+</style>
+
+<section class="ch dt" id="datum" data-ch="datum" aria-labelledby="dt-title">
+  <div class="dt-ticker" aria-label="Sample data ticker">
+    <div class="wrap dt-ticker-in">
+      <span>Responses<b class="dt-num">4,812</b></span><span>Organisations<b class="dt-num">37</b></span><span>Dimensions<b>8</b></span><span>Median<b class="dt-num">61.2</b></span><span>P90<b class="dt-num">83.0</b></span><span>Benchmark<b class="dt-num">58.0</b></span><span>Updated<b>29.09.2026 09:14</b></span><span><em>Sample data</em></span>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="dt-cols" aria-hidden="true"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span></div>
+    <div class="dt-open">
+      <div class="dt-copy">
+        <p class="ch-tag"><i>06</i> Datum &middot; 2010s &middot; the mark as a chart</p>
+        <h2 class="dt-title" id="dt-title">Every <span class="pt">point</span> is a measurement.</h2>
+        <p class="dt-lede">Dataism, a term popularised by the historian Yuval Noah Harari, describes a world that values anything by the data it produces. Datum takes the idea at its word, with Mesura&rsquo;s restraint. Every element in the system is a measurement, the logo included. The mark has eight points, so here they are eight dimensions, drawn to scale from each organisation&rsquo;s results. The opening turns to face the dimension with the most room to grow.</p>
+        <div class="dt-actions">
+          <a class="dt-btn dt-btn--primary" href="#datum">Get your Diagnostic <small>8 min</small></a>
+          <a class="dt-btn dt-btn--secondary" href="#dtField">See the responses</a>
+        </div>
+        <dl class="dt-kv">
+          <div><dt>Points</dt><dd>8 dimensions, to scale</dd></div>
+          <div><dt>Opening</dt><dd>Faces the weakest</dd></div>
+          <div><dt>Serif</dt><dd>Insights only</dd></div>
+        </dl>
+      </div>
+      <div class="dt-hero">
+        <div class="dt-radar-wrap" id="dtRadarWrap">
+          <svg class="dt-radar" id="dtRadar" viewBox="-300 -240 600 480" role="img" aria-label="Readiness mark for the selected organisation, eight dimensions drawn to scale against the benchmark."></svg>
+          <div class="dt-tip" id="dtRadarTip"></div>
+        </div>
+        <div class="dt-orgs" id="dtOrgs" role="group" aria-label="Organisation"></div>
+        <p class="dt-legend"><span><i style="background:#1D4A43"></i>Organisation</span><span><i style="border:1.5px dashed #6E7A73"></i>Benchmark</span><span><i style="background:#D19C3F;width:10px;border-radius:50%"></i>Weakest dimension</span></p>
+        <p class="dt-caption" id="dtRadarCap">Opening faces Skills, 58.6. All organisations are fictional.</p>
+      </div>
+    </div>
+
+    <section class="dt-sec" aria-labelledby="dt-wall-h">
+      <div class="dt-sec-head"><p class="k">Signature 1 &middot; identity from data</p><h3 id="dt-wall-h">Twelve organisations, twelve marks.</h3><p class="d">Same geometry, different results. Sorted by overall score. Fictional organisations, illustrative scores.</p></div>
+      <div class="dt-wall" id="dtWall"></div>
+    </section>
+
+    <section class="dt-sec" id="dtField" aria-labelledby="dt-field-h">
+      <div class="dt-sec-head"><p class="k">Signature 2 &middot; every dot is a person</p><h3 id="dt-field-h">1,200 responses, poured into their shape.</h3><p class="d">Pine sits at or above the benchmark, faint below it. Hover a column for its count. Illustrative data.</p></div>
+      <div class="dt-field-wrap">
+        <div class="dt-field-bar">
+          <div class="dt-seg" role="group" aria-label="View">
+            <button type="button" data-v="dist" aria-pressed="true">Distribution</button>
+            <button type="button" data-v="teams" aria-pressed="false">By team</button>
+            <button type="button" data-v="flow" aria-pressed="false">Stream</button>
+          </div>
+          <p class="dt-legend" style="margin:0"><span><i style="background:#1D4A43;width:10px"></i>At or above 58</span><span><i style="background:#A5A199;width:10px"></i>Below 58</span><span><i style="background:#D19C3F;width:3px"></i>Median</span></p>
+        </div>
+        <canvas class="dt-canvas" id="dtCanvas" role="img" aria-label="Distribution of 1,200 readiness scores. Median 62.4. Illustrative data."></canvas>
+        <div class="dt-tip" id="dtFieldTip"></div>
+      </div>
+    </section>
+
+    <section class="dt-sec" aria-labelledby="dt-measure-h">
+      <div class="dt-sec-head"><p class="k">Signature 3 &middot; the palette, measured</p><h3 id="dt-measure-h">The system checks itself before anyone else does.</h3><p class="d">Every ratio on this page is computed in the browser from the v1.0 hex values.</p></div>
+      <div class="dt-measure">
+        <div class="dt-matrix-wrap"><table class="dt-matrix" id="dtMatrix" aria-label="WCAG contrast ratios, text colour against background colour"></table></div>
+        <div class="dt-plot">
+          <svg id="dtPlot" viewBox="0 0 400 290" role="img" aria-label="Mesura colours plotted by OKLCH lightness and chroma"></svg>
+          <p class="dt-finding" id="dtFinding"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dt-sec" aria-labelledby="dt-comp-h">
+      <div class="dt-sec-head"><p class="k">Components</p><h3 id="dt-comp-h">Controls that show their numbers.</h3><p class="d">Inter for data, mono for annotation, and the serif only when a number becomes an insight.</p></div>
+      <div class="dt-comp">
+        <div class="dt-comp-a">
+          <div><p class="dt-h4">Buttons</p>
+            <div class="dt-btns">
+              <button class="dt-btn dt-btn--primary" type="button">Get your Diagnostic <small>8 min</small></button>
+              <button class="dt-btn dt-btn--secondary" type="button">How it works</button>
+              <button class="dt-btn dt-btn--accent" type="button">Download report <small>PDF 2.4 MB</small></button>
+              <button class="dt-btn dt-btn--ghost" type="button">Learn more &rarr;</button>
+            </div></div>
+          <div><p class="dt-h4">Badges</p>
+            <div class="dt-badges">
+              <span class="dt-badge dt-badge--up">Above benchmark <code>+14.4</code></span>
+              <span class="dt-badge dt-badge--em">Emerging <code>40&ndash;59</code></span>
+              <span class="dt-badge dt-badge--no">Not measured <code>&mdash;</code></span>
+            </div></div>
+          <div class="dt-field"><label for="dt-org">Organisation name <span id="dtCount">14 / 80</span></label><input id="dt-org" type="text" value="Harbour &amp; Co." maxlength="80" autocomplete="off"></div>
+        </div>
+        <div class="dt-comp-b">
+          <p class="dt-h4">Stat cards &middot; each figure also drawn as 100 squares</p>
+          <div class="dt-stats">
+            <article class="dt-stat"><p class="n head">29.6%</p><div class="w" data-w="30" data-c="#1D4A43"></div><p>of Maltese workers use generative AI at work. First in the EU.</p></article>
+            <article class="dt-stat"><p class="n base">15.1%</p><div class="w" data-w="15" data-c="#A5A199"></div><p>is the EU average. Malta sits at nearly double.</p></article>
+            <article class="dt-stat"><p class="n ins">21.6%</p><div class="w" data-w="22" data-c="#D19C3F"></div><p>of organisations formally measure it. The rest is shadow AI.</p></article>
+          </div>
+          <p class="dt-h4">Table &middot; Harbour &amp; Co. against the benchmark &middot; select a heading to sort</p>
+          <table class="dt-table" id="dtTable">
+            <thead><tr><th scope="col"><button type="button" data-s="k">Dimension</button></th><th scope="col"><button type="button" data-s="v">Score</button></th><th scope="col">Against benchmark</th><th scope="col"><button type="button" data-s="d">&Delta;</button></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+
+<script>
+(function () {
+  const { markPath, f, svg, SAMPLE, reduced, loop, onView, rng, contrast, hexRgb, lerp, easeInOut } = MZ;
+  const DIMS = SAMPLE.dims.map(d => d.k);
+  const ORGS = [
+    { name: 'Harbour & Co.', v: SAMPLE.dims.map(d => d.v) },
+    { name: 'Northgate Clinics', v: [52, 61, 48, 70, 74, 58, 55, 46] },
+    { name: 'Kestrel Legal', v: [44, 67, 59, 83, 71, 62, 49, 57] },
+    { name: 'Lanterna Retail', v: [78, 63, 74, 31, 52, 66, 71, 80] },
+    { name: 'Benchmark', v: SAMPLE.dims.map(d => d.b) }
+  ];
+  const BENCH = SAMPLE.dims.map(d => d.b);
+  const mean = a => a.reduce((s, x) => s + x, 0) / a.length;
+  const weakest = a => a.indexOf(Math.min(...a));
+  /* The data mark: tips to scale (radius = score), geometry scaled to the mean so the aperture stays in proportion. */
+  function dataMark(vals, R, notchDeg) {
+    const t = vals.map(v => v / 100), m = mean(t);
+    return markPath({ R: R * m, tips: t.map(x => x / m), innerFollow: true, notch: notchDeg });
+  }
+
+  /* ---- Hero radar ---- */
+  const rs = document.getElementById('dtRadar'), R = 190;
+  if (rs) {
+    let grid = '';
+    for (const s of [.25, .5, .75, 1]) {
+      let d = '';
+      for (let k = 0; k < 8; k++) { const a = (-90 + 45 * k) * Math.PI / 180; d += (k ? 'L' : 'M') + f(Math.cos(a) * R * s) + ' ' + f(Math.sin(a) * R * s); }
+      grid += `<path d="${d}Z" fill="none" stroke="#E7E2D7" stroke-width="1"/><text x="4" y="${f(-R * s - 4)}" font-size="10" fill="#A5A199">${s * 100}</text>`;
+    }
+    for (let k = 0; k < 8; k++) { const a = (-90 + 45 * k) * Math.PI / 180; grid += `<line x1="0" y1="0" x2="${f(Math.cos(a) * R)}" y2="${f(Math.sin(a) * R)}" stroke="#E7E2D7"/>`; }
+    const bench = (() => { let d = ''; BENCH.forEach((v, k) => { const a = (-90 + 45 * k) * Math.PI / 180; d += (k ? 'L' : 'M') + f(Math.cos(a) * R * v / 100) + ' ' + f(Math.sin(a) * R * v / 100); }); return d + 'Z'; })();
+    rs.innerHTML = `${grid}<path d="${bench}" fill="none" stroke="#6E7A73" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <path id="dtMarkPath" fill="#1D4A43" fill-opacity=".94"/><g id="dtDots"></g><g id="dtLabels"></g>`;
+    const mp = rs.querySelector('#dtMarkPath'), dots = rs.querySelector('#dtDots'), labs = rs.querySelector('#dtLabels');
+    let cur = ORGS[0].v.slice(), curNotch = -90 + 45 * weakest(cur), anim = 0, sel = 0;
+    function paint(vals, notch) {
+      mp.setAttribute('d', dataMark(vals, R, notch));
+      const w = weakest(vals);
+      let dd = '', ll = '';
+      vals.forEach((v, k) => {
+        const a = (-90 + 45 * k) * Math.PI / 180, x = Math.cos(a) * R * v / 100, y = Math.sin(a) * R * v / 100;
+        dd += `<circle cx="${f(x)}" cy="${f(y)}" r="${k === w ? 6 : 3.6}" fill="${k === w ? '#D19C3F' : '#0F1F1B'}" stroke="#FBFAF7" stroke-width="2"/>`;
+        const lx = Math.cos(a) * (R + 18), ly = Math.sin(a) * (R + 18), anc = Math.abs(Math.cos(a)) < .2 ? 'middle' : Math.cos(a) > 0 ? 'start' : 'end';
+        const y0 = Math.sin(a) > .9 ? ly + 14 : Math.sin(a) < -.9 ? ly - 22 : ly - 4;
+        ll += `<text x="${f(lx)}" y="${f(y0)}" text-anchor="${anc}" font-size="11" letter-spacing=".5" fill="#6E7A73">${DIMS[k].toUpperCase()}</text><text x="${f(lx)}" y="${f(y0 + 17)}" text-anchor="${anc}" font-family="Inter, sans-serif" font-size="15" font-weight="${k === w ? 700 : 600}" fill="#0F1F1B">${v.toFixed(1)}</text>`;
+      });
+      dots.innerHTML = dd; labs.innerHTML = ll;
+    }
+    paint(cur, curNotch);
+    const orgs = document.getElementById('dtOrgs'), cap = document.getElementById('dtRadarCap');
+    orgs.innerHTML = ORGS.map((o, i) => `<button type="button" aria-pressed="${i === 0}" data-i="${i}">${o.name}</button>`).join('');
+    orgs.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      sel = +b.dataset.i; orgs.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+      const to = ORGS[sel].v, w = weakest(to);
+      let toNotch = -90 + 45 * w, dn = ((toNotch - curNotch) % 360 + 540) % 360 - 180; toNotch = curNotch + dn;
+      const from = cur.slice(), fromN = curNotch, t0 = performance.now(), dur = reduced ? 0 : 750;
+      cancelAnimationFrame(anim);
+      const step = t => {
+        const p = dur ? Math.min(1, (t - t0) / dur) : 1, e2 = easeInOut(p);
+        cur = from.map((v, k) => lerp(v, to[k], e2)); curNotch = lerp(fromN, toNotch, e2);
+        paint(cur, curNotch);
+        if (p < 1) anim = requestAnimationFrame(step);
+      };
+      anim = requestAnimationFrame(step);
+      cap.textContent = `Opening faces ${DIMS[w]}, ${to[w].toFixed(1)}. Overall ${mean(to).toFixed(1)}. All organisations are fictional.`;
+    });
+    // hover: nearest axis
+    const tip = document.getElementById('dtRadarTip'), wrap = document.getElementById('dtRadarWrap');
+    rs.addEventListener('pointermove', e => {
+      const r = rs.getBoundingClientRect(), sx = 600 / r.width, x = (e.clientX - r.left) * sx - 300, y = (e.clientY - r.top) * (480 / r.height) - 240;
+      if (Math.hypot(x, y) < 30) { tip.classList.remove('on'); return; }
+      let a = Math.atan2(y, x) * 180 / Math.PI + 90; a = (a + 360) % 360; const k = Math.round(a / 45) % 8;
+      tip.innerHTML = `<b>${DIMS[k]}</b> ${cur[k].toFixed(1)} &middot; benchmark ${BENCH[k].toFixed(1)}`;
+      const wr = wrap.getBoundingClientRect(), ang = (-90 + 45 * k) * Math.PI / 180, px = (Math.cos(ang) * R * cur[k] / 100 + 300) / sx, py = (Math.sin(ang) * R * cur[k] / 100 + 240) / (480 / r.height);
+      tip.style.left = `${px + r.left - wr.left}px`; tip.style.top = `${py + r.top - wr.top}px`; tip.classList.add('on');
+    });
+    rs.addEventListener('pointerleave', () => tip.classList.remove('on'));
+  }
+
+  /* ---- Wall of twelve ---- */
+  const wall = document.getElementById('dtWall');
+  if (wall) {
+    const names = ['Harbour & Co.', 'Northgate Clinics', 'Kestrel Legal', 'Lanterna Retail', 'Saltpan Freight', 'Copperline Energy', 'Wharfside Hotels', 'Bluestone Council', 'Ironleaf Software', 'Tidewater Bank', 'Oakmere Schools', 'Quayline Media'];
+    const r = rng(31);
+    const list = names.map((n, i) => {
+      const v = i < 4 ? ORGS[i].v : Array.from({ length: 8 }, () => Math.round(30 + r() * 58));
+      return { n, v, o: mean(v) };
+    }).sort((a, b) => b.o - a.o);
+    wall.innerHTML = list.map((o, i) => {
+      const w = weakest(o.v);
+      return `<div class="dt-cell${i < 3 ? ' top' : ''}"><svg viewBox="-110 -110 220 220" role="img" aria-label="${o.n}, overall ${o.o.toFixed(1)}, weakest ${DIMS[w]}">
+        <circle r="100" fill="none" stroke="#F1EDE4"/><path d="${dataMark(o.v, 100, -90 + 45 * w)}" fill="#1D4A43"/>
+        <circle cx="${f(Math.cos((-90 + 45 * w) * Math.PI / 180) * o.v[w])}" cy="${f(Math.sin((-90 + 45 * w) * Math.PI / 180) * o.v[w])}" r="7" fill="#D19C3F" stroke="#fff" stroke-width="2.5"/></svg>
+        <p><span>${o.n}</span><b>${o.o.toFixed(1)}</b></p><small>weakest &middot; ${DIMS[w].toLowerCase()}</small></div>`;
+    }).join('');
+  }
+
+  /* ---- 1,200 people ---- */
+  const cv = document.getElementById('dtCanvas');
+  if (cv) {
+    const ctx = cv.getContext('2d'), N = 1200, r2 = rng(77), TEAMS = [['Operations', 55, .3], ['Finance', 60, .2], ['Sales', 64, .25], ['Technology', 71, .25]];
+    const gauss = () => { let u = 0, v = 0; while (!u) u = r2(); while (!v) v = r2(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); };
+    const P = [];
+    for (let i = 0; i < N; i++) {
+      let x = r2(), t = 0, acc = 0; for (let k = 0; k < 4; k++) { acc += TEAMS[k][2]; if (x <= acc) { t = k; break; } }
+      const s = Math.max(3, Math.min(99, TEAMS[t][1] + gauss() * 13));
+      P.push({ s, t, x: 0, y: 0, tx: 0, ty: 0, fx: 0, fy: 0, d: r2() * 260, lane: Math.floor(r2() * 7), ph: r2() * 6.28, sp: .6 + r2() * .8 });
+    }
+    const sorted = P.map(p => p.s).sort((a, b) => a - b), median = sorted[N >> 1];
+    const teamMed = TEAMS.map((_, k) => { const a = P.filter(p => p.t === k).map(p => p.s).sort((x, y) => x - y); return a[a.length >> 1]; });
+    let W = 0, H = 0, dpr = 1, view = 'dist', t0 = 0, moving = false, geo = null;
+    const DOT = 4, GAP = 1.2;
+    function size() {
+      const r = cv.getBoundingClientRect(); dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function layout(v) {
+      const pad = { l: 28, r: 28, b: 44, t: 26 };
+      if (v === 'dist') {
+        const bins = 20, bw = (W - pad.l - pad.r) / bins, counts = new Array(bins).fill(0);
+        P.forEach(p => counts[Math.min(bins - 1, Math.floor(p.s / 5))]++);
+        const rowsMax = Math.floor((H - pad.t - pad.b - 34) / (DOT + GAP)), fit = Math.max(1, Math.floor((bw - 4) / (DOT + GAP)));
+        const per = Math.min(fit, Math.max(1, Math.ceil(Math.max(...counts) / rowsMax))), fill = new Array(bins).fill(0);
+        P.slice().sort((a, b) => a.s - b.s).forEach(p => {
+          const b = Math.min(bins - 1, Math.floor(p.s / 5)), n = fill[b]++;
+          p.tx = pad.l + b * bw + 2 + (n % per) * (DOT + GAP); p.ty = H - pad.b - (Math.floor(n / per) + 1) * (DOT + GAP);
+        });
+        geo = { v, pad, bins, bw, fill };
+      } else if (v === 'teams') {
+        const gap = 26, tw = (W - pad.l - pad.r - gap * 3) / 4, bins = 10, bw = tw / bins;
+        const counts = TEAMS.map(() => new Array(bins).fill(0)); P.forEach(p => counts[p.t][Math.min(bins - 1, Math.floor(p.s / 10))]++);
+        const rowsMax = Math.floor((H - pad.t - pad.b - 34) / (DOT + GAP)), fit = Math.max(1, Math.floor((bw - 2) / (DOT + GAP)));
+        const per = Math.min(fit, Math.max(1, Math.ceil(Math.max(...counts.flat()) / rowsMax)));
+        const fill = TEAMS.map(() => new Array(bins).fill(0));
+        P.slice().sort((a, b) => a.s - b.s).forEach(p => {
+          const b = Math.min(bins - 1, Math.floor(p.s / 10)), n = fill[p.t][b]++, ox = pad.l + p.t * (tw + gap);
+          p.tx = ox + b * bw + 1 + (n % per) * (DOT + GAP); p.ty = H - pad.b - (Math.floor(n / per) + 1) * (DOT + GAP);
+        });
+        geo = { v, pad, bins, bw, tw, gap, fill };
+      } else geo = { v, pad };
+    }
+    function flowPos(p, t) {
+      const lanes = 7, lh = (H - 80) / lanes, speed = 38 * p.sp;
+      const x = ((p.d * 5 + t * speed / 1000 * 1) % (W + 40)) - 20;
+      return [x, 40 + p.lane * lh + lh / 2 + Math.sin(x / 90 + p.ph) * lh * .32];
+    }
+    const X = s => geo.pad.l + s / 100 * (W - geo.pad.l - geo.pad.r);
+    function axes() {
+      ctx.font = "500 11px 'JetBrains Mono', monospace"; ctx.textAlign = 'center'; ctx.fillStyle = '#6E7A73'; ctx.strokeStyle = '#E7E2D7'; ctx.lineWidth = 1;
+      const base = H - geo.pad.b;
+      if (geo.v === 'dist') {
+        ctx.beginPath(); ctx.moveTo(geo.pad.l, base + .5); ctx.lineTo(W - geo.pad.r, base + .5); ctx.stroke();
+        for (const s of [0, 25, 50, 75, 100]) ctx.fillText(s, X(s), base + 20);
+        ctx.fillText('readiness score', W / 2, base + 38);
+        vline(X(SAMPLE.bench), '#6E7A73', [4, 4], `benchmark ${SAMPLE.bench.toFixed(0)}`, 'left', 0);
+        vline(X(median), '#D19C3F', [], `median ${median.toFixed(1)}`, 'right', 16);
+      } else if (geo.v === 'teams') {
+        TEAMS.forEach((tm, k) => {
+          const ox = geo.pad.l + k * (geo.tw + geo.gap);
+          ctx.beginPath(); ctx.moveTo(ox, base + .5); ctx.lineTo(ox + geo.tw, base + .5); ctx.stroke();
+          ctx.fillStyle = '#0F1F1B'; ctx.font = "600 13px Inter, sans-serif"; ctx.fillText(tm[0], ox + geo.tw / 2, base + 20);
+          ctx.fillStyle = '#6E7A73'; ctx.font = "500 11px 'JetBrains Mono', monospace"; ctx.fillText(`median ${teamMed[k].toFixed(1)}`, ox + geo.tw / 2, base + 36);
+          const mx = ox + teamMed[k] / 100 * geo.tw; ctx.strokeStyle = '#D19C3F'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(mx, geo.pad.t + 30); ctx.lineTo(mx, base); ctx.stroke(); ctx.strokeStyle = '#E7E2D7'; ctx.lineWidth = 1;
+        });
+      } else {
+        ctx.textAlign = 'left'; ctx.fillText('Responses arriving, one dot per person', geo.pad.l, 22);
+      }
+    }
+    function vline(x, col, dash, label, side, dy = 0) {
+      ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(x, geo.pad.t); ctx.lineTo(x, H - geo.pad.b); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.fillStyle = '#0F1F1B'; ctx.font = "600 11px 'JetBrains Mono', monospace"; ctx.textAlign = side === 'left' ? 'right' : 'left';
+      ctx.fillText(label, x + (side === 'left' ? -6 : 6), geo.pad.t + 10 + dy); ctx.restore();
+    }
+    function frame(t) {
+      ctx.clearRect(0, 0, W, H);
+      axes();
+      const el = t - t0;
+      let still = true;
+      for (const p of P) {
+        let x, y;
+        if (view === 'flow') { [x, y] = flowPos(p, t); still = false; }
+        else {
+          const k = reduced ? 1 : Math.max(0, Math.min(1, (el - p.d) / 900)), e = easeInOut(k);
+          x = lerp(p.fx, p.tx, e); y = lerp(p.fy, p.ty, e); if (k < 1) still = false;
+        }
+        p.x = x; p.y = y;
+        ctx.fillStyle = p.s >= SAMPLE.bench ? '#1D4A43' : '#A5A199';
+        ctx.fillRect(x, y, DOT, DOT);
+      }
+      moving = !still;
+    }
+    function go(v, fromStream) {
+      view = v;
+      layout(v === 'flow' ? 'flow' : v);
+      if (v !== 'flow') P.forEach(p => { p.fx = fromStream ? -20 - p.d : p.x; p.fy = fromStream ? H / 2 + (p.lane - 3) * 30 : p.y; });
+      t0 = performance.now(); moving = true;
+      document.querySelectorAll('#dtField .dt-seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v));
+    }
+    size(); layout('dist'); P.forEach(p => { p.x = p.fx = p.tx; p.y = p.fy = p.ty; }); frame(performance.now()); moving = false;
+    let poured = false;
+    onView(cv, () => { if (poured || reduced) return; poured = true; go('dist', true); }, null, { threshold: 0.35 });
+    loop(cv, t => { if (moving || view === 'flow') frame(t); });
+    document.querySelectorAll('#dtField .dt-seg button').forEach(b => b.addEventListener('click', () => { poured = true; go(b.dataset.v, false); if (reduced) frame(performance.now()); }));
+    let rt = 0; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { size(); layout(view); P.forEach(p => { p.x = p.fx = p.tx; p.y = p.fy = p.ty; }); frame(performance.now()); }, 150); });
+    // hover counts
+    const tip = document.getElementById('dtFieldTip'), fw = cv.parentElement;
+    cv.addEventListener('pointermove', e => {
+      if (!geo || geo.v === 'flow') { tip.classList.remove('on'); return; }
+      const r = cv.getBoundingClientRect(), x = e.clientX - r.left;
+      let label = '';
+      if (geo.v === 'dist') { const b = Math.floor((x - geo.pad.l) / geo.bw); if (b < 0 || b >= geo.bins) { tip.classList.remove('on'); return; } label = `<b>${b * 5}&ndash;${b * 5 + 4}</b> &middot; ${geo.fill[b]} people &middot; ${(geo.fill[b] / N * 100).toFixed(1)}%`; }
+      else { const k = Math.floor((x - geo.pad.l) / (geo.tw + geo.gap)); if (k < 0 || k > 3) { tip.classList.remove('on'); return; } const b = Math.max(0, Math.min(9, Math.floor((x - geo.pad.l - k * (geo.tw + geo.gap)) / geo.bw))); label = `<b>${TEAMS[k][0]}</b> &middot; ${b * 10}&ndash;${b * 10 + 9} &middot; ${geo.fill[k][b]} people`; }
+      tip.innerHTML = label; tip.style.left = `${e.clientX - fw.getBoundingClientRect().left}px`; tip.style.top = `${e.clientY - fw.getBoundingClientRect().top}px`; tip.classList.add('on');
+    });
+    cv.addEventListener('pointerleave', () => tip.classList.remove('on'));
+    cv.setAttribute('aria-label', `Distribution of 1,200 readiness scores. Median ${median.toFixed(1)}. Illustrative data.`);
+  }
+
+  /* ---- The palette, measured ---- */
+  const FG = [['Ink', '#22362F'], ['Pine', '#1D4A43'], ['Ink body', '#45534D'], ['Ink muted', '#6E7A73'], ['Ochre', '#D19C3F'], ['Paper', '#F2EDE3']];
+  const BG = [['Paper', '#F2EDE3'], ['Surface', '#FFFFFF'], ['Sunken', '#EAE4D6'], ['Pine', '#1D4A43'], ['Ochre', '#D19C3F']];
+  const mx = document.getElementById('dtMatrix');
+  if (mx) {
+    let h = '<thead><tr><th scope="col">Text on</th>' + BG.map(b => `<th scope="col">${b[0]}</th>`).join('') + '</tr></thead><tbody>';
+    FG.forEach(([fn, fh]) => {
+      h += `<tr><th scope="row">${fn}</th>`;
+      BG.forEach(([bn, bh]) => {
+        if (fh === bh) { h += '<td><div class="dt-mx" style="background:repeating-linear-gradient(45deg,#F1EDE4 0 4px,#fff 4px 8px)"></div></td>'; return; }
+        const c = contrast(fh, bh), grade = c >= 7 ? 'AAA' : c >= 4.5 ? 'AA' : c >= 3 ? 'AA large' : 'fail';
+        h += `<td><div class="dt-mx" style="background:${bh};color:${fh}" title="${fn} on ${bn}: ${c.toFixed(2)} to 1"><b>Aa</b><span>${c.toFixed(1)}:1</span><em class="${grade === 'fail' ? 'fail' : ''}">${grade}</em></div></td>`;
+      });
+      h += '</tr>';
+    });
+    mx.innerHTML = h + '</tbody>';
+  }
+  function oklab(hex) {
+    const [r, g, b] = hexRgb(hex).map(c => { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+    const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b), m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b), s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+    return [0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s, 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s];
+  }
+  const plot = document.getElementById('dtPlot');
+  if (plot) {
+    const T = [['Paper', '#F2EDE3', 11, 4, 'start'], ['Ink', '#22362F', 11, 10, 'start'], ['Pine', '#1D4A43', 11, -4, 'start'], ['Ochre', '#D19C3F', -11, 4, 'end'], ['Logo ochre', '#E1A23C', 0, -13, 'middle'], ['Logo teal', '#073D44', 11, 12, 'start'],
+      ['Faint', '#A5A199', 11, 4, 'start'], ['Muted', '#6E7A73', 11, 4, 'start'], ['Positive', '#2E7D5B', 0, -13, 'middle'], ['Negative', '#A94436', 0, 20, 'middle'], ['Info', '#3D6B8E', -11, 4, 'end']];
+    const x0 = 44, x1 = 380, y0 = 250, y1 = 16, cMax = .16, X = c => x0 + c / cMax * (x1 - x0), Y = L => y0 - L * (y0 - y1);
+    let g = `<rect x="${x0}" y="${y1}" width="${x1 - x0}" height="${y0 - y1}" fill="#fff" stroke="#E7E2D7"/>`;
+    for (const L of [0, .25, .5, .75, 1]) g += `<line x1="${x0}" x2="${x1}" y1="${f(Y(L))}" y2="${f(Y(L))}" stroke="#F1EDE4"/><text x="${x0 - 8}" y="${f(Y(L) + 4)}" text-anchor="end" font-size="10" fill="#6E7A73">${L}</text>`;
+    for (const c of [0, .04, .08, .12, .16]) g += `<text x="${f(X(c))}" y="${y0 + 16}" text-anchor="middle" font-size="10" fill="#6E7A73">${c}</text>`;
+    g += `<text x="${(x0 + x1) / 2}" y="${y0 + 34}" text-anchor="middle" font-size="10" fill="#3F4A45">OKLCH chroma</text><text x="12" y="${(y0 + y1) / 2}" transform="rotate(-90 12 ${(y0 + y1) / 2})" text-anchor="middle" font-size="10" fill="#3F4A45">lightness</text>`;
+    T.forEach(([n, h, dx, dy, anc]) => {
+      const [L, a, b] = oklab(h), C = Math.hypot(a, b), px = X(Math.min(C, cMax)), py = Y(L);
+      g += `<circle cx="${f(px)}" cy="${f(py)}" r="7" fill="${h}" stroke="#0F1F1B" stroke-opacity=".35"><title>${n} ${h}: L ${L.toFixed(2)}, C ${C.toFixed(3)}</title></circle>`;
+      g += `<text x="${f(px + dx)}" y="${f(py + dy)}" text-anchor="${anc}" font-size="9.5" fill="#3F4A45">${n}</text>`;
+    });
+    plot.innerHTML = g;
+    const d = (p, q) => { const A = oklab(p), B = oklab(q); return 100 * Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]); };
+    document.getElementById('dtFinding').innerHTML = `Finding: faint and ochre sit <b>${d('#A5A199', '#D19C3F').toFixed(1)}</b> apart in OKLab (&times;100), and ochre on paper reaches <b>${contrast('#D19C3F', '#F2EDE3').toFixed(1)}:1</b>. The v1.0 rule already bans ochre text; the numbers add one more. When the ranked trio appears in a chart, every mark needs a direct label.`;
+  }
+
+  /* ---- Components ---- */
+  document.querySelectorAll('.dt-stat .w').forEach(w => { const n = +w.dataset.w; w.innerHTML = Array.from({ length: 100 }, (_, i) => `<i${i < n ? ` style="background:${w.dataset.c}"` : ''}></i>`).join(''); });
+  const inp = document.getElementById('dt-org'), cnt = document.getElementById('dtCount');
+  inp && inp.addEventListener('input', () => cnt.textContent = `${inp.value.length} / 80`);
+  const tb = document.querySelector('#dtTable tbody');
+  if (tb) {
+    let rows = SAMPLE.dims.map(d => ({ k: d.k, v: d.v, b: d.b, d: d.v - d.b })), dir = { k: 1, v: -1, d: -1 };
+    const lo = Math.min(...rows.map(r => r.v));
+    const draw = () => tb.innerHTML = rows.map(r => `<tr class="${r.v === lo ? 'low' : ''}"><td>${r.k}</td><td>${r.v.toFixed(1)}</td><td class="bar"><div class="track"><div class="fill" style="width:${r.v}%"></div><div class="bm" style="left:${r.b}%" title="benchmark ${r.b}"></div></div></td><td class="delta">${r.d >= 0 ? '+' : '&minus;'}${Math.abs(r.d).toFixed(1)}</td></tr>`).join('');
+    draw();
+    document.querySelectorAll('#dtTable th button').forEach(b => b.addEventListener('click', () => {
+      const s = b.dataset.s; dir[s] *= -1;
+      rows.sort((a, c) => (typeof a[s] === 'string' ? a[s].localeCompare(c[s]) : a[s] - c[s]) * dir[s]); draw();
+    }));
+  }
+})();
+</script>

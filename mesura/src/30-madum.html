@@ -1,0 +1,364 @@
+<style>
+/* ===== 03 MADUM: Maltese cement tiles. Limestone, balcony green, honey; tile inks borrowed from the semantic set. ===== */
+.md {
+  --md-lime: #EFE4CC; --md-slab: #F7F0E1; --md-green: #1D4A43; --md-honey: #D19C3F; --md-blue: #3D6B8E; --md-terra: #A94436;
+  --md-grout: #D6CAB0; --md-ink: #22362F; --md-ink-2: #45534D; --md-muted: #6E7A73;
+  --t-ground: #EFE4CC; --t-star: #1D4A43; --t-mark: #D19C3F; --t-ring: #3D6B8E; --t-loz: #A94436;
+  --md-serif: "Source Serif 4", Georgia, serif;
+  background: var(--md-lime); color: var(--md-ink);
+}
+.md-way--valletta { --t-ground: #EFE4CC; --t-star: #1D4A43; --t-mark: #D19C3F; --t-ring: #3D6B8E; --t-loz: #A94436; }
+.md-way--mdina    { --t-ground: #EDE0C4; --t-star: #22362F; --t-mark: #D19C3F; --t-ring: #A94436; --t-loz: #1D4A43; }
+.md-way--gozo     { --t-ground: #EFE4CC; --t-star: #3D6B8E; --t-mark: #D19C3F; --t-ring: #1D4A43; --t-loz: #3D6B8E; }
+.md-way--sliema   { --t-ground: #EFE4CC; --t-star: #1D4A43; --t-mark: #D19C3F; --t-ring: #1D4A43; --t-loz: #1D4A43; }
+.md .ch-tag { color: var(--md-green); }
+
+.md-hero { position: relative; overflow: hidden; padding-block: clamp(72px, 10vw, 136px); background: var(--t-ground); }
+.md-floor { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.md-floor .md-t { transform-box: fill-box; transform-origin: center; transition: transform .7s cubic-bezier(.3,1.35,.5,1); cursor: pointer; }
+.md-light { position: absolute; inset: -30% -50%; pointer-events: none; mix-blend-mode: soft-light; transform: skewX(-14deg); will-change: transform;
+  background: repeating-linear-gradient(90deg, rgba(255,248,228,0) 0 50px, rgba(255,248,228,.5) 85px, rgba(255,248,228,.5) 105px, rgba(255,248,228,0) 140px 170px); animation: mdLight 28s ease-in-out infinite alternate; }
+@keyframes mdLight { from { transform: translateX(-6%) skewX(-14deg); } to { transform: translateX(6%) skewX(-14deg); } }
+.md-hero-inner { position: relative; display: grid; grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: 24px; align-items: end; pointer-events: none; }
+.md-slab { pointer-events: auto; background: var(--md-slab); padding: clamp(24px, 3.6vw, 48px); display: grid; gap: 20px;
+  box-shadow: 0 40px 70px -36px rgba(34,54,47,.6), 0 0 0 1px rgba(29,74,67,.22); outline: 1px solid rgba(29,74,67,.22); outline-offset: -9px; }
+.md-name { display: flex; gap: 6px; margin: 0; }
+.md-name span { position: relative; width: clamp(46px, 5.4vw, 64px); aspect-ratio: 1; display: grid; place-items: center; font: 500 clamp(26px, 3.2vw, 38px)/1 var(--md-serif); color: var(--md-green); }
+.md-name span svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.md-name span b { position: relative; font-weight: 600; }
+.md-title { margin: 0; font: 500 clamp(40px, 5vw, 66px)/1.02 var(--md-serif); letter-spacing: -.01em; color: var(--md-ink); text-wrap: balance; }
+.md-title em { font-style: italic; font-weight: 400; color: var(--md-green); }
+.md-lede { margin: 0; font-size: 17px; line-height: 1.65; color: var(--md-ink-2); }
+.md-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.md-ways { pointer-events: auto; justify-self: end; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px; background: rgba(247,240,225,.9); box-shadow: 0 10px 30px -18px rgba(34,54,47,.6); }
+.md-ways p { width: 100%; margin: 2px 4px 2px; font: 600 11px/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--md-muted); }
+.md-ways button { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 6px; border: 1px solid transparent; background: transparent; cursor: pointer; font: 500 14px/1 var(--font-body); color: var(--md-ink); }
+.md-ways button svg { width: 30px; height: 30px; display: block; }
+.md-ways button[aria-pressed="true"] { background: #fff; border-color: rgba(29,74,67,.3); }
+
+.md-body { padding-block: clamp(56px, 8vw, 112px); }
+.md-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+.md-panel { background: var(--md-slab); padding: clamp(22px, 2.8vw, 36px); min-width: 0; box-shadow: 0 0 0 1px rgba(29,74,67,.14); border-radius: 4px; }
+.md-panel h3 { margin: 0 0 6px; font: 600 12px/1.3 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--md-muted); }
+.md-panel .md-sub { margin: 0 0 22px; font: 500 22px/1.25 var(--md-serif); color: var(--md-ink); text-wrap: balance; }
+.md-inks { grid-column: span 5; }
+.md-typepanel { grid-column: span 7; }
+.md-data { grid-column: 1 / -1; }
+.md-comp { grid-column: span 7; }
+.md-poster-wrap { grid-column: span 5; }
+.md-statrow { grid-column: 1 / -1; }
+
+.md-inklist { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
+.md-inklist li { display: grid; gap: 6px; font-size: 13px; line-height: 1.35; color: var(--md-ink-2); }
+.md-inklist i { display: block; aspect-ratio: 1.5; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08), inset 0 0 0 5px rgba(255,255,255,.18); }
+.md-inklist b { color: var(--md-ink); font-weight: 600; font-size: 14px; }
+.md-inklist code { font: 500 11px/1 var(--font-mono); color: var(--md-muted); }
+.md-inks .md-note { margin: 16px 0 0; font-size: 14px; line-height: 1.55; color: var(--md-ink-2); }
+
+.md-type-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: end; border-bottom: 1px solid rgba(29,74,67,.18); padding-bottom: 18px; }
+.md-type-disp { font: 500 clamp(36px, 4vw, 54px)/1 var(--md-serif); letter-spacing: -.01em; color: var(--md-ink); margin: 0; }
+.md-type-disp em { font-style: italic; font-weight: 400; color: var(--md-green); }
+.md-type-rows { display: grid; gap: 12px; margin-top: 16px; }
+.md-type-rows div { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 16px; font-size: 15px; line-height: 1.5; color: var(--md-ink-2); }
+.md-type-rows small { font: 500 11px/1.5 var(--font-mono); color: var(--md-muted); }
+.md-gridviz { width: 150px; height: auto; }
+
+.md-df { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, .9fr); gap: clamp(20px, 3vw, 40px); align-items: center; }
+.md-df svg { width: 100%; height: auto; display: block; }
+.md-df .md-dt { transition: transform .95s cubic-bezier(.65,0,.25,1); }
+.md-legend { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.md-legend li { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px; align-items: center; font-size: 14px; line-height: 1.35; color: var(--md-ink-2); }
+.md-legend svg { width: 40px; height: 40px; display: block; }
+.md-legend b { display: block; color: var(--md-ink); font-weight: 600; font-size: 15px; }
+.md-legend strong { font: 500 26px/1 var(--md-serif); color: var(--md-ink); font-variant-numeric: tabular-nums; }
+.md-seg { display: inline-flex; margin: 22px 0 12px; padding: 3px; background: rgba(29,74,67,.08); border-radius: 6px; }
+.md-seg button { border: 0; background: transparent; padding: 8px 14px; border-radius: 4px; font: 500 14px/1 var(--font-body); color: var(--md-ink-2); cursor: pointer; }
+.md-seg button[aria-pressed="true"] { background: var(--md-green); color: var(--md-slab); }
+.md-caption { margin: 0; font: 500 11px/1.5 var(--font-mono); color: var(--md-muted); }
+
+.md-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.md-btn { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px; border: 0; border-radius: 3px; cursor: pointer; font: 500 16px/1 var(--font-body); text-decoration: none; transition: filter .2s, transform .2s; }
+.md-btn svg { width: 18px; height: 18px; flex: none; }
+.md-btn--primary { background: var(--md-green); color: var(--md-slab); box-shadow: inset 0 0 0 3px var(--md-green), inset 0 0 0 4px rgba(239,228,204,.4); --mk: var(--md-honey); }
+.md-btn--accent { background: var(--md-honey); color: #2E2208; box-shadow: inset 0 0 0 3px var(--md-honey), inset 0 0 0 4px rgba(34,54,47,.25); }
+.md-btn--secondary { background: var(--md-slab); color: var(--md-green); box-shadow: inset 0 0 0 1.5px var(--md-green); }
+.md-btn--ghost { background: none; color: var(--md-green); padding-inline: 4px; text-decoration: underline; text-underline-offset: 6px; text-decoration-color: var(--md-honey); text-decoration-thickness: 2px; }
+.md-btn:hover { filter: brightness(1.06); }
+.md-btn:active { transform: translateY(1px); }
+.md-row-label { margin: 24px 0 10px; font: 600 11px/1 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--md-muted); }
+.md-badges { display: flex; flex-wrap: wrap; gap: 10px; }
+.md-badge { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 5px; border-radius: 3px; font: 600 13px/1 var(--font-body); background: #fff; box-shadow: inset 0 0 0 1px rgba(29,74,67,.18); color: var(--md-ink); }
+.md-badge svg { width: 24px; height: 24px; display: block; }
+.md-field { display: grid; gap: 6px; max-width: 420px; }
+.md-field label { font: 600 14px/1.3 var(--font-body); color: var(--md-ink); }
+.md-field input { font: 400 16px/1.4 var(--font-body); color: var(--md-ink); padding: 13px 14px; border: 0; border-radius: 3px; background: #E9DDC3;
+  box-shadow: inset 0 2px 3px rgba(34,54,47,.18), inset 0 0 0 1px rgba(34,54,47,.14); outline: none; }
+.md-field input:focus { box-shadow: inset 0 2px 3px rgba(34,54,47,.18), inset 0 0 0 2px var(--md-green); }
+.md-field small { font-size: 13px; color: var(--md-muted); }
+
+.md-poster-wrap { display: grid; place-items: center; background: transparent; box-shadow: none; padding: 0; }
+.md-poster { position: relative; margin: 0; width: min(100%, 400px); aspect-ratio: 3 / 4; overflow: hidden; box-shadow: 0 34px 60px -30px rgba(34,54,47,.6); background: var(--t-ground); }
+.md-poster > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.md-poster-slab { position: absolute; left: 12%; right: 12%; top: 16%; bottom: 20%; background: var(--md-slab); display: grid; align-content: center; justify-items: center; text-align: center; gap: 6px; padding: 18px;
+  box-shadow: 0 0 0 1px rgba(29,74,67,.3); outline: 1px solid rgba(29,74,67,.3); outline-offset: -7px; }
+.md-poster-slab .k { margin: 0; font: 600 10px/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--md-blue); }
+.md-poster-slab .n { margin: 0; font: 500 clamp(52px, 7vw, 76px)/1 var(--md-serif); letter-spacing: -.02em; color: var(--md-green); }
+.md-poster-slab .t { margin: 4px 0 0; font: 500 16px/1.3 var(--md-serif); color: var(--md-ink); }
+.md-poster-slab .s { margin: 0; font: italic 400 15px/1.3 var(--md-serif); color: var(--md-muted); }
+.md-poster-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 13%; background: var(--md-green); display: flex; align-items: center; justify-content: space-between; padding: 0 7%; }
+.md-poster-foot svg { width: 42%; --mk: var(--md-honey); --wd: var(--md-slab); }
+.md-poster-foot span { font: 500 10px/1.2 var(--font-mono); color: rgba(247,240,225,.75); text-align: right; }
+
+.md-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.md-stat { position: relative; overflow: hidden; background: var(--md-slab); aspect-ratio: 1.15; display: grid; align-content: center; justify-items: center; text-align: center; padding: 22% 12%; box-shadow: inset 0 0 0 .5px rgba(29,74,67,.2); }
+.md-stat .c { position: absolute; width: 25%; aspect-ratio: 1; }
+.md-stat .c svg { width: 100%; height: 100%; display: block; }
+.md-stat .c.c-tl { top: 0; left: 0; transform: translate(-50%, -50%); }
+.md-stat .c.c-tr { top: 0; right: 0; transform: translate(50%, -50%); }
+.md-stat .c.c-bl { bottom: 0; left: 0; transform: translate(-50%, 50%); }
+.md-stat .c.c-br { bottom: 0; right: 0; transform: translate(50%, 50%); }
+.md-stat .n { margin: 0; font: 500 clamp(44px, 5.4vw, 72px)/1 var(--md-serif); letter-spacing: -.015em; }
+.md-stat .n.head { color: var(--md-green); } .md-stat .n.base { color: #A5A199; } .md-stat .n.ins { color: var(--md-honey); }
+.md-stat .t { margin: 10px 0 2px; font: 600 15px/1.35 var(--font-body); color: var(--md-ink); max-width: 26ch; }
+.md-stat .s { margin: 0; font-size: 14px; line-height: 1.45; color: var(--md-muted); max-width: 30ch; }
+.md-stats-note { margin: 14px 0 0; font-size: 14px; color: var(--md-ink-2); }
+
+@media (max-width: 980px) {
+  .md-hero-inner { grid-template-columns: minmax(0, 1fr); }
+  .md-ways { justify-self: start; }
+  .md-inks, .md-typepanel, .md-comp, .md-poster-wrap { grid-column: 1 / -1; }
+  .md-df { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .md-stats { grid-template-columns: minmax(0, 1fr); }
+  .md-stat { aspect-ratio: auto; padding: 64px 16%; }
+  .md-type-top { grid-template-columns: minmax(0, 1fr); }
+  .md-type-rows div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .md-inklist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+</style>
+
+<section class="ch md" id="madum" data-ch="madum" aria-labelledby="md-title">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="mdDefs"></defs></svg>
+  <div class="md-hero md-way--valletta" id="mdHero">
+    <svg class="md-floor" id="mdFloor" aria-hidden="true"></svg>
+    <div class="md-light" aria-hidden="true"></div>
+    <div class="wrap md-hero-inner">
+      <div class="md-slab">
+        <p class="ch-tag"><i>03</i> Madum &middot; c. 1900 &middot; the mark as a tile</p>
+        <p class="md-name" aria-hidden="true"><span><svg viewBox="0 0 200 200"><use href="#mdD"/></svg><b>M</b></span><span><svg viewBox="0 0 200 200"><use href="#mdD"/></svg><b>a</b></span><span><svg viewBox="0 0 200 200"><use href="#mdD"/></svg><b>d</b></span><span><svg viewBox="0 0 200 200"><use href="#mdD"/></svg><b>u</b></span><span><svg viewBox="0 0 200 200"><use href="#mdD"/></svg><b>m</b></span></p>
+        <h2 class="md-title" id="md-title">A floor is a measure <em>you can walk on.</em></h2>
+        <p class="md-lede">Walk into an older Maltese townhouse and the floor is a grid of patterned cement tiles, madum, each one the same size, repeated until the room is full. The eight-point star has belonged to that Mediterranean pattern language for centuries. Madum builds Mesura from the tile up. Every layout sits on a grid of equal units, every pattern is made from the mark, and a floor can carry data.</p>
+        <div class="md-actions">
+          <a class="md-btn md-btn--primary" href="#madum"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>Get your Diagnostic</a>
+          <a class="md-btn md-btn--ghost" href="#mdData">Read the floor</a>
+        </div>
+      </div>
+      <div class="md-ways" role="group" aria-label="Colourway for the floor">
+        <p>Colourway &middot; click a tile to turn it</p>
+        <button type="button" class="md-way--valletta" data-way="valletta" aria-pressed="true"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#mdA"/></svg>Valletta</button>
+        <button type="button" class="md-way--mdina" data-way="mdina" aria-pressed="false"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#mdA"/></svg>Mdina</button>
+        <button type="button" class="md-way--gozo" data-way="gozo" aria-pressed="false"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#mdA"/></svg>Gozo</button>
+        <button type="button" class="md-way--sliema" data-way="sliema" aria-pressed="false"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#mdA"/></svg>Sliema</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="md-body">
+    <div class="wrap md-grid">
+      <section class="md-panel md-inks" aria-label="Madum colour">
+        <h3>Colour &middot; five tile inks</h3>
+        <p class="md-sub">Limestone ground, balcony green and honey. The other two inks are borrowed from Mesura&rsquo;s semantic set.</p>
+        <ul class="md-inklist">
+          <li><i style="background:#EFE4CC"></i><span><b>Limestone</b><br><code>#EFE4CC</code></span></li>
+          <li><i style="background:#1D4A43"></i><span><b>Balcony green</b><br><code>#1D4A43</code></span></li>
+          <li><i style="background:#D19C3F"></i><span><b>Honey</b><br><code>#D19C3F</code></span></li>
+          <li><i style="background:#3D6B8E"></i><span><b>Harbour</b> &middot; info<br><code>#3D6B8E</code></span></li>
+          <li><i style="background:#A94436"></i><span><b>Terracotta</b> &middot; negative<br><code>#A94436</code></span></li>
+          <li><i style="background:#D6CAB0"></i><span><b>Grout</b> &middot; lines<br><code>#D6CAB0</code></span></li>
+        </ul>
+        <p class="md-note">Harbour and terracotta only ever appear inside a tile. In text and status they keep their v1.0 meanings, so a red tile never reads as an error.</p>
+      </section>
+
+      <section class="md-panel md-typepanel" aria-label="Madum type and grid">
+        <h3>Type and grid</h3>
+        <p class="md-sub">One unit, repeated. Type sits on the tile grid the way furniture sits on a floor.</p>
+        <div class="md-type-top">
+          <p class="md-type-disp">Measured <em>tile by tile</em></p>
+          <svg class="md-gridviz" viewBox="0 0 150 90" aria-hidden="true">
+            <g fill="none" stroke="#1D4A43" stroke-opacity=".35">
+              <rect x=".5" y=".5" width="149" height="89"/>
+              <path d="M30.5 0v90M60.5 0v90M90.5 0v90M120.5 0v90M0 30.5h150M0 60.5h150"/>
+            </g>
+            <rect x="30" y="30" width="60" height="30" fill="#D19C3F" fill-opacity=".45"/>
+            <text x="60" y="49" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#22362F">2 &times; 1</text>
+          </svg>
+        </div>
+        <div class="md-type-rows">
+          <div><small>Display<br>Source Serif 4, 500</small><span>Headlines and figures. Italic marks the phrase that turns.</span></div>
+          <div><small>Text<br>Inter 400, 16/26</small><span>Everything functional. Left aligned, so it reads against a symmetrical pattern.</span></div>
+          <div><small>Grid<br>96 px tile, 4 px grout</small><span>Twelve tiles to the container. Cards, images and spacing are whole or half tiles.</span></div>
+        </div>
+      </section>
+
+      <section class="md-panel md-data" id="mdData" aria-label="A floor you can read">
+        <h3>Signature &middot; a floor you can read</h3>
+        <p class="md-sub">One hundred tiles, one per person. The centre of each tile shows how far that person has come.</p>
+        <div class="md-df">
+          <svg id="mdDataSvg" viewBox="0 0 1000 560" role="img" aria-label="100 tiles showing readiness: 31 advanced, 38 developing, 22 emerging, 9 not yet. Illustrative data."></svg>
+          <div>
+            <ul class="md-legend" id="mdLegend"></ul>
+            <div class="md-seg" role="group" aria-label="Arrangement">
+              <button type="button" data-lay="floor" aria-pressed="true">Floor</button>
+              <button type="button" data-lay="sorted" aria-pressed="false">Sorted</button>
+              <button type="button" data-lay="columns" aria-pressed="false">Columns</button>
+            </div>
+            <p class="md-caption">Illustrative: a sample of 100 of Harbour &amp; Co.&rsquo;s 412 people</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="md-panel md-comp" aria-label="Madum components">
+        <h3>Components</h3>
+        <p class="md-sub">Squared corners and a grout line inside every filled button.</p>
+        <div class="md-btns">
+          <button class="md-btn md-btn--primary" type="button"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>Get your Diagnostic</button>
+          <button class="md-btn md-btn--secondary" type="button">How it works</button>
+          <button class="md-btn md-btn--accent" type="button">Download report</button>
+          <button class="md-btn md-btn--ghost" type="button">Learn more</button>
+        </div>
+        <p class="md-row-label">Badges</p>
+        <div class="md-badges">
+          <span class="md-badge"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#mdA"/></svg>Above benchmark</span>
+          <span class="md-badge"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#mdC"/></svg>Emerging</span>
+          <span class="md-badge"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#mdD"/></svg>Not measured</span>
+        </div>
+        <p class="md-row-label">Field</p>
+        <div class="md-field">
+          <label for="md-email">Work email</label>
+          <input id="md-email" type="email" value="you@harbour.example" autocomplete="off">
+          <small>We&rsquo;ll send your Diagnostic link here.</small>
+        </div>
+      </section>
+
+      <section class="md-panel md-poster-wrap" aria-label="Poster">
+        <figure class="md-poster md-way--valletta">
+          <svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs><pattern id="mdPat" width="60" height="60" patternUnits="userSpaceOnUse" x="30" y="10"><use href="#mdA" width="60" height="60"/></pattern></defs>
+            <rect width="300" height="400" fill="url(#mdPat)"/>
+          </svg>
+          <div class="md-poster-slab">
+            <p class="k">Malta &middot; generative AI at work</p>
+            <p class="n">29.6%</p>
+            <p class="t">of Maltese workers use it.</p>
+            <p class="s">First in the EU.</p>
+          </div>
+          <div class="md-poster-foot"><svg viewBox="0 0 1993 311" aria-hidden="true"><use href="#mz-lockup"/></svg><span>Poster, A2<br>specimen</span></div>
+        </figure>
+      </section>
+
+      <section class="md-statrow" aria-label="Madum stat tiles">
+        <div class="md-stats">
+          <article class="md-stat"><span class="c c-tl"></span><span class="c c-tr"></span><span class="c c-bl"></span><span class="c c-br"></span><p class="n head">29.6%</p><p class="t">of Maltese workers use generative AI at work</p><p class="s">First in the European Union</p></article>
+          <article class="md-stat"><span class="c c-tl"></span><span class="c c-tr"></span><span class="c c-bl"></span><span class="c c-br"></span><p class="n base">15.1%</p><p class="t">is the EU average</p><p class="s">Malta sits at nearly double the norm</p></article>
+          <article class="md-stat"><span class="c c-tl"></span><span class="c c-tr"></span><span class="c c-bl"></span><span class="c c-br"></span><p class="n ins">21.6%</p><p class="t">of organisations formally measure it</p><p class="s">The rest is shadow AI, invisible to leadership</p></article>
+        </div>
+        <p class="md-stats-note">Stat cards are tiles. Set side by side, their corners join into stars. Figures from the Mesura v1.0 system.</p>
+      </section>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const { markPath, f, svg, reduced, onView, rng } = MZ;
+  const NS = 'http://www.w3.org/2000/svg';
+
+  /* Four tiles on a 200-unit square. Corners are shared, so any mix of tiles still joins into stars.
+     The centre carries the data: filled mark, outlined mark, dashed ring, plain. */
+  const corner = markPath({ R: 52, aperture: false });
+  const corners = [[0, 0], [200, 0], [0, 200], [200, 200]].map(([x, y]) => `<path transform="translate(${x} ${y})" d="${corner}" style="fill:var(--t-star)"/>`).join('');
+  const loz = [[100, 0], [200, 100], [100, 200], [0, 100]].map(([x, y]) => `<path transform="translate(${x} ${y}) rotate(45)" d="M-11 -11h22v22h-22Z" style="fill:var(--t-loz)"/>`).join('');
+  let dots = '';
+  for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2 + Math.PI / 16; dots += `<circle cx="${f(100 + Math.cos(a) * 71)}" cy="${f(100 + Math.sin(a) * 71)}" r="4.4" style="fill:var(--t-ring)"/>`; }
+  const ground = '<rect width="200" height="200" style="fill:var(--t-ground)"/>';
+  const markD = markPath({ R: 46 });
+  document.getElementById('mdDefs').innerHTML = `
+    <symbol id="mdA" viewBox="0 0 200 200">${ground}${corners}${loz}${dots}<circle cx="100" cy="100" r="59" fill="none" style="stroke:var(--t-ring)" stroke-width="3.2"/><path transform="translate(100 100)" d="${markD}" style="fill:var(--t-mark)"/></symbol>
+    <symbol id="mdB" viewBox="0 0 200 200">${ground}${corners}${loz}<circle cx="100" cy="100" r="59" fill="none" style="stroke:var(--t-ring)" stroke-width="3.2"/><path transform="translate(100 100)" d="${markD}" fill="none" style="stroke:var(--t-mark)" stroke-width="7" stroke-linejoin="round"/></symbol>
+    <symbol id="mdC" viewBox="0 0 200 200">${ground}${corners}${loz}<circle cx="100" cy="100" r="59" fill="none" style="stroke:var(--t-ring)" stroke-width="3.2" stroke-dasharray="7 9"/><path d="M100 84l16 16-16 16-16-16Z" style="fill:var(--t-mark)"/></symbol>
+    <symbol id="mdD" viewBox="0 0 200 200">${ground}${corners}${loz}</symbol>`;
+
+  /* ---- Hero floor ---- */
+  const hero = document.getElementById('mdHero'), floor = document.getElementById('mdFloor');
+  let rippled = false;
+  function buildFloor() {
+    const w = hero.clientWidth, h = hero.clientHeight, s = w < 700 ? 84 : 112;
+    const cols = Math.ceil(w / s) + 1, rows = Math.ceil(h / s) + 1, ox = -((cols * s - w) / 2), oy = -((rows * s - h) / 2);
+    floor.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    let html = '';
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++)
+      html += `<g class="md-t" data-r="0"><use href="#mdA" x="${f(ox + c * s)}" y="${f(oy + r * s)}" width="${s}" height="${s}"/></g>`;
+    floor.innerHTML = html;
+    return { s, cols, rows, ox, oy };
+  }
+  let geo = buildFloor();
+  floor.addEventListener('click', e => {
+    const g = e.target.closest('.md-t'); if (!g) return;
+    const n = +g.dataset.r + 1; g.dataset.r = n; g.style.transform = `rotate(${n * 90}deg)`;
+  });
+  let rt = 0;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { geo = buildFloor(); }, 200); });
+  // First view: a ripple of quarter turns spreads across the floor from the slab
+  if (!reduced) onView(hero, () => {
+    if (rippled) return; rippled = true;
+    const tiles = floor.querySelectorAll('.md-t'), cx = geo.cols * 0.3, cy = geo.rows * 0.55;
+    tiles.forEach((g, i) => {
+      const c = i % geo.cols, r = Math.floor(i / geo.cols), d = Math.hypot(c - cx, r - cy);
+      g.style.transitionDelay = `${Math.round(d * 70)}ms`; g.dataset.r = 1; g.style.transform = 'rotate(90deg)';
+      setTimeout(() => { g.style.transitionDelay = ''; }, d * 70 + 900);
+    });
+  }, null, { threshold: 0.35 });
+
+  document.querySelectorAll('.md-ways button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.md-ways button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    hero.className = `md-hero md-way--${b.dataset.way}`;
+  }));
+
+  /* ---- Stat tile corners ---- */
+  document.querySelectorAll('.md-stat .c').forEach(c => { c.innerHTML = `<svg viewBox="-60 -60 120 120" aria-hidden="true"><path d="${markPath({ R: 58, aperture: false })}" fill="#1D4A43"/></svg>`; });
+
+  /* ---- A floor you can read ---- */
+  const BANDS = [
+    { id: 'mdA', name: 'Advanced', range: '75 and over', n: 31 },
+    { id: 'mdB', name: 'Developing', range: '60 to 74', n: 38 },
+    { id: 'mdC', name: 'Emerging', range: '40 to 59', n: 22 },
+    { id: 'mdD', name: 'Not yet', range: 'under 40', n: 9 }
+  ];
+  const ds = document.getElementById('mdDataSvg'), legend = document.getElementById('mdLegend');
+  if (ds) {
+    legend.innerHTML = BANDS.map(b => `<li><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#${b.id}"/></svg><span><b>${b.name}</b>${b.range}</span><strong>${b.n}</strong></li>`).join('');
+    const T = 50, people = [];
+    BANDS.forEach((b, bi) => { for (let k = 0; k < b.n; k++) people.push({ bi, k }); });
+    // a plausible office floor: mostly mixed, slightly clustered by team
+    const r = rng(12), order = people.map((p, i) => ({ i, key: r() + p.bi * 0.18 })).sort((a, b) => a.key - b.key).map(o => o.i);
+    const layouts = {
+      floor: i => { const pos = order.indexOf(i); return [250 + (pos % 10) * T, 10 + Math.floor(pos / 10) * T]; },
+      sorted: i => [250 + (i % 10) * T, 10 + Math.floor(i / 10) * T],
+      columns: i => { const p = people[i], colX = 10 + p.bi * (4 * T + 60); return [colX + (p.k % 4) * T, 510 - T - Math.floor(p.k / 4) * T]; }
+    };
+    let html = '';
+    people.forEach((p, i) => { html += `<use class="md-dt" href="#${BANDS[p.bi].id}" width="${T}" height="${T}" style="transition-delay:${Math.round(r() * 280)}ms"/>`; });
+    html += `<g id="mdColLabels" font-family="Inter, sans-serif" font-size="15" fill="#45534D" style="transition:opacity .5s">` + BANDS.map((b, bi) => `<text x="${10 + bi * (4 * T + 60) + 2 * T}" y="542" text-anchor="middle"><tspan font-weight="600" fill="#22362F">${b.name}</tspan>  ${b.n}</text>`).join('') + '</g>';
+    ds.innerHTML = html;
+    const uses = ds.querySelectorAll('.md-dt'), labels = ds.querySelector('#mdColLabels');
+    function lay(name) {
+      uses.forEach((u, i) => { const [x, y] = layouts[name](i); u.style.transform = `translate(${x}px, ${y}px)`; });
+      labels.style.opacity = name === 'columns' ? 1 : 0;
+      document.querySelectorAll('.md-seg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lay === name));
+    }
+    lay('floor');
+    document.querySelectorAll('.md-seg button').forEach(b => b.addEventListener('click', () => lay(b.dataset.lay)));
+  }
+})();
+</script>

@@ -1,0 +1,78 @@
+</main>
+<footer class="colophon" data-ch="cover">
+  <div class="wrap colophon-grid">
+    <svg class="lockup" viewBox="0 0 1993 311" aria-label="mesura.ai"><use href="#mz-lockup"/></svg>
+    <p>Seven prototype design systems for mesura.ai, September 2026. Set in Source Serif 4, Inter, JetBrains Mono, Fraunces, Caveat, Pinyon Script and B612 Mono. Drawn in HTML, CSS, SVG and canvas, with the mark traced from the supplied logo and rebuilt as a parametric shape. Malta and EU figures are taken from Mesura v1.0; every other figure and organisation name is illustrative.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  const { fillPlates, reduced, onView } = MZ;
+  fillPlates();
+
+  /* Cover stage: the mark in seven materials */
+  const stage = document.getElementById('stagePlates'), cap = document.getElementById('stageCap'), dots = document.getElementById('stageDots');
+  if (stage) {
+    const plates = [...stage.children];
+    let i = 0, timer = 0, paused = false;
+    plates.forEach((p, k) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('aria-label', `Show ${p.dataset.name}, ${p.dataset.reading}`); b.setAttribute('aria-pressed', k === 0);
+      b.addEventListener('click', () => { show(k); restart(); });
+      dots.appendChild(b);
+    });
+    function show(k) {
+      plates[i].classList.remove('is-on'); dots.children[i].setAttribute('aria-pressed', 'false');
+      i = k; plates[i].classList.add('is-on'); dots.children[i].setAttribute('aria-pressed', 'true');
+      cap.innerHTML = `${plates[i].dataset.n} ${plates[i].dataset.name} <span>&middot; ${plates[i].dataset.reading}</span>`;
+    }
+    function restart() { clearInterval(timer); if (!reduced) timer = setInterval(() => { if (!paused && !document.hidden) show((i + 1) % plates.length); }, 2600); }
+    stage.parentElement.addEventListener('pointerenter', () => paused = true);
+    stage.parentElement.addEventListener('pointerleave', () => paused = false);
+    restart();
+  }
+
+  /* Timeline ticks on a log scale of years before 2026 */
+  const ticks = document.getElementById('tlTicks');
+  if (ticks) {
+    const lo = Math.log10(5), hi = Math.log10(6000), x = y => 5 + 90 * (hi - Math.log10(y)) / (hi - lo);
+    let html = '';
+    for (const dec of [1, 10, 100, 1000]) for (let m = 1; m < 10; m++) {
+      const y = m * dec; if (y < 5 || y > 6000) continue;
+      html += `<i class="${m === 1 ? 'major' : ''}" style="left:${x(y).toFixed(2)}%"></i>`;
+    }
+    for (const [y, t] of [[10, '10 years'], [100, '100 years'], [1000, '1,000 years']]) html += `<b style="left:${x(y).toFixed(2)}%">${t}</b>`;
+    ticks.innerHTML = html;
+  }
+
+  /* Reel navigation: follows the chapter in the middle of the viewport and takes on its colours */
+  const nav = document.getElementById('reelnav');
+  const links = [...document.querySelectorAll('.reelnav-list a')];
+  const sections = [...document.querySelectorAll('[data-ch]')].filter(s => s !== nav);
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        const ch = e.target.dataset.ch, id = e.target.id;
+        nav.dataset.ch = ch;
+        links.forEach(a => {
+          const on = a.dataset.for === ch || (a.dataset.for === 'lineup' && id === 'lineup');
+          a.setAttribute('aria-current', on ? 'true' : 'false');
+          if (on && a.scrollIntoView && window.innerWidth < 1080) a.parentElement.scrollTo({ left: a.offsetLeft - 60, behavior: reduced ? 'auto' : 'smooth' });
+        });
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => io.observe(s));
+  }
+
+  /* Frame theme toggle. Chapters keep their own fixed palettes. */
+  const btn = document.getElementById('themeToggle'), rootEl = document.documentElement;
+  try { const saved = localStorage.getItem('mz-theme'); if (saved) rootEl.dataset.theme = saved; } catch (e) {}
+  btn && btn.addEventListener('click', () => {
+    const dark = rootEl.dataset.theme ? rootEl.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    rootEl.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('mz-theme', rootEl.dataset.theme); } catch (e) {}
+  });
+})();
+</script>

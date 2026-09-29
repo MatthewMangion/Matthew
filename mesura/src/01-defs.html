@@ -1,0 +1,281 @@
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <path id="mz-word-d" fill-rule="evenodd" style="fill: var(--wd, #073D44)" d="{{WORD}}"/>
+    <symbol id="mz-mark" viewBox="-146 -146 292 292"><path style="fill: var(--mk, #E1A23C)" d="{{MARK}}"/></symbol>
+    <symbol id="mz-word" viewBox="0 0 1640 264"><use href="#mz-word-d"/></symbol>
+    <symbol id="mz-lockup" viewBox="0 0 1993 311"><path style="fill: var(--mk, #E1A23C)" d="{{MARK_LOCKUP}}"/><use href="#mz-word-d" transform="translate(353 0)"/></symbol>
+  </defs>
+</svg>
+<script>
+/* Mesura toolkit: the parametric mark, small helpers, and the seven "plates" (one per reading of the mark). */
+window.MZ = (function () {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  let n = 0;
+  const uid = p => `${p}${++n}`;
+  const f = v => +(+v).toFixed(2);
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+  function rng(seed) {
+    let s = seed >>> 0;
+    return function () { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  }
+  /* Smooth periodic noise, used for hand-made edges (wax, rings, hills). */
+  function wave(seed, octaves = 5) {
+    const r = rng(seed), k = [];
+    for (let i = 0; i < octaves; i++) k.push({ p: r() * 6.283, a: (0.5 + r() * 0.5) / (i + 1), fr: i + 2 + Math.floor(r() * 2) });
+    return t => k.reduce((s, o) => s + o.a * Math.sin(o.fr * t + o.p), 0) / 1.6;
+  }
+  function blob(cx, cy, r, amp, seed, steps = 120) {
+    const w = wave(seed); let d = '';
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps * Math.PI * 2, rr = r + amp * w(t);
+      d += (i ? 'L' : 'M') + f(cx + Math.cos(t) * rr) + ' ' + f(cy + Math.sin(t) * rr);
+    }
+    return d + 'Z';
+  }
+
+  /* The mark, drawn from parameters. R is the sharp octagram radius; the defaults were fitted to the traced
+     logo (98% pixel overlap). tips[8] scale each point, notch is the angle of the opening in degrees. */
+  function markPath(o = {}) {
+    const R = o.R ?? 100, tips = o.tips ?? [1, 1, 1, 1, 1, 1, 1, 1];
+    const inner = o.inner ?? 0.7654, hole = (o.hole ?? 0.366) * R, w = (o.slot ?? 0.235) * R;
+    const rTip = (o.round ?? 0.13) * R, rIn = (o.roundIn ?? 0.136) * R, rExit = (o.roundExit ?? 0.11) * R;
+    const notch = (o.notch ?? -45) * Math.PI / 180, open = o.aperture !== false;
+    const D = Math.PI / 180, V = [];
+    for (let k = 0; k < 8; k++) {
+      const a = (-90 + 45 * k) * D, t = tips[k], t2 = tips[(k + 1) % 8];
+      V.push({ x: Math.cos(a) * R * t, y: Math.sin(a) * R * t, r: rTip, a });
+      const b = a + 22.5 * D, ri = R * inner * (o.innerFollow ? (t + t2) / 2 : 1);
+      V.push({ x: Math.cos(b) * ri, y: Math.sin(b) * ri, r: rIn, a: b });
+    }
+    if (!open) return rounded(V.map(p => [p.x, p.y, p.r]), true);
+    const u = [Math.cos(notch), Math.sin(notch)], v = [-Math.sin(notch), Math.cos(notch)];
+    const norm = a => { a = (a - notch) % (2 * Math.PI); if (a <= -Math.PI) a += 2 * Math.PI; if (a > Math.PI) a -= 2 * Math.PI; return a; };
+    function exit(s) {
+      const t0 = Math.sqrt(Math.max(hole * hole - s * s, 0));
+      let best = null;
+      for (let i = 0; i < 16; i++) {
+        const A = V[i], B = V[(i + 1) % 16], ex = B.x - A.x, ey = B.y - A.y;
+        const det = u[0] * (-ey) - u[1] * (-ex);
+        if (Math.abs(det) < 1e-9) continue;
+        const rx = A.x - s * v[0], ry = A.y - s * v[1];
+        const t = (rx * (-ey) - ry * (-ex)) / det, m = (u[0] * ry - u[1] * rx) / det;
+        if (m >= 0 && m <= 1 && t > t0 && (!best || t < best.t)) best = { t, x: s * v[0] + t * u[0], y: s * v[1] + t * u[1] };
+      }
+      return { e: best, h: { x: s * v[0] + t0 * u[0], y: s * v[1] + t0 * u[1] } };
+    }
+    const P = exit(w / 2), M = exit(-w / 2);
+    if (!P.e || !M.e) return rounded(V.map(p => [p.x, p.y, p.r]), true);
+    const aP = norm(Math.atan2(P.e.y, P.e.x)), aM = norm(Math.atan2(M.e.y, M.e.x));
+    const kept = V.filter(p => { const r = norm(p.a); return r > aP || r < aM; })
+      .sort((p, q) => ((norm(p.a) - aP + 4 * Math.PI) % (2 * Math.PI)) - ((norm(q.a) - aP + 4 * Math.PI) % (2 * Math.PI)));
+    const chain = [[P.h.x, P.h.y, 0], [P.e.x, P.e.y, rExit], ...kept.map(p => [p.x, p.y, p.r]), [M.e.x, M.e.y, rExit], [M.h.x, M.h.y, 0]];
+    return rounded(chain, false) + `A${f(hole)} ${f(hole)} 0 1 0 ${f(P.h.x)} ${f(P.h.y)}Z`;
+
+    function rounded(pts, closed) {
+      const N = pts.length, get = i => pts[(i + N) % N], s0 = closed ? 0 : 1, s1 = closed ? N : N - 1;
+      const T = new Array(N).fill(0), G = [];
+      for (let i = s0; i < s1; i++) {
+        const [px, py, r] = get(i), [ax, ay] = get(i - 1), [bx, by] = get(i + 1);
+        let v1x = ax - px, v1y = ay - py, v2x = bx - px, v2y = by - py;
+        const l1 = Math.hypot(v1x, v1y), l2 = Math.hypot(v2x, v2y);
+        v1x /= l1; v1y /= l1; v2x /= l2; v2y /= l2;
+        const th = Math.acos(clamp(v1x * v2x + v1y * v2y, -1, 1));
+        T[i] = r / Math.tan(th / 2); G[i] = { px, py, v1x, v1y, v2x, v2y, th };
+      }
+      for (let i = 0; i < N - (closed ? 0 : 1); i++) {
+        const j = (i + 1) % N, [ax, ay] = get(i), [bx, by] = get(j), L = Math.hypot(bx - ax, by - ay) * 0.98;
+        if (T[i] + T[j] > L) { const k = L / (T[i] + T[j]); T[i] *= k; T[j] *= k; }
+      }
+      let d = closed ? '' : `M${f(pts[0][0])} ${f(pts[0][1])}`;
+      for (let i = s0; i < s1; i++) {
+        const g = G[i], t = T[i], rr = t * Math.tan(g.th / 2);
+        const sweep = (g.v1x * g.v2y - g.v1y * g.v2x) < 0 ? 1 : 0;
+        d += (d ? 'L' : 'M') + `${f(g.px + g.v1x * t)} ${f(g.py + g.v1y * t)}` + (rr > 0.01 ? `A${f(rr)} ${f(rr)} 0 0 ${sweep} ${f(g.px + g.v2x * t)} ${f(g.py + g.v2y * t)}` : '');
+      }
+      return d + (closed ? 'Z' : `L${f(pts[N - 1][0])} ${f(pts[N - 1][1])}`);
+    }
+  }
+
+  function onView(el, enter, leave, opts = {}) {
+    if (!('IntersectionObserver' in window)) { enter && enter(); return; }
+    const io = new IntersectionObserver(es => es.forEach(e => (e.isIntersecting ? enter && enter(e) : leave && leave(e))), { threshold: opts.threshold ?? 0, rootMargin: opts.rootMargin ?? '0px' });
+    io.observe(el); return io;
+  }
+  /* requestAnimationFrame loop that only runs while el is on screen, and not at all with reduced motion. */
+  function loop(el, fn) {
+    let id = 0, on = false, last = 0;
+    const tick = t => { fn(t, Math.min(64, t - last)); last = t; id = requestAnimationFrame(tick); };
+    if (reduced) { fn(performance.now(), 0); return; }
+    onView(el, () => { if (!on) { on = true; last = performance.now(); id = requestAnimationFrame(tick); } }, () => { on = false; cancelAnimationFrame(id); });
+  }
+  /* Replays an entrance class once, when the element first scrolls in. The resting state is always the finished one. */
+  function replayOnce(el, cls = 'is-playing', threshold = 0.2) {
+    if (reduced) return;
+    let done = false;
+    onView(el, () => { if (done) return; done = true; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }, null, { threshold });
+  }
+  function hexRgb(h) { h = h.replace('#', ''); return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16)); }
+  function lum(h) { return hexRgb(h).map(c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }).reduce((s, c, i) => s + c * [0.2126, 0.7152, 0.0722][i], 0); }
+  function contrast(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  function svg(tag, attrs = {}, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+
+  /* ---------- The seven plates: the same mark in seven materials ---------- */
+  const open = '<svg viewBox="0 0 200 200" xmlns="' + NS + '" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice">';
+  const PLATES = {
+    almanac() {
+      const g = uid('al'), r = rng(7);
+      let rays = '';
+      for (let i = 0; i < 30; i++) {
+        const a = i / 30 * Math.PI * 2, r0 = 50, len = 10 + r() * 20;
+        rays += `<line x1="${f(100 + Math.cos(a) * r0)}" y1="${f(90 + Math.sin(a) * r0)}" x2="${f(100 + Math.cos(a) * (r0 + len))}" y2="${f(90 + Math.sin(a) * (r0 + len))}"/>`;
+      }
+      return open + `<defs><filter id="${g}n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .1 0 0 0 0 .2 0 0 0 0 .17 0 0 0 .42 0"/></filter></defs>
+        <rect width="200" height="200" fill="#F3ECDD"/>
+        <g style="mix-blend-mode:multiply">
+          <g stroke="#E1A23C" stroke-width="2.6" stroke-linecap="round">${rays}</g>
+          <path transform="translate(100 90)" d="${markPath({ R: 40 })}" fill="#E1A23C"/>
+          <path d="M-6 150C30 136 62 154 98 146S160 128 206 144V206H-6Z" fill="#1D4A43" opacity=".92"/>
+          <path d="M-6 170C40 160 80 174 120 166S176 156 206 164V206H-6Z" fill="#1D4A43" opacity=".55"/>
+        </g>
+        <rect width="200" height="200" filter="url(#${g}n)" opacity=".55"/></svg>`;
+    },
+    hallmark() {
+      const g = uid('hm'), wax = blob(100, 100, 78, 4.2, 11);
+      return open + `<defs>
+          <radialGradient id="${g}w" cx=".36" cy=".3" r=".85"><stop offset="0" stop-color="#2F6D61"/><stop offset=".55" stop-color="#1D4A43"/><stop offset="1" stop-color="#0E2723"/></radialGradient>
+          <linearGradient id="${g}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8E1A6"/><stop offset=".38" stop-color="#DDAE55"/><stop offset=".6" stop-color="#9A6C22"/><stop offset=".82" stop-color="#E6C375"/><stop offset="1" stop-color="#A87A2E"/></linearGradient>
+          <filter id="${g}e" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceAlpha" stdDeviation="1.4" result="b"/><feSpecularLighting in="b" surfaceScale="2.2" specularConstant=".85" specularExponent="18" lighting-color="#fff" result="s"><feDistantLight azimuth="225" elevation="40"/></feSpecularLighting><feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/><feComposite in="SourceGraphic" in2="s2" operator="arithmetic" k1="0" k2="1" k3=".7" k4="0"/></filter>
+          <filter id="${g}d" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#22362F" flood-opacity=".35"/></filter>
+          <path id="${g}c" d="M100 100m-57 0a57 57 0 1 1 114 0a57 57 0 1 1-114 0"/>
+        </defs>
+        <rect width="200" height="200" fill="#F2EDE3"/>
+        <path d="${wax}" fill="url(#${g}w)" filter="url(#${g}d)"/>
+        <path d="${wax}" fill="url(#${g}w)" filter="url(#${g}e)"/>
+        <circle cx="100" cy="100" r="67" fill="none" stroke="#0B211D" stroke-width="1.4" opacity=".55"/>
+        <circle cx="100" cy="100" r="48" fill="none" stroke="#0B211D" stroke-width="1" opacity=".5"/>
+        <text font-family="'Source Serif 4', Georgia, serif" font-size="9" font-weight="600" letter-spacing="1.6" fill="url(#${g}g)"><textPath href="#${g}c" textLength="352" lengthAdjust="spacing">MESURA · ASSAYED · MMXXVI · MESURA · MEASURED ·</textPath></text>
+        <path transform="translate(100 100)" d="${markPath({ R: 36 })}" fill="url(#${g}g)" filter="url(#${g}e)"/></svg>`;
+    },
+    madum() {
+      const g = uid('md');
+      return open + `<defs><clipPath id="${g}c"><rect width="200" height="200"/></clipPath></defs>
+        <rect width="200" height="200" fill="#EFE4CC"/>
+        <g clip-path="url(#${g}c)">${tileArt(200)}</g></svg>`;
+    },
+    tolerance() {
+      const g = uid('tl'), R = 58, cx = 100, cy = 96, h = R / Math.SQRT2;
+      return open + `<defs><pattern id="${g}p" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="#EFEAE0" stroke-opacity=".08" stroke-width=".6"/></pattern>
+          <marker id="${g}a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1.5L10 5L0 8.5Z" fill="#E1A23C"/></marker></defs>
+        <rect width="200" height="200" fill="#073D44"/><rect width="200" height="200" fill="url(#${g}p)"/>
+        <g transform="translate(${cx} ${cy})" fill="none" stroke="#EFEAE0">
+          <circle r="${R}" stroke-opacity=".35" stroke-dasharray="3 3" stroke-width=".7"/>
+          <rect x="${f(-h)}" y="${f(-h)}" width="${f(2 * h)}" height="${f(2 * h)}" stroke-opacity=".28" stroke-width=".6"/>
+          <rect x="${f(-h)}" y="${f(-h)}" width="${f(2 * h)}" height="${f(2 * h)}" transform="rotate(45)" stroke-opacity=".28" stroke-width=".6"/>
+          <path d="M${-R - 12} 0H${R + 12}M0 ${-R - 12}V${R + 12}" stroke-opacity=".5" stroke-width=".6" stroke-dasharray="9 2 2 2"/>
+          <path d="${markPath({ R })}" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="M0 0L${f(Math.cos(-Math.PI / 4) * (R + 16))} ${f(Math.sin(-Math.PI / 4) * (R + 16))}" stroke="#E1A23C" stroke-width=".7"/>
+          <path d="M${R * .52} 0A${R * .52} ${R * .52} 0 0 0 ${f(Math.cos(-Math.PI / 4) * R * .52)} ${f(Math.sin(-Math.PI / 4) * R * .52)}" stroke="#E1A23C" stroke-width=".8"/>
+        </g>
+        <text x="${cx + 34}" y="${cy - 8}" font-family="'JetBrains Mono', monospace" font-size="7.5" fill="#E1A23C">45°</text>
+        <g stroke="#E1A23C" stroke-width=".8" fill="none"><path d="M${cx - R} ${cy + R + 20}H${cx + R}" marker-start="url(#${g}a)" marker-end="url(#${g}a)"/><path d="M${cx - R} ${cy + 8}v${R + 18}M${cx + R} ${cy + 8}v${R + 18}" stroke-opacity=".5"/></g>
+        <text x="${cx}" y="${cy + R + 16}" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7.5" fill="#E1A23C">Ø 309.0 ±0.5</text></svg>`;
+    },
+    dial() {
+      const g = uid('dl');
+      let ticks = '';
+      for (let i = 0; i < 48; i++) {
+        const a = -Math.PI / 2 + i / 48 * Math.PI * 2, major = i % 6 === 0, r0 = major ? 76 : 80;
+        ticks += `<line x1="${f(100 + Math.cos(a) * r0)}" y1="${f(100 + Math.sin(a) * r0)}" x2="${f(100 + Math.cos(a) * 85)}" y2="${f(100 + Math.sin(a) * 85)}" stroke-width="${major ? 1.6 : .8}"/>`;
+      }
+      return open + `<defs>
+          <radialGradient id="${g}h" cx=".32" cy=".25" r="1"><stop offset="0" stop-color="#F8F5EF"/><stop offset="1" stop-color="#D9D3C6"/></radialGradient>
+          <linearGradient id="${g}k" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#F5C165"/><stop offset=".55" stop-color="#E1A23C"/><stop offset="1" stop-color="#B98126"/></linearGradient>
+          <radialGradient id="${g}r" cx=".5" cy=".62" r=".7"><stop offset="0" stop-color="#D9D3C6"/><stop offset="1" stop-color="#A9A295"/></radialGradient>
+          <filter id="${g}s" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="2" dy="7" stdDeviation="6" flood-color="#2B2F2C" flood-opacity=".38"/></filter>
+        </defs>
+        <rect width="200" height="200" fill="url(#${g}h)"/>
+        <g stroke="#2B2F2C" stroke-linecap="round" opacity=".8">${ticks}</g>
+        <circle cx="100" cy="100" r="22" fill="url(#${g}r)"/>
+        <g transform="translate(100 100)"><path d="${markPath({ R: 62 })}" fill="url(#${g}k)" filter="url(#${g}s)"/>
+        <path d="${markPath({ R: 62 })}" fill="none" stroke="#FFF3D6" stroke-opacity=".5" stroke-width=".8" transform="translate(-.6 -.6)"/></g>
+        <circle cx="153" cy="47" r="3.2" fill="#E1A23C"/></svg>`;
+    },
+    datum() {
+      const tips = [0.94, 0.52, 0.86, 0.74, 0.97, 0.68, 0.82, 0.9], R = 74;
+      let axes = '', rings = '', dots = '';
+      for (let k = 0; k < 8; k++) {
+        const a = (-90 + 45 * k) * Math.PI / 180;
+        axes += `<line x1="100" y1="100" x2="${f(100 + Math.cos(a) * 88)}" y2="${f(100 + Math.sin(a) * 88)}"/>`;
+        const t = 0.4 + 0.6 * tips[k];
+        dots += `<circle cx="${f(100 + Math.cos(a) * R * t * 0.95)}" cy="${f(100 + Math.sin(a) * R * t * 0.95)}" r="${k === 1 ? 3.6 : 2.2}" fill="${k === 1 ? '#D19C3F' : '#0F1F1B'}"/>`;
+      }
+      for (const s of [0.25, 0.5, 0.75, 1]) {
+        let d = '';
+        for (let k = 0; k < 8; k++) { const a = (-90 + 45 * k) * Math.PI / 180; d += (k ? 'L' : 'M') + f(100 + Math.cos(a) * 88 * s) + ' ' + f(100 + Math.sin(a) * 88 * s); }
+        rings += `<path d="${d}Z"/>`;
+      }
+      return open + `<rect width="200" height="200" fill="#FBFAF7"/>
+        <g fill="none" stroke="#D9D3C4" stroke-width=".7">${rings}${axes}</g>
+        <path transform="translate(100 100)" d="${markPath({ R, tips: tips.map(t => 0.4 + 0.6 * t), innerFollow: true, inner: 0.66 })}" fill="#1D4A43" fill-opacity=".92"/>
+        ${dots}</svg>`;
+    },
+    constant() {
+      const g = uid('cn');
+      let ticks = '';
+      for (let i = 0; i < 120; i++) {
+        const a = i / 120 * Math.PI * 2, major = i % 10 === 0, r0 = major ? 80 : 84;
+        ticks += `<line x1="${f(100 + Math.cos(a) * r0)}" y1="${f(100 + Math.sin(a) * r0)}" x2="${f(100 + Math.cos(a) * 88)}" y2="${f(100 + Math.sin(a) * 88)}" stroke-opacity="${major ? .8 : .35}"/>`;
+      }
+      const sweep = 0.72, a0 = -Math.PI / 4, a1 = a0 + sweep * Math.PI * 2, rA = 74;
+      return open + `<defs>
+          <radialGradient id="${g}b" cx=".5" cy=".5" r=".7"><stop offset="0" stop-color="#14302A"/><stop offset=".6" stop-color="#0A1714"/><stop offset="1" stop-color="#050C0A"/></radialGradient>
+          <radialGradient id="${g}l" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFE7B3" stop-opacity=".95"/><stop offset=".45" stop-color="#DFAC52" stop-opacity=".35"/><stop offset="1" stop-color="#DFAC52" stop-opacity="0"/></radialGradient>
+          <filter id="${g}g" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <rect width="200" height="200" fill="url(#${g}b)"/>
+        <g stroke="#EFEAE0" stroke-width=".7">${ticks}</g>
+        <path d="M${f(100 + Math.cos(a0) * rA)} ${f(100 + Math.sin(a0) * rA)}A${rA} ${rA} 0 1 1 ${f(100 + Math.cos(a1) * rA)} ${f(100 + Math.sin(a1) * rA)}" fill="none" stroke="#FFC56B" stroke-width="2" stroke-linecap="round" filter="url(#${g}g)"/>
+        <circle cx="100" cy="100" r="24" fill="url(#${g}l)"/>
+        <path transform="translate(100 100)" d="${markPath({ R: 56 })}" fill="rgba(223,172,82,.07)" stroke="#FFC56B" stroke-width="1.3" filter="url(#${g}g)"/></svg>`;
+    }
+  };
+
+  /* One Madum tile (size s). Quarter stars at the corners meet their neighbours to make whole stars. */
+  function tileArt(s, o = {}) {
+    const k = s / 200, c = o.colours || { ground: '#EFE4CC', star: '#1D4A43', mark: '#D19C3F', ring: '#3D6B8E', lozenge: '#A94436' };
+    const corner = markPath({ R: 50 * k, aperture: false });
+    let q = '';
+    for (const [x, y] of [[0, 0], [s, 0], [0, s], [s, s]]) q += `<path transform="translate(${f(x)} ${f(y)})" d="${corner}" fill="${c.star}"/>`;
+    let loz = '';
+    for (const [x, y] of [[s / 2, 0], [s, s / 2], [s / 2, s], [0, s / 2]]) loz += `<path transform="translate(${f(x)} ${f(y)}) rotate(45)" d="M${f(-9 * k)} ${f(-9 * k)}h${f(18 * k)}v${f(18 * k)}h${f(-18 * k)}Z" fill="${c.lozenge}"/>`;
+    let ring = '';
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; ring += `<circle cx="${f(s / 2 + Math.cos(a) * 66 * k)}" cy="${f(s / 2 + Math.sin(a) * 66 * k)}" r="${f(3.2 * k)}" fill="${c.ring}"/>`; }
+    return `<rect width="${s}" height="${s}" fill="${c.ground}"/>${q}${loz}${ring}
+      <circle cx="${s / 2}" cy="${s / 2}" r="${f(56 * k)}" fill="none" stroke="${c.ring}" stroke-width="${f(2 * k)}"/>
+      <path transform="translate(${s / 2} ${s / 2})" d="${markPath({ R: 44 * k, notch: o.notch ?? -45 })}" fill="${c.mark}"/>`;
+  }
+
+  /* One illustrative organisation, reused by every chapter so the systems compare like for like.
+     Eight dimensions, clockwise from the top point of the mark. Overall is the mean. */
+  const SAMPLE = {
+    org: 'Harbour & Co.', people: 412, overall: 72.4, bench: 58.0,
+    dims: [
+      { k: 'Adoption', v: 81.0, b: 66 }, { k: 'Skills', v: 58.6, b: 56 }, { k: 'Confidence', v: 70.5, b: 57 }, { k: 'Policy', v: 76.8, b: 45 },
+      { k: 'Data', v: 64.9, b: 55 }, { k: 'Leadership', v: 83.1, b: 61 }, { k: 'Culture', v: 72.0, b: 60 }, { k: 'Tools', v: 72.3, b: 64 }
+    ]
+  };
+
+  function plate(kind) { return PLATES[kind] ? PLATES[kind]() : ''; }
+  const KINDS = ['almanac', 'hallmark', 'madum', 'tolerance', 'dial', 'datum', 'constant'];
+  /* Fill any [data-plate] placeholder. */
+  function fillPlates(root = document) { root.querySelectorAll('[data-plate]').forEach(el => { if (!el.firstElementChild) el.innerHTML = plate(el.dataset.plate); }); }
+
+  return { SAMPLE, NS, reduced, uid, f, clamp, lerp, easeOut, easeInOut, rng, wave, blob, markPath, onView, loop, replayOnce, contrast, hexRgb, svg, plate, tileArt, fillPlates, KINDS };
+})();
+</script>

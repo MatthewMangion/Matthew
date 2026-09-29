@@ -1,0 +1,497 @@
+<style>
+/* ===== 02 HALLMARK: assay and standards. Laid vellum, iron-gall ink, bottle-green wax, gold only as foil. ===== */
+.hm {
+  --hm-vellum: #F2EDE3; --hm-sheet: #F7F2E7; --hm-ink: #22362F; --hm-ink-2: #45534D; --hm-muted: #6E7A73; --hm-faint: #A5A199;
+  --hm-green: #1D4A43; --hm-green-deep: #0F2B26; --hm-gold: #C9963A; --hm-gold-text: #8C6420;
+  --hm-foil: linear-gradient(135deg, #F6DE9E 0%, #D6A54C 30%, #9C6E22 52%, #E9C679 74%, #B08032 100%);
+  --hm-foil-text: linear-gradient(135deg, #D2A450 0%, #8C6420 42%, #B8893A 68%, #6E4C14 100%);
+  --hm-rule: rgba(34,54,47,.62);
+  --hm-serif: "Source Serif 4", Georgia, "Times New Roman", serif; --hm-script: "Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
+  background-color: var(--hm-vellum);
+  background-image: repeating-linear-gradient(0deg, rgba(34,54,47,.024) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(34,54,47,.04) 0 1px, transparent 1px 27px);
+  color: var(--hm-ink); padding-block: clamp(56px, 8vw, 120px); font-family: var(--hm-serif);
+}
+.hm .ch-tag { color: var(--hm-ink); font-family: var(--font-mono); }
+.hm-sc { font-variant-caps: all-small-caps; letter-spacing: .14em; }
+.hm-head { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 18px; margin-bottom: clamp(36px, 5vw, 64px); }
+.hm-head::before, .hm-head::after { content: ""; height: 5px; border-block: 1px solid var(--hm-rule); }
+.hm-head p { margin: 0; font: 500 15px/1 var(--hm-serif); font-variant-caps: all-small-caps; letter-spacing: .22em; white-space: nowrap; }
+.hm-open { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(28px, 5vw, 80px); align-items: center; }
+.hm-seal { margin: 0; display: grid; gap: 10px; justify-items: center; touch-action: pan-y; }
+.hm-seal svg { width: 100%; max-width: 480px; height: auto; display: block; overflow: visible; cursor: crosshair; }
+.hm-seal figcaption { font: italic 400 15px/1.4 var(--hm-serif); color: var(--hm-muted); }
+.hm-copy { display: grid; gap: 22px; min-width: 0; }
+.hm-title { margin: 0; font-weight: 400; font-size: clamp(50px, 6.6vw, 98px); line-height: .98; letter-spacing: -.015em; font-variation-settings: "opsz" 60; text-wrap: balance; }
+.hm-title em { font-style: italic; font-weight: 300; color: var(--hm-green); }
+.hm-lede { margin: 0; font-size: 19px; line-height: 1.6; color: var(--hm-ink-2); max-width: 56ch; font-variation-settings: "opsz" 16; }
+.hm-lede::first-letter { font-size: 3.1em; float: left; line-height: .82; margin: .06em .08em 0 0; font-variation-settings: "opsz" 60; color: var(--hm-green); }
+.hm-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+
+.hm-btn { font: 600 16px/1 var(--hm-serif); font-variant-caps: all-small-caps; letter-spacing: .14em; min-height: 48px; padding: 0 26px; border-radius: 2px; border: 0; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; transition: filter .2s, transform .2s, background-color .2s; }
+.hm-btn--primary { background: var(--hm-green); color: #F0DFB3; box-shadow: inset 0 0 0 3px var(--hm-green), inset 0 0 0 4px rgba(233,203,132,.75); }
+.hm-btn--primary:hover { background: var(--hm-green-deep); box-shadow: inset 0 0 0 3px var(--hm-green-deep), inset 0 0 0 4px rgba(233,203,132,.9); }
+.hm-btn--accent { background: var(--hm-foil); background-size: 200% 200%; background-position: 0% 50%; color: #2A1E08; box-shadow: inset 0 1px 0 rgba(255,255,255,.55), inset 0 -1px 0 rgba(90,60,10,.35), 0 1px 2px rgba(34,54,47,.25); transition: background-position .8s var(--ease-out); }
+.hm-btn--accent:hover { background-position: 100% 50%; }
+.hm-btn--secondary { background: transparent; color: var(--hm-ink); box-shadow: inset 0 0 0 1px var(--hm-ink), inset 0 0 0 4px var(--hm-vellum), inset 0 0 0 5px var(--hm-ink); }
+.hm-btn--secondary:hover { background: rgba(34,54,47,.05); }
+.hm-btn--ghost { background: none; color: var(--hm-green); padding-inline: 4px; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.hm-btn:active { transform: translateY(1px); }
+
+.hm-punches { margin: 6px 0 0; display: grid; gap: 10px; justify-items: start; }
+.hm-punch-row { display: flex; gap: 10px; }
+.hm-punch { width: 56px; height: 46px; display: grid; place-items: center; background: #2B3A34; color: #EDE3CC; font: 700 21px/1 var(--hm-serif);
+  box-shadow: inset 1.5px 1.5px 0 rgba(0,0,0,.45), inset -1px -1px 0 rgba(255,255,255,.18); text-shadow: 0 1px 0 rgba(0,0,0,.6), 0 -1px 0 rgba(255,255,255,.12); }
+.hm-punch svg { width: 30px; height: 30px; --mk: #EDE3CC; filter: drop-shadow(0 1px 0 rgba(0,0,0,.5)); }
+.hm-punch--shield { clip-path: polygon(0 0, 100% 0, 100% 58%, 50% 100%, 0 58%); padding-bottom: 8px; }
+.hm-punch--oval { border-radius: 50%; }
+.hm-punch--rect { clip-path: polygon(8% 0, 92% 0, 100% 14%, 100% 86%, 92% 100%, 8% 100%, 0 86%, 0 14%); letter-spacing: .04em; }
+.hm-punch--cut { clip-path: polygon(0 0, 100% 0, 100% 70%, 78% 100%, 22% 100%, 0 70%); font-style: italic; font-weight: 500; font-size: 26px; }
+.hm-punch-cap { display: flex; gap: 10px; margin: 0; }
+.hm-punch-cap span { width: 56px; text-align: center; font-size: 13px; font-variant-caps: all-small-caps; letter-spacing: .1em; color: var(--hm-muted); }
+.hm-punches p { margin: 0; font: italic 400 15px/1.5 var(--hm-serif); color: var(--hm-ink-2); }
+
+/* board */
+.hm-board { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 44px 28px; margin-top: clamp(64px, 9vw, 120px); }
+.hm-plate { position: relative; border: 1px solid var(--hm-rule); outline: 1px solid var(--hm-rule); outline-offset: 4px; padding: clamp(28px, 3vw, 40px) clamp(20px, 2.6vw, 36px) clamp(22px, 2.6vw, 32px); min-width: 0; background: rgba(247,242,231,.55); }
+.hm-legend { position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%); margin: 0; padding: 0 16px; background: var(--hm-vellum); display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
+  font: 600 16px/1 var(--hm-serif); font-variant-caps: all-small-caps; letter-spacing: .2em; color: var(--hm-ink); }
+.hm-legend svg { width: 13px; height: 13px; --mk: var(--hm-gold); }
+.hm-materials { grid-column: span 5; }
+.hm-letters { grid-column: span 7; }
+.hm-entries-plate { grid-column: 1 / -1; }
+.hm-instruments { grid-column: 1 / -1; }
+.hm-cert-plate { grid-column: 1 / -1; }
+.hm-vernier { grid-column: 1 / -1; }
+.hm-note { margin: 18px 0 0; font: italic 400 15px/1.5 var(--hm-serif); color: var(--hm-ink-2); }
+
+.hm-swatches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.hm-sw { margin: 0; display: grid; gap: 8px; }
+.hm-sw > div { height: 74px; box-shadow: inset 0 0 0 1px rgba(34,54,47,.4), inset 0 0 0 4px var(--hm-sheet), inset 0 0 0 5px rgba(34,54,47,.25); }
+.hm-sw--foil > div { background: var(--hm-foil); background-size: 250% 250%; animation: hmSheen 7s ease-in-out infinite alternate; }
+@keyframes hmSheen { from { background-position: 0% 30%; } to { background-position: 100% 70%; } }
+.hm-sw .laid { background-color: var(--hm-vellum); background-image: repeating-linear-gradient(0deg, rgba(34,54,47,.08) 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, rgba(34,54,47,.14) 0 1px, transparent 1px 18px); }
+.hm-sw figcaption { display: grid; gap: 1px; font-size: 14px; line-height: 1.35; color: var(--hm-ink-2); }
+.hm-sw b { font-weight: 600; color: var(--hm-ink); font-size: 16px; }
+.hm-sw code { font: 500 11px/1.3 var(--font-mono); color: var(--hm-muted); }
+
+.hm-type { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px; align-items: center; }
+.hm-type-big { font-size: clamp(96px, 11vw, 150px); line-height: .85; font-weight: 300; font-variation-settings: "opsz" 60; color: var(--hm-green); letter-spacing: -.02em; }
+.hm-type-big em { font-weight: 400; color: var(--hm-gold-text); }
+.hm-type dl { margin: 0; display: grid; gap: 14px; }
+.hm-type dl > div { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 14px; align-items: baseline; border-bottom: 1px solid rgba(34,54,47,.16); padding-bottom: 12px; }
+.hm-type dt { font-size: 15px; color: var(--hm-muted); }
+.hm-type dd { margin: 0; font-size: 15px; line-height: 1.45; color: var(--hm-ink-2); }
+.hm-type dd .spec { display: block; color: var(--hm-ink); font-size: 26px; line-height: 1.15; margin-bottom: 2px; }
+.hm-type dd .spec.hm-script { font-family: var(--hm-script); font-size: 34px; line-height: 1.1; color: var(--hm-green); }
+
+.hm-entries { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.hm-entry { padding: 6px clamp(14px, 2.4vw, 32px) 4px; border-left: 1px solid rgba(34,54,47,.28); display: grid; gap: 6px; align-content: start; }
+.hm-entry:first-child { border-left: 0; padding-left: 0; }
+.hm-entry-n { margin: 0; font-size: clamp(56px, 6vw, 80px); line-height: 1; font-weight: 400; font-variation-settings: "opsz" 60; letter-spacing: -.01em; }
+.hm-entry-n small { font-size: .45em; margin-left: .08em; font-variant-caps: normal; }
+.hm-entry-n--head { color: var(--hm-green); }
+.hm-entry-n--base { color: var(--hm-faint); }
+.hm-entry-n--ins { background: var(--hm-foil-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hm-entry-t { margin: 4px 0 0; font-size: 18px; line-height: 1.35; color: var(--hm-ink); font-variation-settings: "opsz" 20; }
+.hm-entry-s { margin: 0; font: italic 400 16px/1.45 var(--hm-serif); color: var(--hm-muted); }
+.hm-entries-note { margin: 22px 0 0; font-size: 13px; font-variant-caps: all-small-caps; letter-spacing: .12em; color: var(--hm-muted); text-align: center; }
+
+.hm-inst { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); }
+.hm-inst h4 { margin: 0 0 14px; font: 600 14px/1 var(--hm-serif); font-variant-caps: all-small-caps; letter-spacing: .18em; color: var(--hm-muted); }
+.hm-btns { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 30px; }
+.hm-stamps { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-bottom: 26px; }
+.hm-stamp { width: 172px; height: auto; mix-blend-mode: multiply; }
+.hm-stamp--green { color: #2E6B55; transform: rotate(-4deg); }
+.hm-stamp--ochre { color: #A87422; transform: rotate(2.5deg); }
+.hm-stamp--grey { color: #7C837F; transform: rotate(-1.5deg); }
+.hm-field { display: grid; gap: 4px; max-width: 460px; }
+.hm-field label { font-size: 15px; font-variant-caps: all-small-caps; letter-spacing: .14em; color: var(--hm-muted); }
+.hm-field input { font: italic 400 24px/1.3 var(--hm-serif); color: var(--hm-ink); background: transparent; border: 0; border-bottom: 1.5px dotted var(--hm-ink); padding: 4px 2px 6px; outline: none; }
+.hm-field input:focus { border-bottom: 1.5px solid var(--hm-gold); }
+.hm-field small { font: italic 400 14px/1.4 var(--hm-serif); color: var(--hm-muted); }
+.hm-ledger { width: 100%; border-collapse: collapse; font-size: 17px; font-variant-numeric: tabular-nums; }
+.hm-ledger caption { text-align: left; margin-bottom: 10px; font-size: 16px; color: var(--hm-ink); }
+.hm-ledger th { font-weight: 600; font-size: 13px; font-variant-caps: all-small-caps; letter-spacing: .14em; color: var(--hm-muted); text-align: right; padding: 0 0 8px 14px; border-bottom: 1px solid var(--hm-rule); }
+.hm-ledger th:first-child { text-align: left; padding-left: 0; }
+.hm-ledger td { padding: 7px 0 7px 14px; text-align: right; color: var(--hm-ink); }
+.hm-ledger td:first-child { padding-left: 0; text-align: left; width: 100%; }
+.hm-ledger td:last-child { color: var(--hm-muted); }
+.hm-lead { display: flex; align-items: baseline; gap: 8px; }
+.hm-lead::after { content: ""; flex: 1; border-bottom: 1.5px dotted rgba(34,54,47,.4); transform: translateY(-4px); }
+.hm-ledger tfoot td { border-top: 1px solid var(--hm-rule); font-weight: 600; padding-top: 10px; }
+.hm-ledger tfoot td:first-child { font-variant-caps: all-small-caps; letter-spacing: .14em; }
+.hm-ledger .lo { color: var(--hm-gold-text); }
+
+/* certificate */
+.hm-cert-scroll { overflow-x: auto; padding: 6px 2px 14px; }
+.hm-cert { container-type: inline-size; position: relative; min-width: 660px; aspect-ratio: 1000 / 707; background: #FBF7EE; box-shadow: 0 28px 60px -34px rgba(15,43,38,.55), 0 1px 0 rgba(34,54,47,.12); overflow: hidden; }
+.hm-cert-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hm-cert-body { position: absolute; inset: 11% 11% 9%; display: grid; grid-template-rows: auto auto auto auto auto auto auto 1fr; justify-items: center; text-align: center; color: var(--hm-ink); }
+.hm-cert-no { position: absolute; top: -1.6cqw; right: -1.6cqw; margin: 0; font: 500 1.25cqw/1 var(--font-mono); color: #A94436; letter-spacing: .08em; }
+.hm-cert-kicker { margin: 0; font-size: 1.6cqw; letter-spacing: .3em; color: var(--hm-gold-text); }
+.hm-cert-title { margin: .6cqw 0 1.4cqw; font-weight: 400; font-size: 5.2cqw; line-height: 1; letter-spacing: -.01em; font-variation-settings: "opsz" 60; color: var(--hm-green); }
+.hm-cert-line { margin: 0; font-size: 1.75cqw; line-height: 1.5; color: var(--hm-ink-2); max-width: 64cqw; }
+.hm-cert-line em { font-size: 1.1em; }
+.hm-cert-org { margin: .3cqw 0 .6cqw; font: italic 400 4.3cqw/1.1 var(--hm-serif); color: var(--hm-ink); border-bottom: 1px solid rgba(34,54,47,.35); padding: 0 4cqw .4cqw; }
+.hm-cert-score { margin: .6cqw 0 .4cqw; font-size: 7.4cqw; line-height: 1; font-weight: 400; font-variation-settings: "opsz" 60; background: var(--hm-foil-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hm-cert-score small { font-size: .24em; letter-spacing: .1em; font-variant-caps: all-small-caps; -webkit-text-fill-color: var(--hm-muted); color: var(--hm-muted); }
+.hm-cert-foot { align-self: end; width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 3cqw; }
+.hm-cert-sign { display: grid; justify-items: center; gap: .3cqw; }
+.hm-cert-sign .hm-script { font-family: var(--hm-script); font-size: 3.6cqw; line-height: 1; color: #1E3A5F; transform: rotate(-4deg); }
+.hm-cert-sign i { width: 18cqw; height: 1px; background: var(--hm-ink); }
+.hm-cert-sign small { font-size: 1.3cqw; color: var(--hm-muted); }
+.hm-cert-punches { display: flex; gap: .7cqw; }
+.hm-cert-punches .hm-punch { width: 4.4cqw; height: 3.6cqw; font-size: 1.6cqw; }
+.hm-cert-punches .hm-punch svg { width: 2.4cqw; height: 2.4cqw; }
+.hm-cert-punches .hm-punch--cut { font-size: 2cqw; }
+.hm-cert-seal { justify-self: end; width: 13cqw; margin-bottom: -1cqw; }
+.hm-cert-seal svg { width: 100%; height: auto; display: block; overflow: visible; }
+.hm-cert-specimen { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-24deg); font: 700 13cqw/1 var(--hm-serif); letter-spacing: .08em; color: rgba(169,68,54,.07); pointer-events: none; white-space: nowrap; }
+.hm-cap { margin: 12px 0 0; font: italic 400 15px/1.5 var(--hm-serif); color: var(--hm-muted); text-align: center; }
+
+/* vernier */
+.hm-vernier-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 2.2fr); gap: clamp(20px, 3vw, 44px); align-items: center; }
+.hm-read { margin: 0; font-size: clamp(64px, 7vw, 96px); line-height: 1; font-weight: 400; font-variation-settings: "opsz" 60; color: var(--hm-green); font-variant-numeric: tabular-nums; }
+.hm-read small { display: block; font-size: 14px; margin-top: 8px; letter-spacing: .14em; font-variant-caps: all-small-caps; color: var(--hm-muted); }
+.hm-vernier-copy p:last-child { margin: 14px 0 0; font-size: 16px; line-height: 1.55; color: var(--hm-ink-2); }
+.hm-vscroll { overflow-x: auto; padding-bottom: 4px; }
+.hm-vscroll svg { width: 100%; min-width: 620px; height: auto; display: block; touch-action: none; user-select: none; -webkit-user-select: none; }
+.hm-vscroll svg:focus-visible { outline: 2px solid var(--hm-gold); outline-offset: 4px; }
+.hm-vplate { cursor: grab; }
+.hm-vplate:active { cursor: grabbing; }
+
+@media (max-width: 980px) {
+  .hm-open, .hm-inst, .hm-vernier-grid { grid-template-columns: minmax(0, 1fr); }
+  .hm-materials, .hm-letters { grid-column: 1 / -1; }
+  .hm-seal svg { max-width: 400px; }
+}
+@media (max-width: 700px) {
+  .hm-head { grid-template-columns: minmax(0, 1fr); }
+  .hm-head::before, .hm-head::after { display: none; }
+  .hm-head p { white-space: normal; text-align: center; line-height: 1.5; border-block: 1px solid var(--hm-rule); padding: 8px 0; }
+  .hm-entries { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .hm-entry { border-left: 0; padding: 0; border-top: 1px solid rgba(34,54,47,.2); padding-top: 18px; }
+  .hm-entry:first-child { border-top: 0; padding-top: 0; }
+  .hm-type { grid-template-columns: minmax(0, 1fr); }
+  .hm-type dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .hm-swatches { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+
+<section class="ch hm" id="hallmark" data-ch="hallmark" aria-labelledby="hm-title">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <filter id="hmDistress" x="-5%" y="-10%" width="110%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="9" result="n"/>
+        <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.6 1.75" result="m"/>
+        <feComposite in="SourceGraphic" in2="m" operator="in" result="c"/>
+        <feTurbulence type="turbulence" baseFrequency=".04" numOctaves="1" seed="2" result="w"/>
+        <feDisplacementMap in="c" in2="w" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+  <div class="wrap">
+    <div class="hm-head"><p>mesura &middot; a system of hallmarks &middot; folio ii</p></div>
+    <div class="hm-open">
+      <figure class="hm-seal" id="hmSeal">
+        <svg viewBox="-200 -200 400 400" role="img" aria-label="The Mesura mark in gold foil, struck into a bottle-green wax seal"></svg>
+        <figcaption>Move across the seal to turn it in the light.</figcaption>
+      </figure>
+      <div class="hm-copy">
+        <p class="ch-tag"><i>02</i> Hallmark &middot; 1300 onwards &middot; the mark as a seal</p>
+        <h2 class="hm-title" id="hm-title">Measured, <em>then marked.</em></h2>
+        <p class="hm-lede">Since 1300, silver in England has been tested and struck with a hallmark before sale. The mark says it has been measured and is what it claims to be. Hallmark gives Mesura&rsquo;s report the same standing. The eight-point mark becomes the punch, struck into every certificate of readiness.</p>
+        <div class="hm-actions">
+          <a class="hm-btn hm-btn--primary" href="#hallmark">Get your Diagnostic</a>
+          <a class="hm-btn hm-btn--secondary" href="#hmCert">View a certificate</a>
+        </div>
+        <figure class="hm-punches">
+          <div class="hm-punch-row" aria-hidden="true">
+            <span class="hm-punch hm-punch--shield"><svg viewBox="0 0 292 292"><use href="#mz-mark"/></svg></span>
+            <span class="hm-punch hm-punch--oval">72</span>
+            <span class="hm-punch hm-punch--rect">MT</span>
+            <span class="hm-punch hm-punch--cut">a</span>
+          </div>
+          <p class="hm-punch-cap" aria-hidden="true"><span>sponsor</span><span>standard</span><span>office</span><span>date</span></p>
+          <p>Four punches, read left to right: who measured, the score, where, and in which year of the scheme.</p>
+        </figure>
+      </div>
+    </div>
+
+    <div class="hm-board">
+      <section class="hm-plate hm-materials" aria-label="Hallmark materials">
+        <h3 class="hm-legend"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>Materials<svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg></h3>
+        <div class="hm-swatches">
+          <figure class="hm-sw"><div style="background:#1D4A43"></div><figcaption><b>Bottle green</b><span>Primary actions, enamel, wax</span><code>#1D4A43</code></figcaption></figure>
+          <figure class="hm-sw hm-sw--foil"><div></div><figcaption><b>Assay gold</b><span>Foil only: the mark, one figure</span><code>#F6DE9E &rarr; #9C6E22</code></figcaption></figure>
+          <figure class="hm-sw"><div style="background:#22362F"></div><figcaption><b>Iron gall</b><span>Text, rules, engraving</span><code>#22362F</code></figcaption></figure>
+          <figure class="hm-sw"><div class="laid"></div><figcaption><b>Laid vellum</b><span>With laid and chain lines</span><code>#F2EDE3</code></figcaption></figure>
+        </div>
+        <p class="hm-note">Gold is treated as a material, not a colour. It appears only as foil, and only on things that certify.</p>
+      </section>
+
+      <section class="hm-plate hm-letters" aria-label="Hallmark type">
+        <h3 class="hm-legend"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>Letters<svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg></h3>
+        <div class="hm-type">
+          <div class="hm-type-big" aria-hidden="true">A<em>a</em></div>
+          <dl>
+            <div><dt class="hm-sc">Display</dt><dd><span class="spec">Measured, <em>then marked</em></span>Source Serif 4 at 400, optical size 60. Italic for the turn of a phrase.</dd></div>
+            <div><dt class="hm-sc">Figures</dt><dd><span class="spec">72&middot;4 and 58&middot;0</span>The raised decimal point of older British print.</dd></div>
+            <div><dt class="hm-sc">Labels</dt><dd><span class="spec hm-sc">Certified measure</span>Small capitals, spaced 14 per cent. Buttons use them too.</dd></div>
+            <div><dt class="hm-sc">Signature</dt><dd><span class="spec hm-script">M. Borg</span>Pinyon Script, on certificates and nowhere else.</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="hm-plate hm-entries-plate" aria-label="Hallmark stat entries">
+        <h3 class="hm-legend"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>Entries<svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg></h3>
+        <div class="hm-entries">
+          <article class="hm-entry"><p class="hm-entry-n hm-entry-n--head">29&middot;6<small>%</small></p><p class="hm-entry-t">of Maltese workers use generative AI at work</p><p class="hm-entry-s">First in the European Union</p></article>
+          <article class="hm-entry"><p class="hm-entry-n hm-entry-n--base">15&middot;1<small>%</small></p><p class="hm-entry-t">is the EU average</p><p class="hm-entry-s">Malta sits at nearly double the norm</p></article>
+          <article class="hm-entry"><p class="hm-entry-n hm-entry-n--ins">21&middot;6<small>%</small></p><p class="hm-entry-t">of organisations formally measure it</p><p class="hm-entry-s">The rest is shadow AI, invisible to leadership</p></article>
+        </div>
+        <p class="hm-entries-note">Figures from the Mesura v1.0 system &middot; green for the headline, faint for the baseline, gold for the insight</p>
+      </section>
+
+      <section class="hm-plate hm-instruments" aria-label="Hallmark components">
+        <h3 class="hm-legend"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>Instruments<svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg></h3>
+        <div class="hm-inst">
+          <div>
+            <h4>Buttons</h4>
+            <div class="hm-btns">
+              <button class="hm-btn hm-btn--primary" type="button">Get your Diagnostic</button>
+              <button class="hm-btn hm-btn--secondary" type="button">How it works</button>
+              <button class="hm-btn hm-btn--accent" type="button">Download certificate</button>
+              <button class="hm-btn hm-btn--ghost" type="button">Learn more</button>
+            </div>
+            <h4>Stamps</h4>
+            <div class="hm-stamps">
+              <svg class="hm-stamp hm-stamp--green" viewBox="0 0 200 78" role="img" aria-label="Above benchmark"><g filter="url(#hmDistress)"><ellipse cx="100" cy="39" rx="95" ry="34" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="100" cy="39" rx="86" ry="26" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="100" y="45.5" text-anchor="middle" fill="currentColor" font-family="'Source Serif 4', Georgia, serif" font-weight="700" font-size="14.5" letter-spacing="1.6">ABOVE BENCHMARK</text></g></svg>
+              <svg class="hm-stamp hm-stamp--ochre" viewBox="0 0 200 78" role="img" aria-label="Emerging"><g filter="url(#hmDistress)"><rect x="8" y="10" width="184" height="58" rx="4" fill="none" stroke="currentColor" stroke-width="4"/><rect x="15" y="17" width="170" height="44" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="100" y="46" text-anchor="middle" fill="currentColor" font-family="'Source Serif 4', Georgia, serif" font-weight="700" font-size="20" letter-spacing="5">EMERGING</text></g></svg>
+              <svg class="hm-stamp hm-stamp--grey" viewBox="0 0 200 78" role="img" aria-label="Not measured"><g filter="url(#hmDistress)"><ellipse cx="100" cy="39" rx="95" ry="34" fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="7 4"/><text x="100" y="45.5" text-anchor="middle" fill="currentColor" font-family="'Source Serif 4', Georgia, serif" font-weight="700" font-size="15" letter-spacing="2">NOT MEASURED</text></g></svg>
+            </div>
+            <h4>Field</h4>
+            <div class="hm-field">
+              <label for="hm-org">Name of organisation</label>
+              <input id="hm-org" type="text" value="Harbour &amp; Co. Ltd" autocomplete="off">
+              <small>As it should read on the certificate.</small>
+            </div>
+          </div>
+          <div>
+            <h4>Ledger</h4>
+            <table class="hm-ledger" id="hmLedger">
+              <caption class="hm-sc">Schedule of dimensions &middot; Harbour &amp; Co.</caption>
+              <thead><tr><th scope="col">Dimension</th><th scope="col">Measured</th><th scope="col">Benchmark</th></tr></thead>
+              <tbody></tbody>
+              <tfoot><tr><td><div class="hm-lead">Overall</div></td><td>72&middot;4</td><td>58&middot;0</td></tr></tfoot>
+            </table>
+            <p class="hm-note" style="margin-top:12px;font-size:14px">Illustrative figures. The lowest reading is set in gold, the one place the eye should go first.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="hm-plate hm-cert-plate" aria-label="Certificate of readiness">
+        <h3 class="hm-legend"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>The certificate<svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg></h3>
+        <div class="hm-cert-scroll">
+          <div class="hm-cert" id="hmCert">
+            <svg class="hm-cert-art" viewBox="0 0 1000 707" aria-hidden="true"></svg>
+            <span class="hm-cert-specimen" aria-hidden="true">SPECIMEN</span>
+            <div class="hm-cert-body">
+              <p class="hm-cert-no">N&ordm; MT-2026-004417</p>
+              <p class="hm-cert-kicker hm-sc">mesura &middot; assay of ai readiness</p>
+              <h4 class="hm-cert-title">Certificate of Readiness</h4>
+              <p class="hm-cert-line"><em>This is to certify that</em></p>
+              <p class="hm-cert-org">Harbour &amp; Co. Ltd</p>
+              <p class="hm-cert-line">was assessed across eight dimensions on 29 September 2026 and measured at</p>
+              <p class="hm-cert-score">72&middot;4 <small>out of 100</small></p>
+              <p class="hm-cert-line">against a national benchmark of 58&middot;0.</p>
+              <div class="hm-cert-foot">
+                <div class="hm-cert-sign"><span class="hm-script">M. Borg</span><i></i><small class="hm-sc">Assessor</small></div>
+                <div class="hm-cert-punches" aria-hidden="true">
+                  <span class="hm-punch hm-punch--shield"><svg viewBox="0 0 292 292"><use href="#mz-mark"/></svg></span>
+                  <span class="hm-punch hm-punch--oval">72</span>
+                  <span class="hm-punch hm-punch--rect">MT</span>
+                  <span class="hm-punch hm-punch--cut">a</span>
+                </div>
+                <div class="hm-cert-seal" data-plate-seal></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="hm-cap">Specimen. Organisation, assessor and serial number are illustrative.</p>
+      </section>
+
+      <section class="hm-plate hm-vernier" aria-label="Vernier scale">
+        <h3 class="hm-legend"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>The vernier<svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg></h3>
+        <div class="hm-vernier-grid">
+          <div class="hm-vernier-copy">
+            <p class="hm-read" id="hmRead">72&middot;4<small>Readiness, to a tenth</small></p>
+            <p>In 1631 Pierre Vernier showed how to read a tenth of a division by setting a second scale against the first. Drag the lower scale, or use the arrow keys. The one line that meets the upper scale gives the last digit.</p>
+          </div>
+          <div class="hm-vscroll"><svg id="hmVernier" viewBox="0 0 1000 200" role="slider" tabindex="0" aria-label="Readiness score on a vernier scale" aria-valuemin="0" aria-valuemax="91" aria-valuenow="72.4" aria-valuetext="72.4"></svg></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const { markPath, blob, f, svg, reduced, loop, SAMPLE } = MZ;
+  const dot = v => v.toFixed(1).replace('.', '·');
+
+  /* Wave rings for guilloche: one curve, many rotated copies. */
+  function waveRing(R, A, k, steps = 360) {
+    let d = '';
+    for (let s = 0; s <= steps; s++) { const t = s / steps * Math.PI * 2, r = R + A * Math.sin(k * t); d += (s ? 'L' : 'M') + f(Math.cos(t) * r) + ' ' + f(Math.sin(t) * r); }
+    return d + 'Z';
+  }
+  function rosette(id, R, A, k, copies, attrs) {
+    let s = `<path id="${id}" d="${waveRing(R, A, k)}"/>`, uses = '';
+    for (let c = 0; c < copies; c++) uses += `<use href="#${id}" transform="rotate(${f(c * 360 / k / copies)})"/>`;
+    return { def: s, uses: `<g ${attrs}>${uses}</g>` };
+  }
+
+  /* ---- The seal ---- */
+  function sealSVG(p, big) {
+    const wax = blob(0, 0, 182, 7, 11, 160);
+    const ros = rosette(`${p}Ros`, 99, 7, 10, 12, 'fill="none" stroke="#0B211D" stroke-opacity=".4" stroke-width=".8"');
+    return `<defs>
+      <radialGradient id="${p}Wax" cx=".36" cy=".3" r=".85"><stop offset="0" stop-color="#2F6D61"/><stop offset=".55" stop-color="#1D4A43"/><stop offset="1" stop-color="#0D2521"/></radialGradient>
+      <linearGradient id="${p}Foil" x1="0" y1="0" x2="1" y2="1" gradientTransform="rotate(0 .5 .5)"><stop offset="0" stop-color="#F8E3A8"/><stop offset=".34" stop-color="#DDAE55"/><stop offset=".56" stop-color="#976A20"/><stop offset=".8" stop-color="#EAC87A"/><stop offset="1" stop-color="#A87A2E"/></linearGradient>
+      <filter id="${p}WaxL" x="-15%" y="-15%" width="130%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="7" result="b"/><feSpecularLighting in="b" surfaceScale="7" specularConstant=".7" specularExponent="20" lighting-color="#DDEBE4" result="s"><feDistantLight class="lt" azimuth="225" elevation="38"/></feSpecularLighting><feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/><feComposite in="SourceGraphic" in2="s2" operator="arithmetic" k1="0" k2="1" k3=".55" k4="0"/></filter>
+      <filter id="${p}FoilL" x="-15%" y="-15%" width="130%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="2.4" result="b"/><feSpecularLighting in="b" surfaceScale="4" specularConstant="1" specularExponent="24" lighting-color="#FFF6DC" result="s"><feDistantLight class="lt" azimuth="225" elevation="38"/></feSpecularLighting><feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/><feComposite in="SourceGraphic" in2="s2" operator="arithmetic" k1="0" k2="1" k3=".9" k4="0"/><feDropShadow dx="0" dy="2" stdDeviation="1.6" flood-color="#06140F" flood-opacity=".55"/></filter>
+      <filter id="${p}Deb" x="-5%" y="-5%" width="110%" height="110%"><feOffset in="SourceAlpha" dx="1.2" dy="1.6" result="o"/><feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#03110D" flood-opacity=".75"/><feComposite in2="edge" operator="in" result="sh"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter>
+      <filter id="${p}Drop" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="${big ? 14 : 5}" stdDeviation="${big ? 14 : 5}" flood-color="#0F2B26" flood-opacity=".4"/></filter>
+      <path id="${p}Txt" d="M0 0m-137 0a137 137 0 1 1 274 0a137 137 0 1 1-274 0"/>
+      ${ros.def}
+    </defs>
+    <path d="${wax}" fill="url(#${p}Wax)" filter="url(#${p}Drop)"/>
+    <path d="${wax}" fill="url(#${p}Wax)" filter="url(#${p}WaxL)"/>
+    <circle r="163" fill="none" stroke="#06140F" stroke-opacity=".5" stroke-width="2.4"/>
+    <circle r="114" fill="none" stroke="#06140F" stroke-opacity=".45" stroke-width="1.6"/>
+    ${ros.uses}
+    <text font-family="'Source Serif 4', Georgia, serif" font-size="21" font-weight="600" letter-spacing="2" fill="url(#${p}Foil)" filter="url(#${p}Deb)"><textPath href="#${p}Txt" textLength="850" lengthAdjust="spacing">MESURA &#183; CERTIFIED MEASURE &#183; MMXXVI &#183; MESURA.AI &#183;</textPath></text>
+    <path d="${markPath({ R: 80 })}" fill="url(#${p}Foil)" filter="url(#${p}FoilL)"/>`;
+  }
+  const sealFig = document.getElementById('hmSeal');
+  if (sealFig) {
+    const s = sealFig.querySelector('svg');
+    s.insertAdjacentHTML('beforeend', sealSVG('hmS', true));
+    const lights = s.querySelectorAll('.lt'), foil = s.querySelector('#hmSFoil');
+    let az = 225, el = 38, target = null, raf = 0;
+    const apply = () => { lights.forEach(l => { l.setAttribute('azimuth', f(az)); l.setAttribute('elevation', f(el)); }); foil.setAttribute('gradientTransform', `rotate(${f(az - 225)} .5 .5)`); };
+    s.addEventListener('pointermove', e => {
+      const r = s.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      target = [((Math.atan2(dy, dx) * 180 / Math.PI) + 360) % 360, 20 + 50 * (1 - Math.min(1, Math.hypot(dx, dy) / (r.width / 2)))];
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; [az, el] = target; apply(); });
+    });
+    s.addEventListener('pointerleave', () => { target = null; });
+    let acc = 0;
+    loop(s, (t, dt) => {
+      if (target) return;
+      acc += dt; if (acc < 50) return; acc = 0;       // an idle glint, about 20 times a second
+      az = (az + 1.2) % 360; el = 34 + 8 * Math.sin(t / 2400); apply();
+    });
+  }
+
+  /* ---- Ledger ---- */
+  const body = document.querySelector('#hmLedger tbody');
+  if (body) {
+    const lo = Math.min(...SAMPLE.dims.map(d => d.v));
+    body.innerHTML = SAMPLE.dims.map(d => `<tr><td><div class="hm-lead">${d.k}</div></td><td class="${d.v === lo ? 'lo' : ''}">${dot(d.v)}</td><td>${dot(d.b)}</td></tr>`).join('');
+  }
+
+  /* ---- Certificate art: guilloche border, corner rosettes, watermark ---- */
+  const art = document.querySelector('#hmCert .hm-cert-art');
+  if (art) {
+    const W = 1000, H = 707, band = 30, inset = 22;
+    let waves = '';
+    for (let i = 0; i < 6; i++) {
+      const ph = i * Math.PI / 3;
+      let top = '', left = '';
+      for (let x = 0; x <= 40; x += 1) { const y = band / 2 + 10 * Math.sin(x / 40 * Math.PI * 2 + ph); top += (x ? 'L' : 'M') + x + ' ' + f(y); }
+      waves += `<path d="${top}"/>`;
+    }
+    const ros = rosette('hmCR', 300, 16, 14, 16, 'fill="none" stroke="#1D4A43" stroke-opacity=".09" stroke-width="1"');
+    const ros2 = rosette('hmCR2', 210, 10, 22, 10, 'fill="none" stroke="#C9963A" stroke-opacity=".16" stroke-width="1"');
+    const corner = rosette('hmCC', 9, 2.6, 6, 6, 'fill="none" stroke="#1D4A43" stroke-opacity=".8" stroke-width=".55"');
+    const cornerUse = [[inset + band / 2, inset + band / 2], [W - inset - band / 2, inset + band / 2], [inset + band / 2, H - inset - band / 2], [W - inset - band / 2, H - inset - band / 2]]
+      .map(([x, y]) => `<g transform="translate(${x} ${y})"><rect x="-${band / 2}" y="-${band / 2}" width="${band}" height="${band}" fill="#FBF7EE"/>${corner.uses}</g>`).join('');
+    art.innerHTML = `<defs>
+        <pattern id="hmWaveH" width="40" height="${band}" patternUnits="userSpaceOnUse"><g fill="none" stroke="#1D4A43" stroke-opacity=".75" stroke-width=".7">${waves}</g></pattern>
+        <pattern id="hmWaveV" width="40" height="${band}" patternUnits="userSpaceOnUse" patternTransform="rotate(90)"><g fill="none" stroke="#1D4A43" stroke-opacity=".75" stroke-width=".7">${waves}</g></pattern>
+        ${ros.def}${ros2.def}${corner.def}
+      </defs>
+      <g transform="translate(500 360)">${ros.uses}${ros2.uses}</g>
+      <rect x="${inset}" y="${inset}" width="${W - 2 * inset}" height="${band}" fill="url(#hmWaveH)"/>
+      <rect x="${inset}" y="${H - inset - band}" width="${W - 2 * inset}" height="${band}" fill="url(#hmWaveH)"/>
+      <rect x="${inset}" y="${inset}" width="${band}" height="${H - 2 * inset}" fill="url(#hmWaveV)"/>
+      <rect x="${W - inset - band}" y="${inset}" width="${band}" height="${H - 2 * inset}" fill="url(#hmWaveV)"/>
+      <g fill="none" stroke="#1D4A43"><rect x="${inset}" y="${inset}" width="${W - 2 * inset}" height="${H - 2 * inset}" stroke-width="1.4"/><rect x="${inset + band}" y="${inset + band}" width="${W - 2 * (inset + band)}" height="${H - 2 * (inset + band)}" stroke-width="1"/><rect x="${inset + band + 6}" y="${inset + band + 6}" width="${W - 2 * (inset + band + 6)}" height="${H - 2 * (inset + band + 6)}" stroke-width=".5" stroke-opacity=".6"/></g>
+      ${cornerUse}`;
+    const small = document.querySelector('[data-plate-seal]');
+    if (small) small.innerHTML = `<svg viewBox="-200 -200 400 400" aria-hidden="true">${sealSVG('hmC', false)}</svg>`;
+  }
+
+  /* ---- Vernier ---- */
+  const V = document.getElementById('hmVernier'), read = document.getElementById('hmRead');
+  if (V) {
+    const X0 = 50, U = 9, BENCH = SAMPLE.bench;
+    let v = SAMPLE.overall;
+    let main = '', labels = '';
+    for (let m = 0; m <= 100; m++) {
+      const x = X0 + m * U, len = m % 10 === 0 ? 28 : m % 5 === 0 ? 20 : 12;
+      main += `<line class="mt" data-m="${m}" x1="${x}" y1="96" x2="${x}" y2="${96 - len}"/>`;
+      if (m % 10 === 0) labels += `<text x="${x}" y="52" text-anchor="middle">${m}</text>`;
+    }
+    let vt = '', vl = '';
+    for (let n = 0; n <= 10; n++) {
+      vt += `<line class="vt" data-n="${n}" x1="${f(n * U * 0.9)}" y1="100" x2="${f(n * U * 0.9)}" y2="${n % 5 === 0 ? 126 : 116}"/>`;
+      if (n % 5 === 0) vl += `<text x="${f(n * U * 0.9)}" y="146" text-anchor="middle">${n}</text>`;
+    }
+    V.innerHTML = `<defs>
+        <linearGradient id="hmBrass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F1D494"/><stop offset=".45" stop-color="#D2A04A"/><stop offset="1" stop-color="#A9792B"/></linearGradient>
+        <linearGradient id="hmSteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F6358"/><stop offset="1" stop-color="#15362F"/></linearGradient>
+      </defs>
+      <rect x="20" y="24" width="960" height="74" rx="2" fill="url(#hmBrass)" stroke="#7A5418" stroke-width="1"/>
+      <g stroke="#2A1E08" stroke-width="1.3">${main}</g>
+      <g font-family="'Source Serif 4', Georgia, serif" font-size="17" fill="#2A1E08">${labels}</g>
+      <path d="M${X0 + BENCH * U} 24l-6 -10h12Z" fill="#1D4A43"/>
+      <text x="${X0 + BENCH * U}" y="10" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-size="13" font-style="italic" fill="#45534D">benchmark 58</text>
+      <rect id="hmVHi" x="0" y="66" width="5" height="62" fill="#F3C866" opacity=".35"/>
+      <g class="hm-vplate" id="hmVPlate">
+        <rect x="-26" y="98" width="${U * 9 + 52}" height="62" rx="2" fill="url(#hmSteel)"/>
+        <g stroke="#EDE3CC" stroke-width="1.3">${vt}</g>
+        <g font-family="'Source Serif 4', Georgia, serif" font-size="14" fill="#EDE3CC">${vl}</g>
+        <path d="M0 98v70" stroke="#E9C679" stroke-width="1.6"/>
+      </g>
+      <text x="500" y="192" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-size="14" font-style="italic" fill="#6E7A73">upper scale in whole points, lower scale in tenths</text>`;
+    const plate = V.querySelector('#hmVPlate'), mts = V.querySelectorAll('.mt'), vts = V.querySelectorAll('.vt');
+    function set(nv) {
+      v = Math.round(Math.min(91, Math.max(0, nv)) * 10) / 10;
+      plate.setAttribute('transform', `translate(${f(X0 + v * U)} 0)`);
+      const n = Math.round((v % 1) * 10) % 10, m = Math.round(v + 0.9 * n);
+      vts.forEach(l => { const on = +l.dataset.n === n; l.setAttribute('stroke', on ? '#F3C866' : '#EDE3CC'); l.setAttribute('stroke-width', on ? 2.6 : 1.3); });
+      mts.forEach(l => { const on = +l.dataset.m === m; l.setAttribute('stroke', on ? '#A94436' : '#2A1E08'); l.setAttribute('stroke-width', on ? 2.6 : 1.3); });
+      V.querySelector('#hmVHi').setAttribute('x', f(X0 + m * U - 2.5));
+      read.firstChild.nodeValue = dot(v);
+      V.setAttribute('aria-valuenow', v); V.setAttribute('aria-valuetext', v.toFixed(1));
+    }
+    set(v);
+    let drag = null;
+    const toUnits = dxPx => dxPx * (1000 / V.getBoundingClientRect().width) / U;
+    plate.addEventListener('pointerdown', e => { drag = { x: e.clientX, v }; plate.setPointerCapture(e.pointerId); e.preventDefault(); });
+    plate.addEventListener('pointermove', e => { if (drag) set(drag.v + toUnits(e.clientX - drag.x)); });
+    plate.addEventListener('pointerup', () => drag = null);
+    plate.addEventListener('pointercancel', () => drag = null);
+    V.addEventListener('keydown', e => {
+      const step = e.shiftKey ? 1 : 0.1, map = { ArrowRight: step, ArrowUp: step, ArrowLeft: -step, ArrowDown: -step };
+      if (e.key in map) { set(v + map[e.key]); e.preventDefault(); }
+      if (e.key === 'Home') { set(0); e.preventDefault(); }
+      if (e.key === 'End') { set(91); e.preventDefault(); }
+    });
+  }
+})();
+</script>

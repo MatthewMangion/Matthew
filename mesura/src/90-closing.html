@@ -1,0 +1,176 @@
+<style>
+/* ===== Closing: the seven systems side by side, a positioning map, and where each fits. Frame styles (Mesura v1.0). ===== */
+.lineup { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px 16px; }
+.lu-cell { display: grid; grid-template-rows: auto 1fr; gap: 10px; min-width: 0; }
+.lu-card.lu-v1 { padding: 18px; background: var(--paper); }
+.lu-v1 .v1-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px; display: grid; gap: 8px; }
+.lu-v1 .v1-card b { font: 500 52px/1 var(--font-display); color: var(--pine); letter-spacing: -.01em; }
+.lu-v1 .v1-card strong { font: 600 15px/1.35 var(--font-body); color: var(--ink); }
+.lu-v1 .v1-card span { font-size: 14px; color: var(--ink-muted); }
+@media (max-width: 1100px) { .lineup { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .lineup { grid-template-columns: minmax(0, 1fr); } }
+.lu-cell > header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.lu-cell > header a { font: 500 19px/1.2 var(--font-display); color: var(--ink); text-decoration: none; }
+.lu-cell > header a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.lu-cell > header small { font: 500 11px/1 var(--font-mono); color: var(--ink-muted); }
+.lu-card { position: relative; overflow: hidden; border-radius: 14px; display: grid; align-content: space-between; gap: 18px; min-height: 360px; isolation: isolate; box-shadow: var(--shadow-sm), 0 0 0 1px var(--border); }
+.lu-card.al, .lu-card.hm, .lu-card.md, .lu-card.tl, .lu-card.dl, .lu-card.dt, .lu-card.cn { padding: 18px; }
+.lu-card .al-stat, .lu-card .md-stat, .lu-card .tl-stat { width: 100%; }
+.lu-card .md-stat { aspect-ratio: 1; padding: 20% 12%; }
+.lu-card .md-stat .n { font-size: 44px; }
+.lu-card .hm-entry { border: 0; padding: 0; }
+.lu-card .hm-entry-n { font-size: 60px; }
+.lu-card .tl-num { font-size: 50px; }
+.lu-card .dl-mod .win { padding: 10px 12px; }
+.lu-card .dt-stat { padding: 0; border: 0; }
+.lu-card .dt-stat .n { font-size: 44px; }
+.lu-card .cn-panel b { font: 200 56px/1 var(--cn-serif); letter-spacing: -.02em; }
+.lu-card .cn-panel p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--cn-lumen-2); }
+.lu-card .cn-panel p strong { display: block; color: var(--cn-lumen); font-weight: 500; }
+.lu-card .lu-act { justify-self: start; }
+.lu-note { margin: 10px 0 0; font-size: 14px; color: var(--ink-muted); }
+
+.map-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); margin-top: clamp(56px, 8vw, 104px); align-items: start; }
+.map { position: relative; aspect-ratio: 1.15; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.map-axis { position: absolute; background: var(--border-strong); }
+.map-axis.x { left: 6%; right: 6%; top: 50%; height: 1px; }
+.map-axis.y { top: 7%; bottom: 7%; left: 50%; width: 1px; }
+.map-lab { position: absolute; font: 500 11px/1.2 var(--font-mono); color: var(--ink-muted); letter-spacing: .02em; }
+.map-dot { position: absolute; left: var(--x); top: var(--y); transform: translate(-20px, -50%); display: flex; align-items: center; gap: 8px; text-decoration: none; z-index: 1; }
+.map-dot .tl-plate { width: 40px; height: 40px; border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-md); flex: none; transition: transform .25s var(--ease-out); }
+.map-dot:hover .tl-plate { transform: scale(1.08); }
+.map-dot .tl-plate svg { width: 100%; height: 100%; display: block; }
+.map-dot span { font: 500 15px/1 var(--font-display); color: var(--ink); background: color-mix(in srgb, var(--surface) 85%, transparent); padding: 3px 5px; border-radius: 5px; white-space: nowrap; }
+.map-dot.left { flex-direction: row-reverse; transform: translate(calc(-100% + 20px), -50%); }
+.map-dot.v1 i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); background: var(--paper); margin: 0 13px; }
+.map-dot.v1 span { font-family: var(--font-body); font-size: 13px; color: var(--ink-muted); }
+.map-cap { margin: 10px 0 0; font-size: 13px; color: var(--ink-muted); }
+.fit-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.fit-table th { text-align: left; font: 600 12px/1.3 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted); padding: 0 12px 10px 0; border-bottom: 1px solid var(--border-strong); }
+.fit-table td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--ink-body); line-height: 1.5; }
+.fit-table td:first-child { font: 500 17px/1.3 var(--font-display); color: var(--ink); white-space: nowrap; }
+.rec { margin-top: 28px; padding: 22px 24px; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border); display: grid; gap: 8px; }
+.rec p { margin: 0; }
+.rec .f-label { color: var(--ochre); }
+.rec p.big { font: 500 22px/1.35 var(--font-display); color: var(--ink); text-wrap: pretty; }
+@media (max-width: 960px) { .map-wrap { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .map-dot.v1 span { display: none; } .fit-table td:first-child { white-space: normal; } .map-dot span { font-size: 13px; } .map-dot .tl-plate { width: 32px; height: 32px; } }
+</style>
+
+<section class="closing" id="lineup" data-ch="cover" aria-labelledby="lu-title">
+  <div class="wrap">
+    <div class="closing-head">
+      <p class="f-label">Compare</p>
+      <h2 class="f-h2" id="lu-title">Seven systems, side by side.</h2>
+      <p class="f-lede">The same stat and the same main action, in each system. The decisions underneath are identical. Only the material changes.</p>
+    </div>
+    <div class="lineup" role="list">
+      <div class="lu-cell" role="listitem">
+        <header><a href="#top">Mesura v1.0</a><small>today &middot; reference</small></header>
+        <div class="lu-card lu-v1">
+          <div class="v1-card"><b>29.6%</b><strong>of Maltese workers use generative AI at work</strong><span>First in the European Union</span></div>
+          <a class="f-btn f-btn--primary lu-act" href="#top">Get your Diagnostic</a>
+        </div>
+      </div>
+      <div class="lu-cell" role="listitem">
+        <header><a href="#almanac">Almanac</a><small>01 &middot; sun</small></header>
+        <div class="lu-card al">
+          <article class="al-stat"><p class="al-num al-num--head">29.6%</p><p class="t">of Maltese workers use generative AI at work</p><p class="s">First in the European Union</p></article>
+          <a class="al-btn al-btn--primary lu-act" href="#almanac">Get your Diagnostic</a>
+        </div>
+      </div>
+      <div class="lu-cell" role="listitem">
+        <header><a href="#hallmark">Hallmark</a><small>02 &middot; seal</small></header>
+        <div class="lu-card hm">
+          <article class="hm-entry"><p class="hm-entry-n hm-entry-n--head">29&middot;6<small>%</small></p><p class="hm-entry-t">of Maltese workers use generative AI at work</p><p class="hm-entry-s">First in the European Union</p></article>
+          <a class="hm-btn hm-btn--primary lu-act" href="#hallmark">Get your Diagnostic</a>
+        </div>
+      </div>
+      <div class="lu-cell" role="listitem">
+        <header><a href="#madum">Madum</a><small>03 &middot; tile</small></header>
+        <div class="lu-card md">
+          <article class="md-stat"><span class="c c-tl"></span><span class="c c-tr"></span><span class="c c-bl"></span><span class="c c-br"></span><p class="n head">29.6%</p><p class="t">of Maltese workers use generative AI at work</p></article>
+          <a class="md-btn md-btn--primary lu-act" href="#madum"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg>Get your Diagnostic</a>
+        </div>
+      </div>
+      <div class="lu-cell" role="listitem">
+        <header><a href="#tolerance">Tolerance</a><small>04 &middot; drawing</small></header>
+        <div class="lu-card tl">
+          <article class="tl-stat"><p class="tl-num">29.6%</p><p class="t">of Maltese workers use generative AI at work</p><p class="s">First in the European Union</p></article>
+          <a class="tl-btn tl-btn--primary lu-act" href="#tolerance">Get your Diagnostic</a>
+        </div>
+      </div>
+      <div class="lu-cell" role="listitem">
+        <header><a href="#dial">Dial</a><small>05 &middot; knob</small></header>
+        <div class="lu-card dl">
+          <div class="dl-mod"><div class="win"><svg data-lu-seg="29.6" viewBox="0 0 172 80" role="img" aria-label="29.6 per cent"></svg></div><p><b>of Maltese workers use generative AI at work</b>First in the European Union</p></div>
+          <a class="dl-key dl-key--primary lu-act" href="#dial">Get your Diagnostic</a>
+        </div>
+      </div>
+      <div class="lu-cell" role="listitem">
+        <header><a href="#datum">Datum</a><small>06 &middot; chart</small></header>
+        <div class="lu-card dt">
+          <article class="dt-stat"><p class="n head">29.6%</p><div class="w" data-lu-w="30" data-c="#1D4A43"></div><p>of Maltese workers use generative AI at work. First in the EU.</p></article>
+          <a class="dt-btn dt-btn--primary lu-act" href="#datum">Get your Diagnostic</a>
+        </div>
+      </div>
+      <div class="lu-cell" role="listitem">
+        <header><a href="#constant">Constant</a><small>07 &middot; aperture</small></header>
+        <div class="lu-card cn">
+          <div class="cn-panel cn-chamfer"><b class="cn-lumen-glow">29.6%</b><p><strong>of Maltese workers use generative AI at work</strong>First in the European Union</p></div>
+          <a class="cn-btn lu-act" href="#constant">Get your Diagnostic</a>
+        </div>
+      </div>
+    </div>
+    <p class="lu-note">The first card is the current v1.0 system, for reference. Each name links back to its chapter.</p>
+
+    <div class="map-wrap">
+      <figure style="margin:0">
+        <div class="map" aria-label="Positioning map of the seven systems">
+          <div class="map-axis x"></div><div class="map-axis y"></div>
+          <span class="map-lab" style="left:50%;top:2.4%;transform:translateX(-50%)">Future</span>
+          <span class="map-lab" style="left:50%;bottom:2.4%;transform:translateX(-50%)">Heritage</span>
+          <span class="map-lab" style="left:2%;top:50%;transform:translateY(calc(-100% - 6px))">Human</span>
+          <span class="map-lab" style="right:2%;top:50%;transform:translateY(calc(-100% - 6px))">Technical</span>
+          <a class="map-dot" style="--x:15%;--y:84%" href="#almanac"><span class="tl-plate" data-plate="almanac"></span><span>Almanac</span></a>
+          <a class="map-dot" style="--x:38%;--y:74%" href="#hallmark"><span class="tl-plate" data-plate="hallmark"></span><span>Hallmark</span></a>
+          <a class="map-dot" style="--x:14%;--y:60%" href="#madum"><span class="tl-plate" data-plate="madum"></span><span>Madum</span></a>
+          <a class="map-dot left" style="--x:84%;--y:64%" href="#tolerance"><span class="tl-plate" data-plate="tolerance"></span><span>Tolerance</span></a>
+          <a class="map-dot" style="--x:56%;--y:42%" href="#dial"><span class="tl-plate" data-plate="dial"></span><span>Dial</span></a>
+          <a class="map-dot left" style="--x:88%;--y:28%" href="#datum"><span class="tl-plate" data-plate="datum"></span><span>Datum</span></a>
+          <a class="map-dot" style="--x:60%;--y:12%" href="#constant"><span class="tl-plate" data-plate="constant"></span><span>Constant</span></a>
+          <a class="map-dot v1 left" style="--x:38%;--y:35%" href="#top"><i></i><span>Mesura v1.0 today</span></a>
+        </div>
+        <figcaption class="map-cap">Placement is a judgement, not a measurement.</figcaption>
+      </figure>
+      <div>
+        <table class="fit-table">
+          <thead><tr><th scope="col">System</th><th scope="col">Where it works</th><th scope="col">Watch for</th></tr></thead>
+          <tbody>
+            <tr><td>Almanac</td><td>Year-in-review reports, HR and people audiences</td><td>Can read as soft to a board</td></tr>
+            <tr><td>Hallmark</td><td>Certificates, board packs, awards, print</td><td>Ornament costs time; keep it to documents</td></tr>
+            <tr><td>Madum</td><td>Campaigns and events in Malta, merchandise, offices</td><td>Local references may not travel</td></tr>
+            <tr><td>Tolerance</td><td>Methodology pages, developer docs, the design system site</td><td>Dense; needs a confident reader</td></tr>
+            <tr><td>Dial</td><td>Onboarding, kiosks, events, a physical product one day</td><td>Skeuomorphism dates if overdone</td></tr>
+            <tr><td>Datum</td><td>Dashboards, public data releases, benchmark reports</td><td>Generated marks need rules to stay on-brand</td></tr>
+            <tr><td>Constant</td><td>Product dark mode, keynotes, investor decks</td><td>Glow and motion must stay as calm as the voice</td></tr>
+          </tbody>
+        </table>
+        <div class="rec">
+          <p class="f-label">Recommendation</p>
+          <p class="big">Keep v1.0 as the base. Take two ideas into v2: the certificate from Hallmark, for the reports people share, and the data-drawn mark from Datum, for every client&rsquo;s results page.</p>
+          <p class="f-small">Both extend what Mesura already sells. Neither needs a new colour.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const { markPath } = MZ;
+  document.querySelectorAll('.lineup .md-stat .c').forEach(c => { c.innerHTML = `<svg viewBox="-60 -60 120 120" aria-hidden="true"><path d="${markPath({ R: 58, aperture: false })}" fill="#1D4A43"/></svg>`; });
+  document.querySelectorAll('[data-lu-seg]').forEach(s => MZ.seg && MZ.seg(s, s.dataset.luSeg, '#1E2622', .07, true));
+  document.querySelectorAll('[data-lu-w]').forEach(w => { const n = +w.dataset.luW; w.innerHTML = Array.from({ length: 100 }, (_, i) => `<i${i < n ? ` style="background:${w.dataset.c}"` : ''}></i>`).join(''); });
+})();
+</script>

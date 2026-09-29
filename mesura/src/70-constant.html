@@ -1,0 +1,436 @@
+<style>
+/* ===== 07 CONSTANT: calm futurism. Void and glass, lumen text, amber light; every corner cut at 45 degrees, the angle of the opening. ===== */
+.cn {
+  --cn-void: #060E0C; --cn-cavity: #0B1714; --cn-cavity-2: #10211D; --cn-glass: rgba(239,234,224,.045); --cn-edge: rgba(239,234,224,.12); --cn-edge-2: rgba(239,234,224,.22);
+  --cn-lumen: #EFEAE0; --cn-lumen-2: rgba(239,234,224,.64); --cn-lumen-3: rgba(239,234,224,.4);
+  --cn-amber: #F2B557; --cn-amber-2: #DFAC52; --cn-glow: #FFC56B; --cn-pine: #5FD0B5; --cn-signal: #E0604D;
+  --cn-serif: "Source Serif 4", Georgia, serif; --cn-mono: "B612 Mono", "JetBrains Mono", ui-monospace, monospace;
+  --cut: 12px;
+  color: var(--cn-lumen); color-scheme: dark; padding-block: clamp(64px, 9vw, 128px) clamp(64px, 9vw, 120px);
+  background: radial-gradient(70% 55% at 50% 30%, #0F2721 0%, rgba(15,39,33,0) 70%), radial-gradient(40% 40% at 85% 90%, rgba(223,172,82,.08), transparent 70%), var(--cn-void);
+}
+.cn .ch-tag { color: var(--cn-lumen-2); font-family: var(--cn-mono); }
+.cn .ch-tag i { border-color: var(--cn-edge-2); }
+.cn-mono { font-family: var(--cn-mono); }
+.cn-glow { text-shadow: 0 0 18px rgba(255,197,107,.55), 0 0 2px rgba(255,197,107,.8); }
+.cn-lumen-glow { text-shadow: 0 0 22px rgba(239,234,224,.35); }
+.cn-chamfer { clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+
+.cn-head { text-align: center; display: grid; justify-items: center; gap: 18px; }
+.cn-title { margin: 0; font: 200 clamp(46px, 6.4vw, 100px)/.98 var(--cn-serif); letter-spacing: -.03em; font-variation-settings: "opsz" 60; max-width: 14ch; text-wrap: balance; }
+.cn-title em { font-style: italic; font-weight: 200; color: var(--cn-amber); }
+.cn-stage { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 600px) minmax(0, 1fr); gap: clamp(12px, 2.4vw, 32px); align-items: center; margin-top: clamp(20px, 3vw, 40px); }
+.cn-gauge { position: relative; aspect-ratio: 1; }
+.cn-gauge::before { content: ""; position: absolute; inset: 6%; border-radius: 50%; pointer-events: none;
+  background: repeating-radial-gradient(circle at 50% 50%, rgba(239,234,224,.05) 0 1px, transparent 1px 9px); mask: radial-gradient(circle, #000 20%, transparent 70%); -webkit-mask: radial-gradient(circle, #000 20%, transparent 70%); }
+.cn-gauge svg { position: relative; width: 100%; height: 100%; display: block; overflow: visible; }
+.cn-gauge text { font-family: var(--cn-mono); }
+.cn-spin { transform-origin: 0 0; animation: cnSpin 240s linear infinite; }
+.cn-sweep { transform-origin: 0 0; animation: cnSpin 9s linear infinite; }
+.cn-beam { animation: cnBeam 4.5s ease-in-out infinite; }
+@keyframes cnSpin { to { transform: rotate(360deg); } }
+@keyframes cnBeam { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+.cn-gauge .ch { cursor: pointer; transition: opacity .2s; }
+.cn-gauge .ch:hover { opacity: .8; }
+.cn-tip { position: absolute; z-index: 4; pointer-events: none; transform: translate(-50%, calc(-100% - 12px)); background: rgba(6,14,12,.92); border: 1px solid var(--cn-edge-2); padding: 7px 10px; font: 400 12px/1.4 var(--cn-mono); color: var(--cn-lumen); white-space: nowrap; opacity: 0; transition: opacity .15s; }
+.cn-tip.on { opacity: 1; }
+.cn-tip b { color: var(--cn-glow); font-weight: 400; }
+
+.cn-panel { position: relative; padding: 18px 18px 16px; border: 1px solid var(--cn-edge); display: grid; gap: 14px; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  background: linear-gradient(var(--cn-amber), var(--cn-amber)) 0 0 / 12px 1px no-repeat, linear-gradient(var(--cn-amber), var(--cn-amber)) 0 0 / 1px 12px no-repeat,
+    linear-gradient(var(--cn-amber), var(--cn-amber)) 100% 100% / 12px 1px no-repeat, linear-gradient(var(--cn-amber), var(--cn-amber)) 100% 100% / 1px 12px no-repeat, var(--cn-glass); }
+.cn-read { display: grid; gap: 4px; }
+.cn-read small { font: 400 11px/1.2 var(--cn-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--cn-lumen-3); }
+.cn-read b { font: 200 clamp(38px, 4vw, 58px)/1 var(--cn-serif); letter-spacing: -.02em; font-variation-settings: "opsz" 60; font-variant-numeric: tabular-nums; }
+.cn-read b.amber { color: var(--cn-glow); }
+.cn-read span { font: 400 13px/1.3 var(--cn-mono); color: var(--cn-lumen-2); }
+.cn-read span i { font-style: normal; color: var(--cn-pine); }
+.cn-rows { display: grid; gap: 8px; border-top: 1px solid var(--cn-edge); padding-top: 12px; }
+.cn-rows p { margin: 0; display: flex; justify-content: space-between; gap: 12px; font: 400 12px/1.2 var(--cn-mono); color: var(--cn-lumen-2); letter-spacing: .04em; }
+.cn-rows p b { font-weight: 400; color: var(--cn-lumen); }
+.cn-spark { width: 100%; height: 44px; display: block; }
+
+.cn-foot { display: grid; justify-items: center; gap: 22px; margin-top: clamp(20px, 3vw, 36px); text-align: center; }
+.cn-lede { margin: 0; font-size: 17px; line-height: 1.7; color: var(--cn-lumen-2); max-width: 62ch; }
+.cn-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; align-items: center; }
+
+/* buttons */
+.cn-btn { position: relative; isolation: isolate; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 0 26px; border: 0; cursor: pointer; text-decoration: none;
+  font: 500 15px/1 var(--font-body); letter-spacing: .01em; color: var(--cn-void); background: var(--cn-lumen); clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); transition: filter .2s, transform .2s; }
+.cn-btn:hover { filter: brightness(1.08); }
+.cn-btn:active { transform: translateY(1px); }
+.cn-btn--accent { background: linear-gradient(180deg, #FFD18A, var(--cn-amber)); color: #1C1608; box-shadow: 0 0 30px rgba(255,197,107,.35); }
+.cn-btn--glass { background: var(--cn-edge-2); color: var(--cn-lumen); }
+.cn-btn--glass::before { content: ""; position: absolute; inset: 1px; z-index: -1; background: #0C1916; clip-path: polygon(calc(var(--cut) - .4px) 0, 100% 0, 100% calc(100% - var(--cut) + .4px), calc(100% - var(--cut) + .4px) 100%, 0 100%, 0 calc(var(--cut) - .4px)); }
+.cn-btn--ghost { background: none; color: var(--cn-lumen-2); clip-path: none; font-family: var(--cn-mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; padding-inline: 6px; }
+.cn-btn--ghost:hover { color: var(--cn-lumen); }
+.cn-hold { --p: 0; min-width: 260px; }
+.cn-hold::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: calc(var(--p) * 100%); background: var(--cn-void); opacity: .55; }
+.cn-hold .lbl { display: inline-flex; align-items: center; gap: 10px; }
+.cn-hold .ring { width: 18px; height: 18px; border-radius: 50%; background: conic-gradient(var(--cn-void) calc(var(--p) * 360deg), rgba(6,14,12,.2) 0); mask: radial-gradient(circle, transparent 5px, #000 5.5px); -webkit-mask: radial-gradient(circle, transparent 5px, #000 5.5px); }
+.cn-hold.is-done { background: linear-gradient(180deg, #7FE3CC, var(--cn-pine)); }
+
+/* marquee */
+.cn-marquee { margin-top: clamp(40px, 6vw, 72px); border-block: 1px solid var(--cn-edge); overflow: hidden; mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); -webkit-mask: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.cn-marquee-in { display: flex; width: max-content; animation: cnMarq 70s linear infinite; }
+.cn-marquee:hover .cn-marquee-in { animation-play-state: paused; }
+.cn-marquee ul { display: flex; margin: 0; padding: 0; list-style: none; }
+.cn-marquee li { padding: 16px 28px; border-right: 1px solid var(--cn-edge); font: 400 13px/1.2 var(--cn-mono); color: var(--cn-lumen-2); white-space: nowrap; }
+.cn-marquee li b { color: var(--cn-lumen); font-weight: 400; }
+.cn-marquee li i { font-style: normal; color: var(--cn-amber); margin-left: 10px; }
+@keyframes cnMarq { to { transform: translateX(-50%); } }
+
+/* board */
+.cn-board { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; margin-top: clamp(56px, 8vw, 104px); }
+.cn-card { position: relative; border: 1px solid var(--cn-edge); background: linear-gradient(180deg, rgba(239,234,224,.035), rgba(239,234,224,.015)); padding: clamp(20px, 2.6vw, 32px); min-width: 0; }
+.cn-card h3 { margin: 0 0 6px; font: 400 11px/1.2 var(--cn-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--cn-amber); }
+.cn-card .cn-sub { margin: 0 0 22px; font: 300 24px/1.2 var(--cn-serif); color: var(--cn-lumen); text-wrap: balance; }
+.cn-spectrum { grid-column: span 5; } .cn-type { grid-column: span 7; } .cn-stats { grid-column: 1 / -1; } .cn-comp { grid-column: 1 / -1; } .cn-console-wrap { grid-column: 1 / -1; }
+.cn-lights { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; margin: 0; padding: 0; list-style: none; }
+.cn-lights li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: center; font-size: 13px; line-height: 1.35; color: var(--cn-lumen-2); }
+.cn-lights i { width: 44px; height: 44px; display: block; border-radius: 50%; }
+.cn-lights b { display: block; color: var(--cn-lumen); font-weight: 500; font-size: 14px; }
+.cn-lights code { font: 400 10.5px/1 var(--cn-mono); color: var(--cn-lumen-3); }
+.cn-typerows { display: grid; gap: 16px; }
+.cn-typerows > div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: baseline; border-top: 1px solid var(--cn-edge); padding-top: 14px; }
+.cn-typerows > div:first-child { border-top: 0; padding-top: 0; }
+.cn-typerows small { font: 400 10.5px/1.5 var(--cn-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--cn-lumen-3); }
+.cn-typerows .a { font: 200 56px/1 var(--cn-serif); letter-spacing: -.02em; font-variation-settings: "opsz" 60; }
+.cn-typerows .b { font: 400 18px/1.3 var(--cn-mono); letter-spacing: .06em; color: var(--cn-lumen); }
+.cn-typerows .c { font-size: 16px; line-height: 1.6; color: var(--cn-lumen-2); }
+.cn-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.cn-trio .cn-panel b { font: 200 clamp(52px, 5.4vw, 76px)/1 var(--cn-serif); letter-spacing: -.02em; font-variation-settings: "opsz" 60; }
+.cn-trio .cn-panel b.base { color: var(--cn-lumen-3); }
+.cn-trio .cn-panel b.ins { color: var(--cn-glow); }
+.cn-trio .cn-panel p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--cn-lumen-2); }
+.cn-trio .cn-panel p strong { display: block; color: var(--cn-lumen); font-weight: 500; font-size: 15px; }
+.cn-comp-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 44px); }
+.cn-comp-grid h4 { margin: 0 0 14px; font: 400 11px/1 var(--cn-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--cn-lumen-3); }
+.cn-btns { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 26px; }
+.cn-leds { display: grid; gap: 10px; }
+.cn-led { display: inline-flex; align-items: center; gap: 10px; font: 400 12px/1 var(--cn-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--cn-lumen-2); }
+.cn-led i { width: 8px; height: 8px; border-radius: 50%; }
+.cn-led--up i { background: var(--cn-pine); box-shadow: 0 0 10px var(--cn-pine), 0 0 2px #fff inset; }
+.cn-led--em i { background: var(--cn-amber); box-shadow: 0 0 10px var(--cn-amber); }
+.cn-led--no i { border: 1px solid var(--cn-lumen-3); }
+.cn-field { display: grid; gap: 8px; }
+.cn-field label { font: 400 11px/1 var(--cn-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--cn-lumen-2); }
+.cn-input { position: relative; }
+.cn-input input { width: 100%; font: 400 16px/1.4 var(--font-body); color: var(--cn-lumen); background: var(--cn-glass); border: 1px solid var(--cn-edge); padding: 13px 14px; outline: none; caret-color: var(--cn-glow); transition: border-color .2s; }
+.cn-input::before, .cn-input::after { content: ""; position: absolute; width: 10px; height: 10px; pointer-events: none; transition: all .25s var(--ease-out); opacity: 0; }
+.cn-input::before { left: -5px; top: -5px; border-left: 1px solid var(--cn-glow); border-top: 1px solid var(--cn-glow); }
+.cn-input::after { right: -5px; bottom: -5px; border-right: 1px solid var(--cn-glow); border-bottom: 1px solid var(--cn-glow); }
+.cn-input:focus-within::before { left: -3px; top: -3px; opacity: 1; }
+.cn-input:focus-within::after { right: -3px; bottom: -3px; opacity: 1; }
+.cn-input input:focus { border-color: var(--cn-edge-2); }
+.cn-field small { font-size: 13px; color: var(--cn-lumen-3); }
+.cn-toggle { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-size: 14px; color: var(--cn-lumen-2); margin-top: 22px; }
+.cn-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.cn-toggle .t { width: 46px; height: 24px; border: 1px solid var(--cn-edge-2); position: relative; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); background: rgba(239,234,224,.04); transition: background-color .2s; }
+.cn-toggle .t::after { content: ""; position: absolute; top: 4px; left: 4px; width: 14px; height: 14px; background: var(--cn-lumen-3); transition: all .25s var(--ease-out); }
+.cn-toggle input:checked + .t { background: rgba(95,208,181,.14); }
+.cn-toggle input:checked + .t::after { left: 26px; background: var(--cn-pine); box-shadow: 0 0 10px var(--cn-pine); }
+.cn-toggle input:focus-visible + .t { outline: 1px solid var(--cn-glow); outline-offset: 3px; }
+
+/* console */
+.cn-console { border: 1px solid var(--cn-edge-2); background: #081311; box-shadow: 0 40px 80px -40px #000, 0 0 0 8px rgba(239,234,224,.03); display: grid; grid-template-columns: 58px minmax(0, 1fr); min-height: 440px; overflow: hidden; }
+.cn-rail { border-right: 1px solid var(--cn-edge); display: grid; align-content: start; justify-items: center; gap: 18px; padding: 16px 0; }
+.cn-rail svg { width: 26px; height: 26px; --mk: var(--cn-amber); }
+.cn-rail i { width: 22px; height: 22px; border: 1px solid var(--cn-edge-2); display: block; clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+.cn-rail i.on { background: rgba(242,181,87,.2); border-color: var(--cn-amber); }
+.cn-main { display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+.cn-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 18px; border-bottom: 1px solid var(--cn-edge); font: 400 12px/1 var(--cn-mono); color: var(--cn-lumen-2); letter-spacing: .06em; }
+.cn-bar b { color: var(--cn-lumen); font-weight: 400; }
+.cn-bar .live { color: var(--cn-pine); }
+.cn-bar .live::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--cn-pine); box-shadow: 0 0 8px var(--cn-pine); margin-right: 8px; animation: cnBeam 2s ease-in-out infinite; }
+.cn-body { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) minmax(0, .9fr); min-width: 0; }
+.cn-col { padding: 18px; border-right: 1px solid var(--cn-edge); min-width: 0; display: grid; gap: 14px; align-content: start; }
+.cn-col:last-child { border-right: 0; }
+.cn-col h5 { margin: 0; font: 400 10.5px/1 var(--cn-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--cn-lumen-3); }
+.cn-mini svg { width: 100%; max-width: 230px; display: block; margin: 0 auto; }
+.cn-dims { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.cn-dims li { display: grid; grid-template-columns: 88px minmax(0, 1fr) 38px; gap: 10px; align-items: center; font: 400 12px/1 var(--cn-mono); color: var(--cn-lumen-2); }
+.cn-dims li b { font-weight: 400; color: var(--cn-lumen); text-align: right; font-variant-numeric: tabular-nums; }
+.cn-dims .tr { position: relative; height: 6px; background: rgba(239,234,224,.07); }
+.cn-dims .fl { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, rgba(95,208,181,.35), var(--cn-pine)); box-shadow: 0 0 10px rgba(95,208,181,.4); }
+.cn-dims li.low .fl { background: linear-gradient(90deg, rgba(242,181,87,.35), var(--cn-amber)); box-shadow: 0 0 10px rgba(242,181,87,.45); }
+.cn-dims .bm { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--cn-lumen); }
+.cn-feed { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.cn-feed li { border: 1px solid var(--cn-edge); padding: 10px 12px; display: grid; gap: 4px; font-size: 13px; line-height: 1.45; color: var(--cn-lumen-2); background: rgba(239,234,224,.02); }
+.cn-feed li small { font: 400 10.5px/1 var(--cn-mono); letter-spacing: .08em; color: var(--cn-lumen-3); text-transform: uppercase; }
+.cn-feed li b { color: var(--cn-lumen); font-weight: 500; }
+.cn-feed li.amber { border-color: rgba(242,181,87,.4); }
+.cn-cap { margin: 12px 0 0; font: 400 11px/1.5 var(--cn-mono); color: var(--cn-lumen-3); }
+
+@media (max-width: 1100px) {
+  .cn-stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .cn-gauge { grid-column: 1 / -1; grid-row: 1; width: min(100%, 560px); justify-self: center; }
+  .cn-spectrum, .cn-type { grid-column: 1 / -1; }
+  .cn-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .cn-body .cn-col:last-child { grid-column: 1 / -1; border-top: 1px solid var(--cn-edge); }
+}
+@media (max-width: 720px) {
+  .cn-stage, .cn-trio, .cn-comp-grid, .cn-lights { grid-template-columns: minmax(0, 1fr); }
+  .cn-typerows > div { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .cn-console { grid-template-columns: minmax(0, 1fr); }
+  .cn-rail { display: none; }
+  .cn-body { grid-template-columns: minmax(0, 1fr); }
+  .cn-col { border-right: 0; border-bottom: 1px solid var(--cn-edge); }
+  .cn-hold { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .cn-marquee-in { animation: none; flex-wrap: wrap; width: auto; } .cn-marquee ul + ul { display: none; } .cn-marquee ul { flex-wrap: wrap; } }
+</style>
+
+<section class="ch cn" id="constant" data-ch="constant" aria-labelledby="cn-title">
+  <div class="wrap">
+    <div class="cn-head">
+      <p class="ch-tag"><i>07</i> Constant &middot; 2019 onwards &middot; the mark as an aperture</p>
+      <h2 class="cn-title cn-lumen-glow" id="cn-title">Measured against something <em>that never changes.</em></h2>
+    </div>
+    <div class="cn-stage">
+      <div class="cn-panel cn-chamfer" aria-label="Readiness readout">
+        <div class="cn-read"><small>Readiness &middot; Harbour &amp; Co.</small><b class="amber cn-glow">72.4</b><span><i>&#9650; +14.4</i> against benchmark</span></div>
+        <svg class="cn-spark" id="cnSpark" viewBox="0 0 200 44" preserveAspectRatio="none" aria-label="Seven quarters, from 31 to 72" role="img"></svg>
+        <div class="cn-rows"><p>Q1 2025<b>31.0</b></p><p>Q3 2026<b>72.4</b></p><p>Percentile<b>81st</b></p></div>
+      </div>
+      <div class="cn-gauge" id="cnGauge">
+        <svg viewBox="-300 -300 600 600" role="img" aria-label="Aperture gauge. Readiness 72.4 of 100, measured clockwise from the opening in the mark. Benchmark 58. Eight channels, one per dimension."></svg>
+        <div class="cn-tip" id="cnTip"></div>
+      </div>
+      <div class="cn-panel cn-chamfer" aria-label="Calibration readout">
+        <div class="cn-read"><small>Benchmark &middot; national</small><b>58.0</b><span>412 people measured</span></div>
+        <div class="cn-rows"><p>Margin, 95%<b>&plusmn;1.1</b></p><p>Dimensions<b>8</b></p><p>Weakest<b>Skills 58.6</b></p><p>Calibrated<b>29.09.2026</b></p></div>
+      </div>
+    </div>
+    <div class="cn-foot">
+      <p class="cn-lede">Since May 2019, every SI unit has been defined by a fixed constant of nature. The kilogram no longer depends on a metal cylinder kept in a vault outside Paris. It can be reproduced anywhere, with the right instrument. Constant imagines Mesura as that instrument: calibrated, luminous and exact. The mark becomes an aperture. Readiness is read clockwise from the opening, and light passes through it.</p>
+      <div class="cn-actions">
+        <button class="cn-btn cn-btn--accent cn-hold" id="cnHold" type="button" aria-describedby="cnHoldHint"><span class="lbl"><span class="ring" aria-hidden="true"></span><span id="cnHoldText">Hold to run Diagnostic</span></span></button>
+        <a class="cn-btn cn-btn--ghost" href="#cnConsole">[ See the console ]</a>
+      </div>
+      <p class="cn-cap" id="cnHoldHint" style="margin:0">Press and hold, or hold the space bar. Illustrative figures.</p>
+    </div>
+  </div>
+  <div class="cn-marquee" aria-label="The seven defining constants of the SI">
+    <div class="cn-marquee-in">
+      <ul>
+        <li><b>&Delta;&nu;<sub>Cs</sub></b> = 9 192 631 770 Hz<i>second</i></li>
+        <li><b>c</b> = 299 792 458 m s<sup>&minus;1</sup><i>metre</i></li>
+        <li><b>h</b> = 6.626 070 15 &times; 10<sup>&minus;34</sup> J s<i>kilogram</i></li>
+        <li><b>e</b> = 1.602 176 634 &times; 10<sup>&minus;19</sup> C<i>ampere</i></li>
+        <li><b>k</b> = 1.380 649 &times; 10<sup>&minus;23</sup> J K<sup>&minus;1</sup><i>kelvin</i></li>
+        <li><b>N<sub>A</sub></b> = 6.022 140 76 &times; 10<sup>23</sup> mol<sup>&minus;1</sup><i>mole</i></li>
+        <li><b>K<sub>cd</sub></b> = 683 lm W<sup>&minus;1</sup><i>candela</i></li>
+      </ul>
+      <ul aria-hidden="true">
+        <li><b>&Delta;&nu;<sub>Cs</sub></b> = 9 192 631 770 Hz<i>second</i></li>
+        <li><b>c</b> = 299 792 458 m s<sup>&minus;1</sup><i>metre</i></li>
+        <li><b>h</b> = 6.626 070 15 &times; 10<sup>&minus;34</sup> J s<i>kilogram</i></li>
+        <li><b>e</b> = 1.602 176 634 &times; 10<sup>&minus;19</sup> C<i>ampere</i></li>
+        <li><b>k</b> = 1.380 649 &times; 10<sup>&minus;23</sup> J K<sup>&minus;1</sup><i>kelvin</i></li>
+        <li><b>N<sub>A</sub></b> = 6.022 140 76 &times; 10<sup>23</sup> mol<sup>&minus;1</sup><i>mole</i></li>
+        <li><b>K<sub>cd</sub></b> = 683 lm W<sup>&minus;1</sup><i>candela</i></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="cn-board">
+      <section class="cn-card cn-spectrum" aria-label="Constant colour">
+        <h3>Spectrum</h3>
+        <p class="cn-sub">Colour is light here. Most of the page is the absence of it.</p>
+        <ul class="cn-lights">
+          <li><i style="background:#060E0C;box-shadow:inset 0 0 0 1px rgba(239,234,224,.18)"></i><span><b>Void</b>Ground, 90% of pixels <code>#060E0C</code></span></li>
+          <li><i style="background:radial-gradient(circle at 35% 30%,#1B3530,#0B1714);box-shadow:inset 0 0 0 1px rgba(239,234,224,.18)"></i><span><b>Cavity</b>Panels and glass <code>#0B1714</code></span></li>
+          <li><i style="background:#EFEAE0;box-shadow:0 0 22px rgba(239,234,224,.45)"></i><span><b>Lumen</b>Text, primary action <code>#EFEAE0</code></span></li>
+          <li><i style="background:radial-gradient(circle,#FFE0A6,#F2B557 60%);box-shadow:0 0 26px rgba(255,197,107,.7)"></i><span><b>Amber</b>The mark, the insight <code>#F2B557</code></span></li>
+          <li><i style="background:radial-gradient(circle,#B8F2E3,#5FD0B5 60%);box-shadow:0 0 26px rgba(95,208,181,.6)"></i><span><b>Pine, lit</b>Live and above benchmark <code>#5FD0B5</code></span></li>
+          <li><i style="background:radial-gradient(circle,#FFB3A6,#E0604D 60%);box-shadow:0 0 22px rgba(224,96,77,.55)"></i><span><b>Signal</b>Errors only <code>#E0604D</code></span></li>
+        </ul>
+      </section>
+      <section class="cn-card cn-type" aria-label="Constant type">
+        <h3>Type</h3>
+        <p class="cn-sub">A light serif for numbers that glow. A cockpit mono for readouts.</p>
+        <div class="cn-typerows">
+          <div><small>Figures<br>Source Serif 4, 200<br>optical size 60</small><span class="a cn-lumen-glow">72.4 <span style="color:var(--cn-glow)" class="cn-glow">&rarr; 80</span></span></div>
+          <div><small>Readouts<br>B612 Mono</small><span class="b">RESPONSES 412 &middot; MARGIN &plusmn;1.1</span></div>
+          <div><small>Text<br>Inter 400, 16/27</small><span class="c">B612 was drawn for Airbus cockpit displays, where a misread digit matters. Here it carries every label and readout. Inter carries the sentences.</span></div>
+        </div>
+      </section>
+      <section class="cn-card cn-stats" aria-label="Constant stat panels">
+        <h3>Stat panels</h3>
+        <p class="cn-sub">The ranked trio in light: lumen for the headline, dimmed for the baseline, amber for the insight.</p>
+        <div class="cn-trio">
+          <div class="cn-panel cn-chamfer"><b class="cn-lumen-glow">29.6%</b><p><strong>of Maltese workers use generative AI at work</strong>First in the European Union</p></div>
+          <div class="cn-panel cn-chamfer"><b class="base">15.1%</b><p><strong>is the EU average</strong>Malta sits at nearly double the norm</p></div>
+          <div class="cn-panel cn-chamfer"><b class="ins cn-glow">21.6%</b><p><strong>of organisations formally measure it</strong>The rest is shadow AI, invisible to leadership</p></div>
+        </div>
+      </section>
+      <section class="cn-card cn-comp" aria-label="Constant components">
+        <h3>Components</h3>
+        <p class="cn-sub">Every corner cut at 45&deg;, the angle of the opening in the mark.</p>
+        <div class="cn-comp-grid">
+          <div>
+            <h4>Buttons</h4>
+            <div class="cn-btns">
+              <button class="cn-btn" type="button">Get your Diagnostic</button>
+              <button class="cn-btn cn-btn--glass" type="button">How it works</button>
+              <button class="cn-btn cn-btn--accent" type="button">Download report</button>
+              <button class="cn-btn cn-btn--ghost" type="button">[ Learn more ]</button>
+            </div>
+            <h4>Status</h4>
+            <div class="cn-leds"><span class="cn-led cn-led--up"><i></i>Above benchmark</span><span class="cn-led cn-led--em"><i></i>Emerging</span><span class="cn-led cn-led--no"><i></i>Not measured</span></div>
+          </div>
+          <div>
+            <div class="cn-field">
+              <label for="cn-email">Work email</label>
+              <div class="cn-input"><input id="cn-email" type="email" value="you@harbour.example" autocomplete="off"></div>
+              <small>We&rsquo;ll send your Diagnostic link here.</small>
+            </div>
+            <label class="cn-toggle"><input type="checkbox" id="cn-live" checked><span class="t"></span>Live results</label>
+          </div>
+          <div>
+            <h4>Motion</h4>
+            <p style="margin:0;font-size:14px;line-height:1.6;color:var(--cn-lumen-2)">Slow and continuous, like an instrument that is always on. The tick ring turns once every four minutes, the sweep once every nine seconds. Nothing bounces. With reduced motion set, everything stands still.</p>
+          </div>
+        </div>
+      </section>
+      <section class="cn-card cn-console-wrap" id="cnConsole" aria-label="Readiness console, product screen">
+        <h3>Application &middot; readiness console</h3>
+        <p class="cn-sub">The same system as product UI, at working density.</p>
+        <div class="cn-console">
+          <nav class="cn-rail" aria-label="Console sections, specimen"><svg viewBox="0 0 292 292" aria-hidden="true"><use href="#mz-mark"/></svg><i class="on"></i><i></i><i></i><i></i></nav>
+          <div class="cn-main">
+            <div class="cn-bar"><span><b>Harbour &amp; Co.</b> &middot; readiness &middot; Q3 2026</span><span class="live">Live &middot; 412 of 430 responded</span></div>
+            <div class="cn-body">
+              <div class="cn-col cn-mini"><h5>Overall</h5><svg id="cnMini" viewBox="-130 -130 260 260" aria-label="Readiness 72.4" role="img"></svg></div>
+              <div class="cn-col"><h5>Dimensions &middot; line marks the benchmark</h5><ul class="cn-dims" id="cnDims"></ul></div>
+              <div class="cn-col"><h5>Signals</h5>
+                <ul class="cn-feed">
+                  <li class="amber"><small>Weakest dimension</small><span><b>Skills, 58.6.</b> 2.6 above the benchmark, the smallest margin of the eight.</span></li>
+                  <li><small>Largest lead</small><span><b>Policy, 76.8.</b> 31.8 above the benchmark since the January policy.</span></li>
+                  <li><small>Next measurement</small><span><b>Q4 2026.</b> Survey opens on 5 January.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="cn-cap">Specimen screen. Organisation and figures are illustrative.</p>
+      </section>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const { markPath, f, svg, SAMPLE, reduced, loop, onView } = MZ;
+  const D = Math.PI / 180, DIMS = SAMPLE.dims, lo = Math.min(...DIMS.map(d => d.v));
+  /* ---- The aperture gauge. Zero is the opening (-45 deg); readiness runs clockwise. ---- */
+  const g = document.querySelector('#cnGauge svg');
+  if (g) {
+    const R = 118, zero = -45, arcR = 246, val = SAMPLE.overall, bench = SAMPLE.bench;
+    const pt = (r, deg) => [Math.cos(deg * D) * r, Math.sin(deg * D) * r];
+    const arc = (r, a0, a1) => { const [x0, y0] = pt(r, a0), [x1, y1] = pt(r, a1); return `M${f(x0)} ${f(y0)}A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${f(x1)} ${f(y1)}`; };
+    let ticks = '';
+    for (let i = 0; i < 120; i++) {
+      const a = i * 3, major = i % 10 === 0, [x0, y0] = pt(major ? 262 : 268, a), [x1, y1] = pt(278, a);
+      ticks += `<line x1="${f(x0)}" y1="${f(y0)}" x2="${f(x1)}" y2="${f(y1)}" stroke="#EFEAE0" stroke-opacity="${major ? .7 : .28}" stroke-width="${major ? 1.4 : .8}"/>`;
+    }
+    let chans = '';
+    DIMS.forEach((d, k) => {
+      const a = -90 + 45 * k, r0 = 146, full = 64, len = full * d.v / 100, w = 3.2, weak = d.v === lo;
+      const p = (r, da) => pt(r, a + da);
+      const sector = (r1, r2, ww) => { const [ax, ay] = p(r1, -ww), [bx, by] = p(r2, -ww), [cx2, cy2] = p(r2, ww), [dx, dy] = p(r1, ww); return `M${f(ax)} ${f(ay)}L${f(bx)} ${f(by)}A${f(r2)} ${f(r2)} 0 0 1 ${f(cx2)} ${f(cy2)}L${f(dx)} ${f(dy)}A${f(r1)} ${f(r1)} 0 0 0 ${f(ax)} ${f(ay)}Z`; };
+      chans += `<g class="ch" data-k="${k}"><path d="${sector(r0 - 6, r0 + full + 6, 9)}" fill="transparent"/><path d="${sector(r0, r0 + full, w)}" fill="rgba(239,234,224,.07)"/><path d="${sector(r0, r0 + len, w)}" fill="${weak ? 'url(#cnChA)' : 'url(#cnChP)'}" filter="url(#cnSoft)"/>`;
+      const [bmx0, bmy0] = p(r0 + full * d.b / 100, -w - 3), [bmx1, bmy1] = p(r0 + full * d.b / 100, w + 3);
+      chans += `<line x1="${f(bmx0)}" y1="${f(bmy0)}" x2="${f(bmx1)}" y2="${f(bmy1)}" stroke="#EFEAE0" stroke-width="1.4" stroke-opacity=".85"/>`;
+      const [lx, ly] = pt(224, a), ca = Math.cos(a * D), sa = Math.sin(a * D), anc = Math.abs(ca) < .2 ? 'middle' : ca > 0 ? 'start' : 'end';
+      const yy = ly + (sa > .9 ? 12 : sa < -.9 ? -2 : 4);
+      chans += `<text x="${f(lx)}" y="${f(yy)}" text-anchor="${anc}" font-size="10.5" fill="${weak ? '#FFC56B' : 'rgba(239,234,224,.62)'}" letter-spacing=".8">${d.k.toUpperCase()} ${d.v.toFixed(0)}</text></g>`;
+    });
+    const [ex, ey] = pt(arcR, zero + 360 * val / 100), [bx, by] = pt(arcR, zero + 360 * bench / 100), [bx2, by2] = pt(arcR + 16, zero + 360 * bench / 100);
+    const [zx0, zy0] = pt(arcR - 12, zero), [zx1, zy1] = pt(arcR + 12, zero);
+    const beamA = zero, [b1x, b1y] = pt(60, beamA - 9), [b2x, b2y] = pt(300, beamA - 3.5), [b3x, b3y] = pt(300, beamA + 3.5), [b4x, b4y] = pt(60, beamA + 9);
+    g.innerHTML = `<defs>
+        <radialGradient id="cnLens" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF4D8" stop-opacity=".95"/><stop offset=".35" stop-color="#FFC56B" stop-opacity=".45"/><stop offset="1" stop-color="#FFC56B" stop-opacity="0"/></radialGradient>
+        <radialGradient id="cnHalo" cx=".5" cy=".5" r=".5"><stop offset=".55" stop-color="#5FD0B5" stop-opacity="0"/><stop offset=".78" stop-color="#5FD0B5" stop-opacity=".07"/><stop offset="1" stop-color="#5FD0B5" stop-opacity="0"/></radialGradient>
+        <linearGradient id="cnBeamG" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox" gradientTransform="rotate(${beamA} .5 .5)"><stop offset="0" stop-color="#FFE3A8" stop-opacity=".9"/><stop offset="1" stop-color="#FFC56B" stop-opacity="0"/></linearGradient>
+        <linearGradient id="cnChP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5FD0B5" stop-opacity=".5"/><stop offset="1" stop-color="#9BF0DA"/></linearGradient>
+        <linearGradient id="cnChA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2B557" stop-opacity=".55"/><stop offset="1" stop-color="#FFD48A"/></linearGradient>
+        <filter id="cnGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="cnSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="cnBlur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+      </defs>
+      <circle r="290" fill="url(#cnHalo)"/>
+      <g class="cn-spin">${ticks}</g>
+      <g class="cn-sweep" opacity=".5"><path d="M0 0L${f(pt(280, -90)[0])} ${f(pt(280, -90)[1])}A280 280 0 0 1 ${f(pt(280, -62)[0])} ${f(pt(280, -62)[1])}Z" fill="url(#cnLens)" opacity=".18"/></g>
+      <circle r="${arcR}" fill="none" stroke="#EFEAE0" stroke-opacity=".08" stroke-width="4"/>
+      <path d="${arc(arcR, zero, zero + 360 * val / 100)}" fill="none" stroke="#FFC56B" stroke-width="4" stroke-linecap="round" filter="url(#cnGlow)"/>
+      <line x1="${f(zx0)}" y1="${f(zy0)}" x2="${f(zx1)}" y2="${f(zy1)}" stroke="#EFEAE0" stroke-width="2"/>
+      <text x="${f(pt(arcR + 30, zero - 4)[0])}" y="${f(pt(arcR + 30, zero - 4)[1])}" font-size="11" fill="rgba(239,234,224,.7)" text-anchor="middle">0</text>
+      <circle cx="${f(bx)}" cy="${f(by)}" r="4" fill="#060E0C" stroke="#EFEAE0" stroke-width="1.5"/>
+      <text x="${f(pt(arcR - 14, zero + 360 * bench / 100)[0])}" y="${f(pt(arcR - 14, zero + 360 * bench / 100)[1] + 16)}" font-size="10.5" fill="rgba(239,234,224,.75)" text-anchor="start" letter-spacing=".8">BENCHMARK 58</text>
+      <circle cx="${f(ex)}" cy="${f(ey)}" r="6" fill="#FFF4D8" filter="url(#cnGlow)"/>
+      ${chans}
+      <path class="cn-beam" d="M${f(b1x)} ${f(b1y)}L${f(b2x)} ${f(b2y)}L${f(b3x)} ${f(b3y)}L${f(b4x)} ${f(b4y)}Z" fill="url(#cnBeamG)" filter="url(#cnBlur)"/>
+      <path d="${markPath({ R })}" fill="rgba(223,172,82,.08)" stroke="#FFC56B" stroke-width="1.6" stroke-linejoin="round" filter="url(#cnGlow)"/>
+      <circle r="${f(R * .366 - 2)}" fill="url(#cnLens)" id="cnLensC"/>`;
+    // hover on channels
+    const tip = document.getElementById('cnTip'), wrap = document.getElementById('cnGauge');
+    g.querySelectorAll('.ch').forEach(c => {
+      c.addEventListener('pointerenter', () => {
+        const d = DIMS[+c.dataset.k]; tip.innerHTML = `<b>${d.k}</b> ${d.v.toFixed(1)} &middot; benchmark ${d.b.toFixed(1)}`; tip.classList.add('on');
+      });
+      c.addEventListener('pointermove', e => { const r = wrap.getBoundingClientRect(); tip.style.left = `${e.clientX - r.left}px`; tip.style.top = `${e.clientY - r.top}px`; });
+      c.addEventListener('pointerleave', () => tip.classList.remove('on'));
+    });
+    // the lens breathes
+    const lens = g.querySelector('#cnLensC');
+    loop(g, t => { lens.setAttribute('opacity', f(.72 + .28 * Math.sin(t / 900))); });
+  }
+
+  /* ---- Sparkline ---- */
+  const sp = document.getElementById('cnSpark');
+  if (sp) {
+    const q = [31, 38, 44, 49, 58, 66, 72.4], X = i => 4 + i * (192 / 6), Y = v => 40 - (v - 20) / 60 * 36;
+    const d = q.map((v, i) => `${i ? 'L' : 'M'}${f(X(i))} ${f(Y(v))}`).join('');
+    sp.innerHTML = `<defs><linearGradient id="cnSpG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC56B" stop-opacity=".35"/><stop offset="1" stop-color="#FFC56B" stop-opacity="0"/></linearGradient></defs>
+      <line x1="0" x2="200" y1="${f(Y(58))}" y2="${f(Y(58))}" stroke="#EFEAE0" stroke-opacity=".3" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/>
+      <path d="${d}L${f(X(6))} 44L${f(X(0))} 44Z" fill="url(#cnSpG)"/><path d="${d}" fill="none" stroke="#FFC56B" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+      <circle cx="${f(X(6))}" cy="${f(Y(72.4))}" r="2.6" fill="#FFF4D8"/>`;
+  }
+
+  /* ---- Hold to run ---- */
+  const hold = document.getElementById('cnHold'), txt = document.getElementById('cnHoldText');
+  if (hold) {
+    let start = 0, raf = 0, done = false;
+    const DUR = 1200;
+    const tick = t => { const p = Math.min(1, (t - start) / DUR); hold.style.setProperty('--p', p); if (p >= 1) finish(); else raf = requestAnimationFrame(tick); };
+    function begin(e) { if (done) return; if (e && e.type === 'keydown' && (e.repeat || (e.key !== ' ' && e.key !== 'Enter'))) return; if (e) e.preventDefault(); start = performance.now(); txt.textContent = 'Keep holding'; raf = requestAnimationFrame(tick); }
+    function cancel() { if (done) return; cancelAnimationFrame(raf); hold.style.setProperty('--p', 0); txt.textContent = 'Hold to run Diagnostic'; }
+    function finish() {
+      done = true; txt.textContent = 'Calibrating';
+      setTimeout(() => { hold.classList.add('is-done'); txt.textContent = 'Calibrated · 72.4'; hold.style.setProperty('--p', 1); }, 700);
+      setTimeout(() => { done = false; hold.classList.remove('is-done'); hold.style.setProperty('--p', 0); txt.textContent = 'Hold to run Diagnostic'; }, 4200);
+    }
+    hold.addEventListener('pointerdown', begin);
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => hold.addEventListener(ev, cancel));
+    hold.addEventListener('keydown', begin);
+    hold.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') cancel(); });
+    hold.addEventListener('click', e => e.preventDefault());
+  }
+
+  /* ---- Console ---- */
+  const mini = document.getElementById('cnMini');
+  if (mini) {
+    const R = 50, arcR = 108, zero = -45, val = SAMPLE.overall;
+    const pt = (r, a) => [Math.cos(a * D) * r, Math.sin(a * D) * r], [x0, y0] = pt(arcR, zero), [x1, y1] = pt(arcR, zero + 360 * val / 100);
+    mini.innerHTML = `<circle r="${arcR}" fill="none" stroke="#EFEAE0" stroke-opacity=".08" stroke-width="5"/>
+      <path d="M${f(x0)} ${f(y0)}A${arcR} ${arcR} 0 1 1 ${f(x1)} ${f(y1)}" fill="none" stroke="#FFC56B" stroke-width="5" stroke-linecap="round" filter="url(#cnGlow)"/>
+      <path d="${markPath({ R })}" fill="rgba(223,172,82,.1)" stroke="#FFC56B" stroke-width="1.4"/>
+      <text y="${R + 38}" text-anchor="middle" font-family="'Source Serif 4', Georgia, serif" font-weight="200" font-size="34" fill="#EFEAE0">72.4</text>`;
+    mini.setAttribute('viewBox', '-130 -130 260 290');
+  }
+  const dims = document.getElementById('cnDims');
+  if (dims) dims.innerHTML = DIMS.map(d => `<li class="${d.v === lo ? 'low' : ''}"><span>${d.k}</span><span class="tr"><span class="fl" style="width:${d.v}%"></span><span class="bm" style="left:${d.b}%"></span></span><b>${d.v.toFixed(1)}</b></li>`).join('');
+})();
+</script>

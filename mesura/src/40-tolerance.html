@@ -1,0 +1,434 @@
+<style>
+/* ===== 04 TOLERANCE: the engineering drawing. Blueprint in the logo's own teal; every component carries its dimensions. ===== */
+@property --bp { syntax: '<color>'; inherits: true; initial-value: #073D44; }
+@property --ln { syntax: '<color>'; inherits: true; initial-value: #EFEAE0; }
+@property --dim { syntax: '<color>'; inherits: true; initial-value: #E1A23C; }
+.tl {
+  --bp: #073D44; --bp-2: #0A4850; --ln: #EFEAE0; --ln-2: rgba(239,234,224,.66); --ln-3: rgba(239,234,224,.3); --ln-4: rgba(239,234,224,.1);
+  --grid: rgba(239,234,224,.05); --grid-2: rgba(239,234,224,.1); --dim: #E1A23C; --red: #E68A73; --on-ln: #073D44;
+  --tl-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  background-color: var(--bp); color: var(--ln); padding-block: clamp(56px, 8vw, 112px);
+  background-image: linear-gradient(var(--grid-2) 1px, transparent 1px), linear-gradient(90deg, var(--grid-2) 1px, transparent 1px), linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px; background-position: -1px -1px;
+  transition: --bp .6s var(--ease), --ln .6s var(--ease), --dim .6s var(--ease);
+}
+.tl.is-white { --bp: #F2EDE3; --bp-2: #FBF8F1; --ln: #073D44; --ln-2: rgba(7,61,68,.7); --ln-3: rgba(7,61,68,.32); --ln-4: rgba(7,61,68,.08);
+  --grid: rgba(7,61,68,.05); --grid-2: rgba(7,61,68,.09); --dim: #A8741F; --red: #A94436; --on-ln: #F2EDE3; }
+.tl .ch-tag { color: var(--ln); font-family: var(--tl-mono); }
+.tl-mono { font-family: var(--tl-mono); }
+.tl .s-ln { stroke: var(--ln); } .tl .s-ln2 { stroke: var(--ln-2); } .tl .s-ln3 { stroke: var(--ln-3); } .tl .s-dim { stroke: var(--dim); } .tl .s-red { stroke: var(--red); }
+.tl .f-ln { fill: var(--ln); } .tl .f-ln2 { fill: var(--ln-2); } .tl .f-dim { fill: var(--dim); } .tl .f-bp { fill: var(--bp); } .tl .f-none { fill: none; } .tl .f-ln4 { fill: var(--ln-4); }
+
+.tl-sheet { position: relative; border: 1px solid var(--ln-2); padding: 22px; }
+.tl-sheet-in { position: relative; border: 2px solid var(--ln); padding: clamp(20px, 3vw, 40px); display: grid; gap: 28px; }
+.tl-zones { position: absolute; display: flex; font: 500 10px/1 var(--tl-mono); color: var(--ln-2); }
+.tl-zones span { flex: 1; display: grid; place-items: center; position: relative; }
+.tl-zones span + span::before { content: ""; position: absolute; background: var(--ln-3); }
+.tl-zones--top, .tl-zones--bottom { left: 22px; right: 22px; height: 22px; }
+.tl-zones--top { top: 0; } .tl-zones--bottom { bottom: 0; }
+.tl-zones--top span + span::before, .tl-zones--bottom span + span::before { left: 0; top: 6px; bottom: 6px; width: 1px; }
+.tl-zones--left, .tl-zones--right { top: 22px; bottom: 22px; width: 22px; flex-direction: column; }
+.tl-zones--left { left: 0; } .tl-zones--right { right: 0; }
+.tl-zones--left span + span::before, .tl-zones--right span + span::before { top: 0; left: 6px; right: 6px; height: 1px; }
+.tl-open { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(20px, 4vw, 56px); align-items: center; }
+.tl-copy { display: grid; gap: 20px; min-width: 0; }
+.tl-title { margin: 0; font: 500 clamp(40px, 5.4vw, 76px)/1 var(--font-body); letter-spacing: -.035em; text-wrap: balance; }
+.tl-title span { display: block; font: 400 .3em/1.3 var(--tl-mono); letter-spacing: .02em; color: var(--dim); margin-top: 12px; }
+.tl-lede { margin: 0; font-size: 17px; line-height: 1.65; color: var(--ln-2); max-width: 54ch; }
+.tl-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.tl-switch { display: inline-flex; border: 1px solid var(--ln-3); border-radius: 999px; padding: 3px; }
+.tl-switch button { border: 0; background: transparent; color: var(--ln-2); font: 500 12px/1 var(--tl-mono); letter-spacing: .06em; text-transform: uppercase; padding: 9px 14px; border-radius: 999px; cursor: pointer; }
+.tl-switch button[aria-pressed="true"] { background: var(--ln); color: var(--on-ln); }
+.tl-draw { margin: 0; min-width: 0; }
+.tl-draw svg { width: 100%; height: auto; display: block; overflow: visible; }
+.tl-draw text { font-family: var(--tl-mono); font-size: 12px; }
+.tl-draw.is-playing .con { animation: tlFade .8s ease both; animation-delay: calc(var(--i) * 90ms); }
+.tl-draw.is-playing .outline { animation: tlDraw 1.8s cubic-bezier(.6,0,.3,1) .5s both; }
+.tl-draw.is-playing .dimg { animation: tlFade .6s ease both; animation-delay: calc(1.6s + var(--i) * 160ms); }
+@keyframes tlFade { from { opacity: 0; } }
+@keyframes tlDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+.tl-foot { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
+.tl-notes { margin: 0; padding: 0 0 0 1.6em; font: 500 11px/1.7 var(--tl-mono); letter-spacing: .03em; text-transform: uppercase; color: var(--ln-2); max-width: 48ch; }
+.tl-notes::before { content: "General notes"; display: block; margin: 0 0 6px -1.6em; color: var(--ln); font-weight: 600; }
+.tl-tb { justify-self: end; border-collapse: collapse; font: 500 11px/1.25 var(--tl-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--ln); min-width: min(100%, 520px); }
+.tl-tb td { border: 1px solid var(--ln-2); padding: 7px 10px; vertical-align: top; }
+.tl-tb td small { display: block; font-size: 9px; color: var(--ln-2); margin-bottom: 3px; }
+.tl-tb .big { font: 600 18px/1 var(--font-body); letter-spacing: -.01em; text-transform: none; }
+.tl-tb svg { width: 104px; display: block; --mk: var(--dim); --wd: var(--ln); }
+
+.tl-board { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 22px; margin-top: 28px; }
+.tl-card { position: relative; border: 1px solid var(--ln-3); background: color-mix(in srgb, var(--bp) 86%, transparent); padding: clamp(18px, 2.4vw, 30px); min-width: 0; }
+.tl-view { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--ln-3); font: 500 11px/1.3 var(--tl-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ln-2); }
+.tl-view b { color: var(--ln); font-weight: 600; }
+.tl-inks { grid-column: span 5; }
+.tl-letter { grid-column: span 7; }
+.tl-spec { grid-column: 1 / -1; }
+.tl-parts { grid-column: span 6; }
+.tl-exploded { grid-column: span 6; }
+
+.tl-sw { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.tl-sw li { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 14px; align-items: center; font-size: 14px; line-height: 1.4; color: var(--ln-2); }
+.tl-sw i { height: 38px; border: 1px solid var(--ln-2); position: relative; }
+.tl-sw b { display: block; color: var(--ln); font-weight: 600; }
+.tl-sw code { font: 500 11px/1 var(--tl-mono); color: var(--dim); }
+.tl-letter-rows { display: grid; gap: 8px; }
+.tl-letter-rows p { font-size: var(--fs); margin: 0; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: baseline; font-family: var(--tl-mono); text-transform: uppercase; letter-spacing: .02em; color: var(--ln); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl-letter-rows small { font-size: 10px; color: var(--dim); letter-spacing: .06em; }
+.tl-letter-foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: center; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--ln-3); }
+.tl-letter-foot svg { width: 100%; height: auto; display: block; }
+.tl-letter-foot p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ln-2); }
+
+/* live dimensions */
+.tl-spec-stage { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 88px 80px; padding: 46px 64px 30px 70px; }
+.tl-spec-stage > * { min-width: 0; }
+.tl-overlay { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; transition: opacity .3s; }
+.tl-spec.is-off .tl-overlay { opacity: 0; }
+.tl-cell { display: grid; gap: 30px; align-content: start; justify-items: start; }
+.tl-cell > small { order: 2; font: 500 11px/1 var(--tl-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ln-2); }
+.tl-btn { text-decoration: none; font: 500 16px/1 var(--font-body); min-height: 48px; padding: 0 24px; border-radius: 999px; border: 1px solid var(--ln); background: transparent; color: var(--ln); cursor: pointer; display: inline-flex; align-items: center; transition: background-color .2s, color .2s; }
+.tl-btn--primary { background: var(--ln); color: var(--on-ln); }
+.tl-btn--accent { background: var(--dim); border-color: var(--dim); color: #0B2A2E; }
+.tl-btn--secondary:hover { background: var(--ln-4); }
+.tl-btn--ghost { border-color: transparent; padding-inline: 4px; text-decoration: underline dashed; text-underline-offset: 6px; }
+.tl-field { display: grid; gap: 6px; width: 100%; }
+.tl-field label { font: 600 14px/1.3 var(--font-body); }
+.tl-field input { font: 400 16px/1.4 var(--font-body); padding: 13px 14px; border-radius: 12px; border: 1px solid var(--ln-2); background: transparent; color: var(--ln); outline: none; width: 100%; }
+.tl-field input:focus { border-color: var(--dim); box-shadow: 0 0 0 3px color-mix(in srgb, var(--dim) 30%, transparent); }
+.tl-field small { font-size: 13px; color: var(--ln-2); }
+.tl-stat { border: 1px solid var(--ln-2); border-radius: 16px; padding: 24px; display: grid; gap: 6px; width: 100%; }
+.tl-num { margin: 0; font: 500 56px/1 var(--font-display); letter-spacing: -.01em; color: transparent; -webkit-text-stroke: 1.2px var(--ln); }
+.tl-num.ins { -webkit-text-stroke-color: var(--dim); }
+.tl-stat p.t { margin: 0; font: 600 15px/1.35 var(--font-body); }
+.tl-stat p.s { margin: 0; font-size: 14px; color: var(--ln-2); }
+.tl-fcfs { display: grid; gap: 10px; }
+.tl-fcf { display: inline-grid; grid-auto-flow: column; border: 1px solid var(--ln); font: 500 12px/1 var(--tl-mono); letter-spacing: .04em; text-transform: uppercase; width: max-content; max-width: 100%; }
+.tl-fcf > * { padding: 8px 10px; border-left: 1px solid var(--ln); display: grid; place-items: center; }
+.tl-fcf > :first-child { border-left: 0; width: 34px; padding: 0; }
+.tl-fcf svg { width: 16px; height: 16px; }
+.tl-fcf--up { border-color: var(--dim); color: var(--ln); } .tl-fcf--up > * { border-color: var(--dim); } .tl-fcf--up svg { color: var(--dim); }
+.tl-fcf--off { border-style: dashed; color: var(--ln-2); } .tl-fcf--off > * { border-left-style: dashed; }
+.tl-spec-note { margin: 12px 0 0; font-size: 14px; line-height: 1.55; color: var(--ln-2); }
+
+.tl-parts svg { width: 100%; height: auto; display: block; }
+.tl-parts text { font-family: var(--tl-mono); font-size: 12px; }
+.tl-parts p { margin: 12px 0 0; font-size: 14px; line-height: 1.55; color: var(--ln-2); }
+
+.tl-ex-wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 18px; align-items: center; }
+.tl-ex { height: 330px; display: grid; place-items: center; perspective: 1400px; --gap: 44px; cursor: default; }
+.tl-ex:hover, .tl-ex:focus-within { --gap: 64px; }
+.tl-ex-stage { position: relative; width: 210px; height: 150px; transform-style: preserve-3d; transform: rotateX(56deg) rotateZ(-36deg); }
+.tl-ex-l { position: absolute; inset: 0; border-radius: 16px; transform: translateZ(calc(var(--z) * var(--gap))); transition: transform .8s cubic-bezier(.3,1.2,.4,1); transform-style: preserve-3d; }
+.tl-ex-l.l1 { --z: -1; background: rgba(0,0,0,.35); filter: blur(10px); }
+.tl-ex-l.l2 { --z: 0; background: var(--bp-2); border: 1px solid var(--ln-3); }
+.tl-ex-l.l3 { --z: 1; border: 1.4px solid var(--ln); }
+.tl-ex-l.l4 { --z: 2; padding: 22px; }
+.tl-ex-l.l4 b { display: block; font: 500 44px/1 var(--font-display); color: transparent; -webkit-text-stroke: 1px var(--ln); }
+.tl-ex-l.l4 span { display: block; margin-top: 8px; font: 500 11px/1.3 var(--tl-mono); text-transform: uppercase; color: var(--ln-2); }
+.tl-ex-l.l5 { --z: 3; inset: -6px; border-radius: 20px; border: 2px dashed var(--dim); }
+.tl-balloon { position: absolute; right: -44px; top: -8px; width: 26px; height: 26px; border-radius: 50%; border: 1.2px solid var(--dim); display: grid; place-items: center; font: 600 12px/1 var(--tl-mono); color: var(--dim); background: var(--bp);
+  transform: rotateZ(36deg) rotateX(-56deg); transform-origin: center; }
+.tl-balloon::before { content: ""; position: absolute; right: 100%; top: 50%; width: 30px; height: 1px; background: var(--dim); }
+.tl-bom { width: 100%; border-collapse: collapse; font: 500 11px/1.3 var(--tl-mono); text-transform: uppercase; letter-spacing: .03em; }
+.tl-bom th, .tl-bom td { border: 1px solid var(--ln-3); padding: 7px 8px; text-align: left; vertical-align: top; }
+.tl-bom th { color: var(--ln-2); font-weight: 500; font-size: 10px; }
+.tl-bom td:first-child { color: var(--dim); text-align: center; width: 28px; }
+.tl-bom td code { text-transform: none; color: var(--ln-2); }
+
+@media (max-width: 1000px) {
+  .tl-open, .tl-ex-wrap, .tl-foot { grid-template-columns: minmax(0, 1fr); }
+  .tl-inks, .tl-letter, .tl-parts, .tl-exploded { grid-column: 1 / -1; }
+  .tl-spec-stage { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tl-tb { justify-self: stretch; }
+}
+@media (max-width: 640px) {
+  .tl-letter-rows p { font-size: calc(var(--fs) * .62); grid-template-columns: 40px minmax(0, 1fr); }
+  .tl-zones { display: none; }
+  .tl-sheet { padding: 8px; }
+  .tl-spec-stage { grid-template-columns: minmax(0, 1fr); padding-right: 40px; }
+  .tl-letter-foot { grid-template-columns: minmax(0, 1fr); }
+  .tl-tb td { padding: 6px; }
+}
+</style>
+
+<section class="ch tl" id="tolerance" data-ch="tolerance" aria-labelledby="tl-title">
+  <div class="wrap">
+    <div class="tl-sheet">
+      <div class="tl-zones tl-zones--top" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+      <div class="tl-zones tl-zones--bottom" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+      <div class="tl-zones tl-zones--left" aria-hidden="true"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+      <div class="tl-zones tl-zones--right" aria-hidden="true"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+      <div class="tl-sheet-in">
+        <div class="tl-open">
+          <div class="tl-copy">
+            <p class="ch-tag"><i>04</i> Tolerance &middot; 1940s &middot; the mark as a drawing</p>
+            <h2 class="tl-title" id="tl-title">Every dimension needs a tolerance. <span>&plusmn; how far it may vary and still be right</span></h2>
+            <p class="tl-lede">An engineer never draws a part without saying how far it may vary and still be right. Tolerance is a design system drawn the way parts are drawn. Every component carries its own dimensions, so it can be checked the way a part is checked. The logo gets a construction sheet, and the interface is Mesura measuring itself.</p>
+            <div class="tl-actions">
+              <a class="tl-btn tl-btn--primary" href="#tolerance">Get your Diagnostic</a>
+              <div class="tl-switch" role="group" aria-label="Print">
+                <button type="button" data-print="blue" aria-pressed="true">Blueprint</button>
+                <button type="button" data-print="white" aria-pressed="false">Whiteprint</button>
+              </div>
+            </div>
+          </div>
+          <figure class="tl-draw" id="tlDraw">
+            <svg viewBox="20 84 620 540" role="img" aria-label="Construction drawing of the Mesura mark: two squares at 45 degrees, an aperture of 113 units, an opening of 36.3 units at 45 degrees, overall width 292 units."></svg>
+          </figure>
+        </div>
+        <div class="tl-foot">
+        <ol class="tl-notes" aria-label="General notes">
+          <li>All dimensions in logo units. The mark is 292 wide.</li>
+          <li>Corners R 20.1 unless stated. Inner corners R 21.0.</li>
+          <li>In the logo, the opening is always at 45&deg;, upper right.</li>
+          <li>Clear space on every side: one aperture, &Oslash; 113.</li>
+          <li>Do not scale the drawing. Read the dimensions.</li>
+        </ol>
+        <table class="tl-tb" aria-label="Title block">
+          <tr><td rowspan="2" style="width:130px"><small>Drawn by</small><svg viewBox="0 0 1993 311" aria-hidden="true"><use href="#mz-lockup"/></svg></td><td colspan="2"><small>Title</small><span class="big">The mark, construction</span></td><td><small>Dwg no.</small>MZ-04</td></tr>
+          <tr><td><small>Material</small>Ochre #E1A23C</td><td><small>Units</small>Logo units</td><td><small>Scale</small>1:1</td></tr>
+          <tr><td><small>Date</small>2026-09-29</td><td><small>Tolerance</small>&plusmn;0.5 unless stated</td><td><small>Sheet</small>4 of 7</td><td><small>Rev</small>A</td></tr>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-board">
+      <section class="tl-card tl-inks" aria-label="Tolerance colour">
+        <p class="tl-view"><b>View B &middot; inks</b><span>Four, plus paper</span></p>
+        <ul class="tl-sw">
+          <li><i style="background:#073D44"></i><span><b>Blueprint</b>The ground. The logo&rsquo;s own teal. <code>#073D44</code></span></li>
+          <li><i style="background:#EFEAE0"></i><span><b>Linework</b>Text, outlines, controls. <code>#EFEAE0</code></span></li>
+          <li><i style="background:#E1A23C"></i><span><b>Dimension</b>Measurements and the insight. <code>#E1A23C</code></span></li>
+          <li><i style="background:#E68A73"></i><span><b>Redline</b>Corrections and errors only. <code>#E68A73</code></span></li>
+          <li><i style="background:#F2EDE3"></i><span><b>Whiteprint</b>The same sheet, reversed. <code>#F2EDE3</code></span></li>
+        </ul>
+      </section>
+
+      <section class="tl-card tl-letter" aria-label="Tolerance type">
+        <p class="tl-view"><b>View C &middot; lettering</b><span>Steps of &radic;2, like ISO lettering heights</span></p>
+        <div class="tl-letter-rows">
+          <p style="--fs:44px;line-height:1.1"><small>44</small>Readiness</p>
+          <p style="--fs:31px;line-height:1.15"><small>31</small>Benchmark report</p>
+          <p style="--fs:22px"><small>22</small>Eight dimensions, one score</p>
+          <p style="--fs:16px"><small>16</small>Measured on 29 September 2026</p>
+          <p style="--fs:11px"><small>11</small>Unless stated, tolerance &plusmn;0.5 logo units</p>
+        </div>
+        <div class="tl-letter-foot">
+          <svg viewBox="0 0 300 96" aria-hidden="true">
+            <defs><pattern id="tlHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" class="f-bp"/><path d="M0 0V7" class="s-ln" stroke-width="1.3"/></pattern></defs>
+            <text x="4" y="82" font-family="'Source Serif 4', Georgia, serif" font-size="96" font-weight="500" letter-spacing="-2" style="fill:url(#tlHatch)" class="s-ln" stroke-width="1.2">72.4</text>
+          </svg>
+          <p>Headline figures keep the serif, drawn in section: an outline with hatching, the way a cut surface is drawn. Mono does the labelling. Inter does the talking.</p>
+        </div>
+      </section>
+
+      <section class="tl-card tl-spec" id="tlSpec" aria-label="Tolerance components with live dimensions">
+        <p class="tl-view"><b>View D &middot; components, measured live</b><span><button type="button" class="tl-btn tl-btn--secondary" id="tlDimToggle" aria-pressed="true" style="min-height:30px;padding:0 14px;font:500 11px/1 var(--tl-mono);letter-spacing:.06em;text-transform:uppercase">Dimensions on</button></span></p>
+        <div class="tl-spec-stage" id="tlStage">
+          <svg class="tl-overlay" id="tlOverlay" aria-hidden="true"></svg>
+          <div class="tl-cell"><small>Primary</small><button class="tl-btn tl-btn--primary" type="button" data-dim="w h r type">Get your Diagnostic</button></div>
+          <div class="tl-cell"><small>Secondary</small><button class="tl-btn tl-btn--secondary" type="button" data-dim="w h pad">How it works</button></div>
+          <div class="tl-cell"><small>Accent &middot; one per page</small><button class="tl-btn tl-btn--accent" type="button" data-dim="w h">Download report</button></div>
+          <div class="tl-cell">
+            <div class="tl-field" data-dim="w">
+              <label for="tl-email">Work email</label>
+              <input id="tl-email" type="email" value="you@harbour.example" data-dim="h r" autocomplete="off">
+              <small>We&rsquo;ll send your Diagnostic link here.</small>
+            </div>
+          </div>
+          <div class="tl-cell">
+            <article class="tl-stat" data-dim="w h pad r">
+              <p class="tl-num">29.6%</p>
+              <p class="t">of Maltese workers use generative AI at work</p>
+              <p class="s">First in the European Union</p>
+            </article>
+          </div>
+          <div class="tl-cell">
+            <small>Badges &middot; feature control frames</small>
+            <div class="tl-fcfs">
+              <span class="tl-fcf tl-fcf--up" data-dim="h"><span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 13V3M4 7l4-4 4 4"/></svg></span><span>Above benchmark</span><span>+14.4</span></span>
+              <span class="tl-fcf"><span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 9c2-4 4-4 6 0s4 4 6 0"/></svg></span><span>Emerging</span><span>40&ndash;59</span></span>
+              <span class="tl-fcf tl-fcf--off"><span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="5"/><path d="M3 13 13 3"/></svg></span><span>Not measured</span><span>&mdash;</span></span>
+            </div>
+          </div>
+        </div>
+        <p class="tl-spec-note">The dimensions are read from the page as it renders, in CSS pixels. Resize the window and they update. If a number here disagrees with the token file, one of them is wrong.</p>
+      </section>
+
+      <section class="tl-card tl-parts" aria-label="Tolerance stats drawn as parts">
+        <p class="tl-view"><b>View E &middot; stats as parts</b><span>Scale 1 mm = 1 %</span></p>
+        <svg viewBox="0 0 560 250" id="tlParts" role="img" aria-label="Bars: 29.6 per cent of Maltese workers use generative AI at work, 15.1 per cent EU average, 21.6 per cent of organisations formally measure it. Difference 14.5 points."></svg>
+        <p>Headline drawn in section. The baseline as a hidden line, dashed, the way edges behind a part are drawn. The insight in dimension ochre. Figures from the Mesura v1.0 system.</p>
+      </section>
+
+      <section class="tl-card tl-exploded" aria-label="Exploded view of a card">
+        <p class="tl-view"><b>View F &middot; exploded card</b><span>Hover to separate</span></p>
+        <div class="tl-ex-wrap">
+          <div class="tl-ex" tabindex="0" aria-label="Exploded view of a stat card, five layers">
+            <div class="tl-ex-stage">
+              <div class="tl-ex-l l1"></div>
+              <div class="tl-ex-l l2"><span class="tl-balloon">2</span></div>
+              <div class="tl-ex-l l3"><span class="tl-balloon">3</span></div>
+              <div class="tl-ex-l l4"><b>72.4</b><span>Readiness &middot; Harbour &amp; Co.</span><span class="tl-balloon">4</span></div>
+              <div class="tl-ex-l l5"><span class="tl-balloon" style="right:-38px">5</span></div>
+            </div>
+          </div>
+          <table class="tl-bom">
+            <thead><tr><th>Item</th><th>Part</th><th>Token</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Shadow</td><td><code>0 12px 32px, 12%</code></td></tr>
+              <tr><td>2</td><td>Surface</td><td><code>radius-lg 16</code></td></tr>
+              <tr><td>3</td><td>Border</td><td><code>1px border</code></td></tr>
+              <tr><td>4</td><td>Content</td><td><code>padding 24</code></td></tr>
+              <tr><td>5</td><td>Focus ring</td><td><code>2px ochre, offset 3</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  const { markPath, f, svg, replayOnce, SAMPLE } = MZ;
+  const sec = document.getElementById('tolerance');
+
+  /* ---- Construction drawing of the mark (logo units: mark width 292, R 154.5) ---- */
+  const draw = document.querySelector('#tlDraw svg');
+  if (draw) {
+    const cx = 300, cy = 300, R = 176, k = R / 154.5, U = v => v * k, h = R / Math.SQRT2;
+    const tipX = U(146), hole = 0.366 * R, slot = 0.235 * R, a45 = -Math.PI / 4;
+    const P = (r, a) => [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
+    const ux = Math.cos(a45), uy = Math.sin(a45), vx = -uy, vy = ux;       // notch axis and its normal
+    const ex = r => [cx + ux * r, cy + uy * r];
+    const tAt = 152;                                                       // where the slot edges leave the mark
+    const e1 = [cx + vx * slot / 2 + ux * tAt, cy + vy * slot / 2 + uy * tAt], e2 = [cx - vx * slot / 2 + ux * tAt, cy - vy * slot / 2 + uy * tAt];
+    const far = 212, d1 = [e1[0] + ux * (far - tAt), e1[1] + uy * (far - tAt)], d2 = [e2[0] + ux * (far - tAt), e2[1] + uy * (far - tAt)];
+    const angR = R * 0.56, [ax0, ay0] = P(angR, -Math.PI / 2), [ax1, ay1] = P(angR, a45);
+    const [hx, hy] = P(hole, Math.PI * 1.22), [lx, ly] = [70, 118];
+    const [tx, ty] = P(R * 0.9, Math.PI);
+    let i = 0;
+    draw.innerHTML = `
+      <defs><marker id="tlArr" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1.5 10 5 0 8.5Z" class="f-dim"/></marker></defs>
+      <g class="f-none" stroke-width="1">
+        <path class="con s-ln3" style="--i:${i++}" stroke-dasharray="16 3 3 3" d="M${cx - R - 40} ${cy}H${cx + R + 40}M${cx} ${cy - R - 40}V${cy + R + 40}"/>
+        <circle class="con s-ln3" style="--i:${i++}" cx="${cx}" cy="${cy}" r="${R}" stroke-dasharray="4 4"/>
+        <rect class="con s-ln3" style="--i:${i++}" x="${f(cx - h)}" y="${f(cy - h)}" width="${f(2 * h)}" height="${f(2 * h)}"/>
+        <rect class="con s-ln3" style="--i:${i++}" x="${f(cx - h)}" y="${f(cy - h)}" width="${f(2 * h)}" height="${f(2 * h)}" transform="rotate(45 ${cx} ${cy})"/>
+        <circle class="con s-ln3" style="--i:${i++}" cx="${cx}" cy="${cy}" r="${f(hole)}" stroke-dasharray="4 4"/>
+        <path class="con s-ln3" style="--i:${i++}" stroke-dasharray="16 3 3 3" d="M${cx} ${cy}L${f(ex(R + 60)[0])} ${f(ex(R + 60)[1])}"/>
+      </g>
+      <path class="outline s-ln f-ln4" pathLength="1" stroke-dasharray="1" stroke-width="2" stroke-linejoin="round" transform="translate(${cx} ${cy})" d="${markPath({ R })}"/>
+      <g class="dimg" style="--i:0">
+        <path class="s-dim f-none" stroke-width=".9" d="M${f(cx - tipX)} ${cy + 8}V${cy + R + 52}M${f(cx + tipX)} ${cy + 8}V${cy + R + 52}"/>
+        <path class="s-dim f-none" stroke-width="1" marker-start="url(#tlArr)" marker-end="url(#tlArr)" d="M${f(cx - tipX)} ${cy + R + 42}H${f(cx + tipX)}"/>
+        <text class="f-dim" x="${cx}" y="${cy + R + 34}" text-anchor="middle">292.0 &#177;0.5</text>
+      </g>
+      <g class="dimg" style="--i:1">
+        <path class="s-dim f-none" stroke-width=".9" d="M${f(e1[0])} ${f(e1[1])}L${f(d1[0] + ux * 10)} ${f(d1[1] + uy * 10)}M${f(e2[0])} ${f(e2[1])}L${f(d2[0] + ux * 10)} ${f(d2[1] + uy * 10)}"/>
+        <path class="s-dim f-none" stroke-width="1" marker-start="url(#tlArr)" marker-end="url(#tlArr)" d="M${f(d1[0] + vx * 26)} ${f(d1[1] + vy * 26)}L${f(d1[0])} ${f(d1[1])}"/>
+        <path class="s-dim f-none" stroke-width="1" marker-start="url(#tlArr)" marker-end="url(#tlArr)" d="M${f(d2[0] - vx * 26)} ${f(d2[1] - vy * 26)}L${f(d2[0])} ${f(d2[1])}"/>
+        <text class="f-dim" x="${f(d1[0] + 14)}" y="${f(d1[1] + 34)}">36.3 OPENING</text>
+      </g>
+      <g class="dimg" style="--i:2">
+        <path class="s-dim f-none" stroke-width="1" marker-start="url(#tlArr)" marker-end="url(#tlArr)" d="M${f(ax0)} ${f(ay0)}A${f(angR)} ${f(angR)} 0 0 1 ${f(ax1)} ${f(ay1)}"/>
+        <text class="f-dim" x="${f(cx + 30)}" y="${f(cy - angR - 10)}">45&#176;</text>
+      </g>
+      <g class="dimg" style="--i:3">
+        <path class="s-dim f-none" stroke-width=".9" d="M${f(hx)} ${f(hy)}L${lx + 118} ${ly + 6}H${lx}"/>
+        <circle class="f-dim" cx="${f(hx)}" cy="${f(hy)}" r="2.6"/>
+        <text class="f-dim" x="${lx}" y="${ly}">&#216; 113.0 APERTURE</text>
+      </g>
+      <g class="dimg" style="--i:4">
+        <path class="s-dim f-none" stroke-width=".9" d="M${f(cx - U(142))} ${f(cy - 16)}L${f(cx - R - 20)} ${f(cy - 62)}H${f(cx - R - 88)}"/>
+        <text class="f-dim" x="${f(cx - R - 88)}" y="${f(cy - 68)}">8&#215; R 20.1</text>
+      </g>
+      <g class="dimg" style="--i:5">
+        <path class="s-dim f-none" stroke-width="1" d="M${cx} ${f(cy + hole)}v38"/>
+        <path class="f-dim" d="M${cx - 7} ${f(cy + hole + 10)}h14l-7 -10Z"/>
+        <rect class="s-dim f-bp" stroke-width="1.2" x="${cx - 13}" y="${f(cy + hole + 38)}" width="26" height="24"/>
+        <text class="f-dim" x="${cx}" y="${f(cy + hole + 55)}" text-anchor="middle" font-weight="700">A</text>
+      </g>
+      <g class="dimg" style="--i:6">
+        <text class="f-ln2" x="${cx - R}" y="${cy + R + 84}" font-size="11">DRAWN FROM THE SUPPLIED LOGO. PARAMETRIC SHAPE MATCHES THE TRACE TO 98%.</text>
+      </g>`;
+    replayOnce(document.getElementById('tlDraw'), 'is-playing', 0.3);
+  }
+
+  /* ---- Blueprint / whiteprint ---- */
+  sec.querySelectorAll('[data-print]').forEach(b => b.addEventListener('click', () => {
+    sec.classList.toggle('is-white', b.dataset.print === 'white');
+    sec.querySelectorAll('[data-print]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    setTimeout(measure, 650);
+  }));
+
+  /* ---- Stats as parts ---- */
+  const parts = document.getElementById('tlParts');
+  if (parts) {
+    const x0 = 40, s = 13.4, rows = [['29.6', 29.6, 'head', 'OF MALTESE WORKERS USE GEN AI AT WORK'], ['15.1', 15.1, 'base', 'EU AVERAGE'], ['21.6', 21.6, 'ins', 'OF ORGANISATIONS FORMALLY MEASURE IT']];
+    let g = `<defs><pattern id="tlHatch2" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V6" class="s-ln" stroke-width="1"/></pattern></defs>`;
+    for (let t = 0; t <= 35; t += 5) g += `<path class="s-ln3" d="M${f(x0 + t * s)} 186v${t % 10 ? 5 : 9}"/><text class="f-ln2" x="${f(x0 + t * s)}" y="212" text-anchor="middle" font-size="11">${t}</text>`;
+    g += `<path class="s-ln3" d="M${x0} 186H${f(x0 + 35 * s)}"/><text class="f-ln2" x="${f(x0 + 35 * s)}" y="232" text-anchor="end" font-size="10">PER CENT</text>`;
+    rows.forEach(([lab, v, kind, cap], r) => {
+      const y = 24 + r * 48, w = v * s;
+      const cls = kind === 'head' ? 's-ln' : kind === 'ins' ? 's-dim' : 's-ln2';
+      g += `<rect x="${x0}" y="${y}" width="${f(w)}" height="22" class="${cls}" style="fill:${kind === 'head' ? 'url(#tlHatch2)' : kind === 'ins' ? 'color-mix(in srgb, var(--dim) 18%, transparent)' : 'none'}" stroke-width="1.3" ${kind === 'base' ? 'stroke-dasharray="6 4"' : ''}/>`;
+      g += `<text x="${f(x0 + w + 10)}" y="${y + 16}" font-size="15" font-family="'Source Serif 4', Georgia, serif" class="${kind === 'ins' ? 'f-dim' : 'f-ln'}">${lab}%</text>`;
+      g += `<text x="${x0}" y="${y - 6}" font-size="10" class="f-ln2">${cap}</text>`;
+    });
+    const xa = x0 + 29.6 * s, xb = x0 + 15.1 * s;
+    g += `<path class="s-dim" stroke-width=".9" d="M${f(xa)} 48V64M${f(xb)} 70V54"/><path class="s-dim f-none" marker-start="url(#tlArr2)" marker-end="url(#tlArr2)" d="M${f(xb)} 59H${f(xa)}"/><text class="f-dim" x="${f(xa + 50)}" y="63">&#916; 14.5 PTS</text>`;
+    g = `<defs><marker id="tlArr2" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1.5 10 5 0 8.5Z" class="f-dim"/></marker></defs>` + g;
+    parts.innerHTML = g;
+  }
+
+  /* ---- Live dimensions ---- */
+  const stage = document.getElementById('tlStage'), ov = document.getElementById('tlOverlay');
+  function hdim(x1, x2, y, yRef, label) {
+    return `<path class="s-dim" stroke-width=".8" d="M${f(x1)} ${f(yRef - 3)}V${f(y - 5)}M${f(x2)} ${f(yRef - 3)}V${f(y - 5)}"/>
+      <path class="s-dim f-none" stroke-width=".9" marker-start="url(#tlArrO)" marker-end="url(#tlArrO)" d="M${f(x1)} ${f(y)}H${f(x2)}"/>
+      <text class="f-dim" x="${f((x1 + x2) / 2)}" y="${f(y - 5)}" text-anchor="middle">${label}</text>`;
+  }
+  function vdim(y1, y2, x, xRef, label) {
+    return `<path class="s-dim" stroke-width=".8" d="M${f(xRef + 3)} ${f(y1)}H${f(x + 5)}M${f(xRef + 3)} ${f(y2)}H${f(x + 5)}"/>
+      <path class="s-dim f-none" stroke-width=".9" marker-start="url(#tlArrO)" marker-end="url(#tlArrO)" d="M${f(x)} ${f(y1)}V${f(y2)}"/>
+      <text class="f-dim" x="${f(x + 6)}" y="${f((y1 + y2) / 2 + 4)}">${label}</text>`;
+  }
+  function measure() {
+    if (!stage || !ov) return;
+    const cr = stage.getBoundingClientRect();
+    ov.setAttribute('width', cr.width); ov.setAttribute('height', cr.height); ov.setAttribute('viewBox', `0 0 ${f(cr.width)} ${f(cr.height)}`);
+    let out = `<defs><marker id="tlArrO" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 1.5 10 5 0 8.5Z" class="f-dim"/></marker></defs><g font-family="'JetBrains Mono', monospace" font-size="10.5">`;
+    stage.querySelectorAll('[data-dim]').forEach(el => {
+      const r = el.getBoundingClientRect(), x = r.left - cr.left, y = r.top - cr.top, w = r.width, h = r.height, cs = getComputedStyle(el), o = el.dataset.dim.split(' ');
+      if (o.includes('w')) out += hdim(x, x + w, y - 12, y, `${Math.round(w)}`);
+      if (o.includes('h')) out += vdim(y, y + h, x + w + 12, x + w, `${Math.round(h)}`);
+      if (o.includes('pad')) {
+        const pl = parseFloat(cs.paddingLeft), pt = parseFloat(cs.paddingTop), pr = parseFloat(cs.paddingRight), pb = parseFloat(cs.paddingBottom);
+        out += `<rect class="s-dim f-none" stroke-width=".8" stroke-dasharray="3 3" x="${f(x + pl)}" y="${f(y + pt)}" width="${f(w - pl - pr)}" height="${f(h - pt - pb)}"/>`;
+        out += `<text class="f-dim" x="${f(x + pl / 2)}" y="${f(y + h / 2 + 4)}" text-anchor="middle">${Math.round(pl)}</text>`;
+      }
+      if (o.includes('r')) {
+        const rad = Math.min(parseFloat(cs.borderTopLeftRadius) || 0, h / 2), lab = rad >= h / 2 - 0.5 ? 'R H/2' : `R ${Math.round(rad)}`;
+        out += `<path class="s-dim f-none" stroke-width="1.4" d="M${f(x)} ${f(y + rad)}A${f(rad)} ${f(rad)} 0 0 1 ${f(x + rad)} ${f(y)}"/><path class="s-dim" stroke-width=".8" d="M${f(x + rad * .3)} ${f(y + rad * .3)}L${f(x - 16)} ${f(y - 16)}H${f(x - 22)}"/><text class="f-dim" x="${f(x - 24)}" y="${f(y - 20)}" text-anchor="end">${lab}</text>`;
+      }
+      if (o.includes('type')) {
+        out += `<path class="s-dim" stroke-width=".8" d="M${f(x + w * .72)} ${f(y + h - 14)}L${f(x + w * .72 + 12)} ${f(y + h + 16)}H${f(x + w * .72 + 20)}"/><text class="f-dim" x="${f(x + w * .72 + 23)}" y="${f(y + h + 20)}">INTER ${cs.fontWeight} &#183; ${Math.round(parseFloat(cs.fontSize))} PX</text>`;
+      }
+    });
+    ov.innerHTML = out + '</g>';
+  }
+  if (stage) {
+    ('ResizeObserver' in window) ? new ResizeObserver(() => measure()).observe(stage) : window.addEventListener('resize', measure);
+    document.fonts && document.fonts.ready.then(measure);
+    measure();
+  }
+  const dt = document.getElementById('tlDimToggle');
+  dt && dt.addEventListener('click', () => {
+    const on = dt.getAttribute('aria-pressed') !== 'true';
+    dt.setAttribute('aria-pressed', on); dt.textContent = on ? 'Dimensions on' : 'Dimensions off';
+    document.getElementById('tlSpec').classList.toggle('is-off', !on);
+  });
+})();
+</script>
