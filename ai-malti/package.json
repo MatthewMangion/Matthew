@@ -1,0 +1,13 @@
+{
+  "name": "ai-bil-malti",
+  "version": "1.0.0",
+  "description": "AI bil-Malti EP.01 — Kif Naħdem: a code-generated Maltese motion-graphics explainer",
+  "scripts": {
+    "render": "./tools/render_all.sh 3",
+    "export": "./tools/export.sh",
+    "audio": "python3 audio/synth.py"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {}
+}

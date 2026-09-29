@@ -1,0 +1,7 @@
+node_modules/
+audio/stems/
+audio/_pre.wav
+*.mkv
+audio/mix.wav
+out/ai-bil-malti-upload.mp4
+__pycache__/

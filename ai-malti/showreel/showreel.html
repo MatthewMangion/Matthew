@@ -1,0 +1,221 @@
+<title>AI bil-Malti Showreel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@1&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: a screening room on luzzu-hull blue. The phone-framed film sits in a sticky column;
+   the breakdown reads like a shot list beside it (stacks to one column on phones). */
+:root {
+  --hull: #1741C4;        /* page ground: deep luzzu blue */
+  --hull-deep: #0F2E94;   /* panels, table stripes */
+  --limestone: #F4EDE0;   /* text */
+  --limestone-dim: #C9D3F2;
+  --yellow: #FFC300;      /* accent: headlines, links, focus */
+  --red: #E8202A;         /* graphic-only accent (flag, rules) */
+  --ink: #0B0B10;
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --step--1: 0.8125rem; --step-0: 1rem; --step-1: 1.25rem; --step-2: 1.75rem; --step-3: 2.75rem; --step-4: clamp(3rem, 9vw, 6.5rem);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--hull); color: var(--limestone); font-family: var(--font-display); font-size: var(--step-0); line-height: 1.55; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 24px; padding-block: 28px 64px; }
+a { color: var(--yellow); }
+:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; border-radius: 6px; }
+
+.slug { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.14em; text-transform: uppercase; }
+.flag { display: inline-flex; width: 26px; height: 26px; border: 1.5px solid color-mix(in srgb, var(--limestone) 60%, transparent); }
+.flag i { flex: 1; background: #fff; } .flag i + i { background: var(--red); }
+
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 48px; align-items: start; margin-top: 36px; }
+.hero h1 { font-weight: 900; font-stretch: 125%; font-size: var(--step-4); line-height: 0.88; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.hero h1 span { display: block; font-stretch: 70%; color: var(--yellow); }
+.lede { font-family: var(--font-serif); font-style: italic; font-size: var(--step-2); line-height: 1.2; margin: 22px 0 18px; max-width: 30ch; }
+.intro { max-width: 60ch; color: var(--limestone-dim); font-stretch: 92%; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; padding: 0; list-style: none; }
+.facts li { font-family: var(--font-mono); font-size: var(--step--1); padding: 6px 12px; border: 1px solid color-mix(in srgb, var(--limestone) 35%, transparent); border-radius: 999px; font-variant-numeric: tabular-nums; }
+
+.stage { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); }
+.phone { background: var(--ink); border-radius: 44px; padding: 12px; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.55), 0 0 0 2px color-mix(in srgb, var(--limestone) 20%, transparent); max-width: 100%; }
+.phone video { display: block; width: 100%; aspect-ratio: 9 / 16; border-radius: 34px; background: var(--ink); }
+.controls { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+button { font: inherit; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; color: var(--ink); background: var(--yellow); border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; }
+button.ghost { background: transparent; color: var(--limestone); box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--limestone) 55%, transparent); }
+button:hover { filter: brightness(1.06); }
+
+section { margin-top: 72px; }
+h2 { font-weight: 900; font-stretch: 110%; font-size: var(--step-3); line-height: 1; margin: 0 0 6px; text-wrap: balance; }
+h2 + .sub { font-family: var(--font-serif); font-style: italic; font-size: var(--step-1); color: var(--limestone-dim); margin: 0 0 24px; }
+
+.shots { overflow-x: auto; border-radius: 18px; background: var(--hull-deep); }
+table { width: 100%; border-collapse: collapse; min-width: 640px; }
+th { text-align: left; font-family: var(--font-mono); font-size: var(--step--1); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--limestone-dim); padding: 14px 16px; border-bottom: 1px solid color-mix(in srgb, var(--limestone) 22%, transparent); }
+td { padding: 12px 16px; vertical-align: top; border-bottom: 1px solid color-mix(in srgb, var(--limestone) 10%, transparent); }
+tr.now td { background: color-mix(in srgb, var(--yellow) 16%, transparent); }
+td.tc button { background: transparent; color: var(--yellow); padding: 2px 0; font-variant-numeric: tabular-nums; }
+td.mt { font-weight: 800; font-stretch: 88%; font-size: var(--step-1); line-height: 1.2; }
+td.en { font-family: var(--font-serif); font-style: italic; font-size: var(--step-1); line-height: 1.2; color: var(--limestone-dim); }
+td.fx { font-stretch: 90%; color: var(--limestone-dim); font-size: 0.9375rem; }
+
+.craft { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
+.craft div { min-width: 0; }
+.craft h3 { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.14em; text-transform: uppercase; color: var(--yellow); margin: 0 0 8px; border-top: 3px solid var(--red); padding-top: 12px; }
+.craft p { margin: 0; color: var(--limestone-dim); font-stretch: 92%; }
+
+.kit { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; }
+.card { background: var(--limestone); color: var(--ink); border-radius: 22px; padding: 22px 24px; min-width: 0; }
+.card h3 { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.14em; text-transform: uppercase; margin: 0 0 12px; color: #4A4F66; }
+.card p { margin: 0 0 14px; white-space: pre-line; }
+.card .tags { font-family: var(--font-mono); font-size: 0.875rem; line-height: 1.8; word-break: break-word; }
+.card button { background: var(--ink); color: var(--limestone); }
+.tips { margin: 0; padding-left: 1.1em; color: var(--limestone-dim); }
+.tips li + li { margin-top: 10px; }
+footer { margin-top: 80px; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; color: var(--limestone-dim); display: flex; flex-wrap: wrap; gap: 8px 24px; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .stage { position: static; max-width: 380px; }
+  .kit { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  table { min-width: 0; }
+  thead { display: none; }
+  table, tbody, tr, td { display: block; }
+  tr { padding: 14px 16px; border-bottom: 1px solid color-mix(in srgb, var(--limestone) 12%, transparent); }
+  td { padding: 2px 0; border: 0; }
+  td.fx { margin-top: 6px; }
+}
+@media (max-width: 480px) { .wrap { padding-inline: 16px; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <div class="slug"><span class="flag" aria-hidden="true"><i></i><i></i></span> AI bil-Malti · EP. 01 · 1080×1920 · 64 s</div>
+
+  <div class="hero">
+    <div>
+      <h1>KIF NAĦDEM<span>showreel</span></h1>
+      <p class="lede">Kull pixel. Kull nota. Kull kelma. Magħmula minn AI.</p>
+      <p class="intro">A 64-second vertical explainer for Maltese audiences on how large language models work: tokens, embeddings, attention, next-word prediction, training and reasoning. It is written in Maltese and built entirely in code, including the typography, 3D, particles, sound design and music. Every idea is carried by on-screen text, so it works with the sound off, and it loops seamlessly.</p>
+      <ul class="facts" aria-label="Specs">
+        <li>9:16 · 30 fps</li><li>120 BPM · D minor</li><li>12 scenes · 11 transitions</li><li>−13 LUFS</li><li>0 stock assets</li>
+      </ul>
+    </div>
+    <div class="stage">
+      <div class="phone"><video id="film" src="media/ai-bil-malti-web.mp4" poster="media/cover.jpg" playsinline muted loop autoplay preload="metadata" aria-label="AI bil-Malti, episode 1: Kif Naħdem"></video></div>
+      <div class="controls">
+        <button id="sound" type="button">Ixgħel il-ħoss · Sound on</button>
+        <button id="restart" type="button" class="ghost">Mill-bidu · Restart</button>
+      </div>
+    </div>
+  </div>
+
+  <section aria-labelledby="h-shots">
+    <h2 id="h-shots">Xena b'xena</h2>
+    <p class="sub">Scene by scene. Tap a timecode to jump the film there.</p>
+    <div class="shots"><table>
+      <thead><tr><th scope="col">Ħin</th><th scope="col">Malti</th><th scope="col">English</th><th scope="col">Technique</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+  </section>
+
+  <section aria-labelledby="h-craft">
+    <h2 id="h-craft">Kif inbena</h2>
+    <p class="sub">How it was built.</p>
+    <div class="craft">
+      <div><h3>Engine</h3><p>A deterministic Canvas 2D renderer where every frame is a pure function of time, so scenes render in parallel headless browsers. Motion blur is real: each frame averages 3–10 sub-frames in linear light. A WebGL2 finishing pass adds dual-filter bloom, chromatic aberration, glitch slicing, vignette and grain, then packs YUV 4:2:0 on the GPU for the encoder.</p></div>
+      <div><h3>Type</h3><p>Archivo's width axis runs 62–125%. Canvas can't animate width, so 64 fixed-width faces are registered and interpolated between. Instrument Serif italic carries the voice and JetBrains Mono the data, with every Maltese letter (ċ ġ ħ ż, għ, ie) set natively.</p></div>
+      <div><h3>Sound</h3><p>An original track synthesized in Python from oscillators and filters: kick, claps, supersaws, plucks, lead and more than 40 sound-design cues driven by the same timeline as the picture. It includes a tape-stop for the joke, crickets for the silence and a true-peak limiter.</p></div>
+      <div><h3>Maltese details</h3><p>The typographic map uses the real coastline of Malta, Gozo and Comino. The attention scene rests on a Maltese pun, since <em>bank</em> means both bank and bench. Colours come from the luzzu, and the eye of the luzzu is the attention head.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-kit">
+    <h2 id="h-kit">Biex jinfirex</h2>
+    <p class="sub">Built to be shared: caption, tags and first comment.</p>
+    <div class="kit">
+      <div class="card">
+        <h3>Caption</h3>
+        <p id="cap">L-AI spjegat lilha nfisha… bil-Malti 🇲🇹🤯
+Kull pixel, kull nota u kull kelma f'dan il-filmat saru minn AI.
+Issa għidli: IRKOTTA jew PIŻELLI? 👇</p>
+        <p class="tags" id="tags">#Malta #Malti #AIbilMalti #AI #IntelliġenzaArtifiċjali #LLM #Pastizzi #Għawdex #MotionDesign #TechTok #LearnOnTikTok #fyp #maltatiktok</p>
+        <div class="controls"><button type="button" data-copy="cap">Copy caption</button><button type="button" data-copy="tags">Copy hashtags</button></div>
+      </div>
+      <div>
+        <ul class="tips">
+          <li><strong>Pin this comment:</strong> “Irkotta jew piżelli? Il-kummenti jiddeċiedu 🥟”. Answer the best replies with video replies.</li>
+          <li><strong>Frame 0 is the thumbnail.</strong> It opens on “DAN IL-FILMAT”, and a separate cover is included for the Reels grid.</li>
+          <li><strong>Safe zones:</strong> all key text sits between y 300–1480 px, clear of the TikTok and Reels buttons and captions.</li>
+          <li><strong>The loop:</strong> the last second types itself back into the first frame, so replays count.</li>
+          <li><strong>Series hook:</strong> the end card sets up EP. 02 and gives people a reason to follow.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer><span>Direction, animation, type, code and music: Claude (AI)</span><span>Coastline: geoBoundaries (CC BY 4.0)</span><span>Fonts: Archivo, Instrument Serif, JetBrains Mono (OFL)</span></footer>
+</div>
+
+<script>
+const SHOTS = [
+  [0, 'DAN IL-FILMAT / GĦAMILTU / JIEN. / L-AI.', 'This video, I made it myself. The AI.', 'Frame 0 doubles as the thumbnail; variable-width spring, colour-block cuts, glitch entrance'],
+  [2, 'KULL PIXEL. KULL NOTA. KULL KELMA. BIL-MALTI.', 'Every pixel. Every note. Every word. In Maltese.', 'Slot-machine swaps: mosaic resolve, oscilloscope, typewriter, split-flag inversion'],
+  [4, "Issa ħa nurik KIF NAĦDEM f'60 sekonda.", 'Now I’ll show you how I work, in 60 seconds.', 'Instrument ring; the “60” flies into a live HUD countdown; implosion to black'],
+  [8, "L-EWWEL: QRAJT. / TRILJUNI TA' KLIEM.", 'First: I read. Trillions of words.', 'Title shatters into 420 words that print a map of Malta made of Maltese words'],
+  [11.5, 'ħobż', '(bread)', '240× dive into one highlighted word, match-cut into a full yellow frame'],
+  [12, 'IMMA MA NARAX KLIEM. NARA TOKENS.', 'But I don’t see words. I see tokens.', 'Laser cuts split “Ħobż biż-żejt” into tokens; chips map to IDs'],
+  [16, 'MAPPA TAT-TIFSIRA', 'A map of meaning', '3D point cloud with orbiting camera and depth of field; Maltese word clusters'],
+  [20, 'RE − RAĠEL + MARA ≈ REĠINA', 'KING − MAN + WOMAN ≈ QUEEN', 'Vector lifted and slid across in 3D; axes multiply to 4,096 dimensions'],
+  [24, 'IMBAGĦAD: ATTENZJONI.', 'Then: attention.', 'The luzzu eye draws itself on and opens'],
+  [26, 'Poġġejt il-flus fil-bank. / Qgħadt fuq il-bank fil-ġnien.', 'Money in the bank. / Sat on the bench.', 'Weighted attention arcs, flowing pulses, heat bars: same word, two meanings'],
+  [30, 'IL-KUNTEST JIBDEL KOLLOX.', 'Context changes everything.', 'Spring type, a blink, then a 60× zoom into the pupil'],
+  [32, "GĦEXIEREN TA' DRABI. B'BILJUNI TA' PARAMETRI.", 'Dozens of times. Billions of parameters.', 'Flight up through 32 glass layers; wall of 1,040 dials; white-out'],
+  [36, 'INBASSAR IL-KELMA LI JMISS.', 'I predict the next word.', 'Drop #2 on limestone; stacked slam type'],
+  [38, 'L-aħjar pastizzi huma tal-… irkotta 50.1% / piżelli 49.7%', 'The best pastizzi are… ricotta vs peas', 'Live probability race and photo-finish; tape-stop, desaturated freeze, crickets'],
+  [42, "It-traffiku f'Malta huwa… kaos. 99.9%", 'Traffic in Malta is… chaos.', 'The bar overshoots its track; comic BIP! BIP! bursts'],
+  [44, "NAGĦŻEL WAĦDA. INŻIDHA. U NERĠA' NIBDA.", 'Pick one. Add it. Start again.', 'Autoregressive loop; a comet speeds up as the reply writes itself'],
+  [48, 'KIF TGĦALLIMT? Bassart. Żbaljajt. Irranġajt.', 'How did I learn? Guessed. Wrong. Adjusted.', 'Il-baħar huwa aħmar ✗ → blu ✓; montage, loss curve, odometer'],
+  [52, 'L-aqwa mudelli jaħsbu pass pass qabel iwieġbu.', 'The best models think step by step.', 'A reasoning tree explores, prunes and commits to one path'],
+  [54, "U jużaw l-għodod… anke biex jagħmlu filmati bħal dan.", 'They use tools, even to make videos like this.', 'Tool tiles; a phone shows this video recursively (Droste) and the camera zooms in forever'],
+  [56, 'MHUX MAĠIJA. MATEMATIKA.', 'Not magic. Maths.', 'Silence, then festa fireworks made of digits'],
+  [59, 'Irkotta jew piżelli? ikteb fil-kummenti', 'Ricotta or peas? Comment below', 'Comment-bait CTA, then end card with series lockup'],
+  [63, 'DAN IL-FILMAT', 'This video', 'The last second types back into frame 0: a seamless loop'],
+];
+const film = document.getElementById('film');
+const rows = document.getElementById('rows');
+const fmt = (t) => `0:${String(Math.floor(t)).padStart(2, '0')}${t % 1 ? '.' + String(Math.round((t % 1) * 10)) : ''}`;
+SHOTS.forEach(([t, mt, en, fx], i) => {
+  const tr = document.createElement('tr');
+  tr.dataset.t = t;
+  tr.innerHTML = `<td class="tc"><button type="button" aria-label="Jump to ${fmt(t)}">${fmt(t)}</button></td><td class="mt"></td><td class="en"></td><td class="fx"></td>`;
+  tr.querySelector('.mt').textContent = mt;
+  tr.querySelector('.en').textContent = en;
+  tr.querySelector('.fx').textContent = fx;
+  tr.querySelector('button').addEventListener('click', () => { film.currentTime = t; film.play().catch(() => {}); });
+  rows.appendChild(tr);
+});
+const trs = [...rows.children];
+film.addEventListener('timeupdate', () => {
+  const t = film.currentTime;
+  let cur = 0;
+  SHOTS.forEach(([s], i) => { if (t >= s) cur = i; });
+  trs.forEach((tr, i) => tr.classList.toggle('now', i === cur));
+});
+const sound = document.getElementById('sound');
+sound.addEventListener('click', () => {
+  film.muted = !film.muted;
+  if (!film.muted) film.play().catch(() => {});
+  sound.textContent = film.muted ? 'Ixgħel il-ħoss · Sound on' : 'Itfi l-ħoss · Mute';
+});
+document.getElementById('restart').addEventListener('click', () => { film.currentTime = 0; film.play().catch(() => {}); });
+document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+  const el = document.getElementById(b.dataset.copy);
+  const label = b.textContent;
+  try { await navigator.clipboard.writeText(el.textContent.trim()); b.textContent = 'Copied'; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected: press Ctrl/⌘+C'; }
+  setTimeout(() => (b.textContent = label), 1800);
+}));
+</script>

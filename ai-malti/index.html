@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="mt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI bil-Malti — Kif Naħdem</title>
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  #out { display: block; width: 1080px; height: 1920px; }
+  #dbg { position: fixed; left: 8px; top: 8px; color: #0f0; font: 14px monospace; z-index: 2; }
+</style>
+</head>
+<body>
+<canvas id="out" width="1080" height="1920"></canvas>
+<div id="dbg"></div>
+<script src="src/core.js"></script>
+<script src="src/fonts.js"></script>
+<script src="src/post.js"></script>
+<script src="src/main.js"></script>
+<script src="src/data/malta.js"></script>
+<script src="src/timeline.js"></script>
+<script src="src/fx.js"></script>
+<script src="src/hud.js"></script>
+<script src="src/lib.js"></script>
+<script src="src/scenes/s01-hook.js"></script>
+<script src="src/scenes/s02-promise.js"></script>
+<script src="src/scenes/s03-read.js"></script>
+<script src="src/scenes/s04-tokens.js"></script>
+<script src="src/scenes/s05-embed.js"></script>
+<script src="src/scenes/s06-attention.js"></script>
+<script src="src/scenes/s07-layers.js"></script>
+<script src="src/scenes/s08-predict.js"></script>
+<script src="src/scenes/s09-loop.js"></script>
+<script src="src/scenes/s10-train.js"></script>
+<script src="src/scenes/s11-latest.js"></script>
+<script src="src/scenes/s12-finale.js"></script>
+<script src="src/scenes/s99-cover.js"></script>
+<script>
+  window.READY = ENGINE.init({ debug: /debug/.test(location.search) }).then((info) => {
+    window.INFO = info;
+    const q = new URLSearchParams(location.search);
+    if (q.has('t')) ENGINE.renderFrame(Math.round(parseFloat(q.get('t')) * M.FPS));
+    return info;
+  });
+</script>
+</body>
+</html>
